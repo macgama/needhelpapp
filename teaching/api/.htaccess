@@ -1,0 +1,8 @@
+# La configuration ne doit jamais être servie en clair, même en cas
+# de mauvaise interprétation des fichiers PHP par le serveur.
+<FilesMatch "^(config|config\.example)\.php$">
+    Require all denied
+</FilesMatch>
+
+# Pas de listage du dossier
+Options -Indexes

@@ -1,0 +1,284 @@
+/* Version de cette feuille, lue par le script au chargement : une feuille
+   restée en arrière produit des mises en page incompréhensibles, et c'est
+   la panne la plus difficile à diagnostiquer de l'extérieur. */
+:root{ --css-version:"2026-11-05"; }
+
+/* =========================================================
+   La conjugaison — styles propres à cette application.
+   Les couleurs, la typographie et les composants communs
+   viennent de app.css, partagé avec La dictée.
+   ========================================================= */
+
+.deux-colonnes{display:grid;grid-template-columns:1fr;gap:16px;align-items:start}
+
+.listes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.listes li{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.listes .check{margin:0;align-items:flex-start}
+.listes b{font-weight:500}
+
+.mode-titre{
+  margin:16px 0 8px;font-size:12.5px;font-weight:500;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink);
+}
+.mode-titre:first-child{margin-top:0}
+#temps .check{margin-bottom:8px}
+.temps-entete{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.temps-entete h3{font-size:13px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--grey)}
+.linkish.rouge{color:var(--red);margin-left:14px}
+.temps-grille{display:grid;grid-template-columns:1fr;gap:0 22px}
+.temps-groupe{break-inside:avoid;padding-bottom:6px}
+@media (min-width:520px){ .temps-grille{grid-template-columns:1fr 1fr} }
+@media (min-width:960px){ .temps-grille{grid-template-columns:1fr} }
+
+/* ---------- l'exercice ---------- */
+.avance-ligne{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13.5px;color:var(--grey)}
+.avance-piste{height:6px;background:#F2F1EC;border-radius:3px;overflow:hidden;margin:8px 0 20px;border:1px solid var(--line)}
+.avance-barre{height:100%;width:0;background:var(--ink);transition:width .25s ease}
+
+.question{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 18px}
+.q-consigne{margin:0 0 18px;font-size:16px;color:var(--grey)}
+.q-consigne b{color:var(--slate);font-weight:500}
+
+.q-ligne{
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  background-color:var(--paper);
+  background-image:repeating-linear-gradient(to bottom, transparent 0 43px, var(--rule-soft) 43px 44px);
+  border:1px solid var(--line);border-radius:10px;
+  padding:10px 14px 12px 22px;position:relative;
+}
+.q-ligne::before{content:"";position:absolute;top:0;bottom:0;left:12px;width:1.5px;background:var(--margin);opacity:.85}
+.q-sujet{font-size:14px;color:var(--grey);flex:1 1 100%}
+.q-pronom{font-size:21px;color:var(--ink-soft);line-height:44px;white-space:nowrap}
+#reponse{
+  flex:1 1 160px;min-width:0;border:0;border-bottom:2px solid var(--ink);border-radius:0;
+  background:transparent;font-size:21px;line-height:44px;padding:0 4px;min-height:44px;
+  font-family:var(--font-body);color:var(--slate);
+}
+#reponse:focus{outline:none;border-bottom-color:var(--red)}
+#reponse:disabled{color:var(--grey);border-bottom-style:dashed}
+
+.verdict{margin:14px 0 0;font-size:15px;min-height:22px}
+.verdict.bon{color:var(--green)}
+.verdict.faux{color:var(--red);font-family:var(--font-hand);font-size:22px}
+
+/* ---------- le bilan ---------- */
+.bilan{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.bilan li{
+  display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;
+  border-bottom:1px dashed var(--line);padding-bottom:8px;font-size:14px;
+}
+.bilan b{font-weight:500}
+.faux-mot{margin-left:auto}
+.faux-mot s{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px;color:#9B9BA6}
+.faux-mot em{font-style:normal;font-family:var(--font-hand);color:var(--red);font-size:20px;margin-left:8px}
+
+/* ---------- le tableau de conjugaison ---------- */
+.tableau{margin-top:8px}
+.tableau h3{margin:22px 0 10px;font-size:12.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink)}
+.temps-bloc{
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;
+}
+.temps-bloc h4{margin:0 0 10px;font-family:var(--font-display);font-weight:500;font-size:16px;color:var(--slate)}
+.temps-bloc ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:4px}
+.temps-bloc li{font-size:15px;display:flex;gap:6px}
+.temps-bloc .p{color:var(--grey);min-width:74px;display:inline-block}
+
+@media (min-width:700px){
+  .temps-bloc ul{grid-template-columns:1fr 1fr;gap:5px 22px}
+  .q-consigne{font-size:17px}
+  .q-pronom, #reponse{font-size:23px}
+}
+@media (min-width:960px){
+  .deux-colonnes{grid-template-columns:1fr 340px}
+  .tableau{columns:2;column-gap:18px}
+  .temps-bloc{break-inside:avoid;margin-bottom:14px}
+  .tableau h3{column-span:all}
+  .temps-bloc ul{grid-template-columns:1fr}
+}
+
+/* ---------- la liste des verbes ---------- */
+.alphabet{display:flex;flex-wrap:wrap;gap:4px;margin:16px 0 4px}
+.alphabet button{
+  min-width:34px;min-height:34px;border:1px solid var(--line);background:#fff;border-radius:8px;
+  font-size:13.5px;color:var(--ink);cursor:pointer;padding:0 6px;
+}
+.alphabet button:hover:not(:disabled){border-color:var(--ink);background:#F7F6FD}
+.alphabet button:disabled{opacity:.3;cursor:default}
+.alphabet button[aria-current="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.liste-verbes{margin-top:8px}
+.bloc-lettre{margin-bottom:18px}
+.bloc-lettre h3{
+  margin:0 0 8px;font-family:var(--font-display);font-weight:700;font-size:19px;color:var(--red);
+  border-bottom:1px solid var(--line);padding-bottom:5px;
+}
+.mots{display:flex;flex-wrap:wrap;gap:6px}
+.mots button{
+  border:1px solid var(--line);background:#fff;border-radius:20px;padding:7px 13px;font-size:14px;
+  color:var(--slate);cursor:pointer;min-height:36px;transition:border-color .15s,background .15s,color .15s;
+}
+.mots button:hover{border-color:var(--ink);background:#F7F6FD;color:var(--ink)}
+.mots button .g{color:var(--grey);font-size:11px;margin-left:5px}
+
+/* ---------- mes listes de verbes ---------- */
+#liste-chips{margin:4px 0 0}
+#liste-chips button{border-color:var(--ink);color:var(--ink);background:#F7F6FD}
+#liste-chips button::after{content:" ×";color:var(--red);font-weight:500}
+#mes-listes li{align-items:center}
+#mes-listes .lv{color:var(--grey);font-size:12.5px;flex:1 1 100%;margin:0}
+#mes-listes .mini{margin-left:0}
+.section-title{margin:22px 0 10px;font-size:13px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--grey)}
+
+/* ---------- la sélection de verbes dans Composer ---------- */
+#verbes-choisis button{border-color:var(--ink);color:var(--ink);background:#F7F6FD}
+#verbes-choisis button::after{content:" ×";color:var(--red);font-weight:500}
+#raccourcis button{font-size:12.5px;padding:6px 11px}
+#biblio-liste{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
+#biblio-liste li{display:flex;flex-wrap:wrap;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13.5px}
+#biblio-liste .t{color:var(--slate)}
+#biblio-liste .meta{flex:1 1 100%;color:var(--grey);font-size:12.5px}
+
+/* =========================================================
+   La feuille imprimable
+   ========================================================= */
+#feuille{display:none}
+
+@media print{
+  /* Seule la feuille subsiste. On masque tous les enfants de <body> sauf
+     elle : #feuille doit donc être fille directe de <body>, faute de quoi
+     la page sortirait blanche. */
+  body > *{display:none !important}   /* le bandeau compris */
+  body > #feuille{display:block !important;font-family:Georgia, 'Times New Roman', serif;color:#000}
+
+  @page{margin:18mm 16mm}
+  .feuille-page{page-break-after:always}
+  .feuille-page:last-child{page-break-after:auto}
+
+  .feuille-entete{border-bottom:1.5pt solid #000;padding-bottom:6pt;margin-bottom:14pt}
+  .feuille-entete h1{font-size:17pt;margin:0 0 3pt;font-weight:700}
+  .feuille-entete .infos{font-size:9.5pt;color:#333;display:flex;justify-content:space-between;gap:12pt}
+  .feuille-nom{margin:0 0 12pt;font-size:10.5pt}
+  .feuille-consigne{font-size:10pt;font-style:italic;margin:0 0 14pt}
+
+  ol.feuille-questions{margin:0;padding-left:22pt;font-size:11.5pt;line-height:2.5}
+  ol.feuille-questions.deux{columns:2;column-gap:12mm;line-height:2.2}
+  ol.feuille-questions li{margin-bottom:2pt;break-inside:avoid}
+  .q-verbe{font-weight:700}
+  .q-temps{font-style:italic}
+  .q-trait{display:inline-block;min-width:48mm;border-bottom:0.6pt solid #666;margin-left:4pt}
+
+  ol.feuille-corrige{margin:0;padding-left:22pt;font-size:11pt;line-height:1.75;
+                     columns:2;column-gap:14mm}
+  ol.feuille-corrige li{break-inside:avoid}
+  .c-reponse{font-weight:700}
+
+  .feuille-pied{margin-top:16pt;font-size:8.5pt;color:#555;border-top:0.5pt solid #999;padding-top:5pt}
+}
+
+/* =========================================================
+   Propre au vocabulaire
+   ========================================================= */
+.langues{display:flex;align-items:flex-end;gap:12px}
+.langues .field{flex:1;margin:0}
+.fleche-langues{padding-bottom:12px;color:var(--grey);font-size:18px}
+
+/* La saisie occupe la plus large des deux colonnes : c'est là que se
+   passe le travail, et une leçon fait vingt lignes. */
+.mots-zone{max-height:min(58vh, 620px);overflow-y:auto;padding-right:4px;margin-bottom:12px}
+.mot-entetes{
+  display:grid;grid-template-columns:26px 1fr 1fr 92px 36px;gap:6px;margin-bottom:6px;
+  font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);
+}
+.mot-ligne{display:grid;grid-template-columns:26px 1fr 1fr 92px 36px;gap:6px;margin-bottom:6px;align-items:center}
+.mot-ligne input[type="checkbox"]{width:18px;height:18px;min-height:0;accent-color:var(--ink);cursor:pointer;padding:0}
+/* un mot écarté reste lisible, mais s'efface visuellement */
+.mot-ligne.ecarte input[type="text"]{opacity:.45}
+.mot-ligne input{
+  width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--font-body);font-size:14.5px;background:#fff;min-height:40px;
+}
+.mot-ligne input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(59,47,127,.10)}
+.mot-ligne input.note{font-size:12.5px;color:var(--grey)}
+.mot-ligne .retirer{
+  border:1px solid var(--line);background:#fff;border-radius:8px;min-height:40px;
+  color:var(--red);font-size:17px;line-height:1;cursor:pointer;
+}
+.mot-ligne .retirer:hover{border-color:var(--red);background:#FDF4F3}
+
+.q-consigne{margin:0 0 6px;font-size:14px;color:var(--grey)}
+.q-mot{
+  font-family:var(--font-display);font-size:34px;font-weight:500;color:var(--ink);
+  margin:0 0 4px;line-height:1.2;
+}
+.q-note{margin:0 0 14px;font-size:13px;color:var(--grey);min-height:18px}
+
+#v-biblio-liste{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
+#v-biblio-liste li{display:flex;flex-wrap:wrap;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13.5px}
+#v-biblio-liste .t{color:var(--slate)}
+#v-biblio-liste .meta{flex:1 1 100%;color:var(--grey);font-size:12.5px}
+
+/* La colonne de travail — liste, mots, exercice — occupe les deux tiers.
+   Le choix des langues, qu'on règle une fois, tient dans le reste et
+   reste visible pendant la saisie. */
+@media (min-width:900px){
+  .composer-vocab{grid-template-columns:minmax(0, 1.9fr) minmax(0, 1fr);align-items:start}
+  .composer-vocab > div:last-child{position:sticky;top:16px}
+}
+@media (max-width:520px){
+  .mot-entetes{grid-template-columns:26px 1fr 1fr 36px}
+  .mot-entetes span:nth-child(4){display:none}
+  .mot-ligne{grid-template-columns:26px 1fr 1fr 36px}
+  .mot-ligne input.note{grid-column:2 / 4}
+}
+
+.verdict.presque{color:#8A6D1F}
+
+/* =========================================================
+   Les cartes
+   Deux faces superposées, la carte pivote sur son axe vertical.
+   ========================================================= */
+.carte-zone{display:flex;justify-content:center;margin:10px 0 18px;perspective:1200px}
+
+.carte{
+  position:relative;width:100%;max-width:460px;min-height:230px;
+  background:none;border:0;padding:0;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,.2,.2,1);
+}
+.carte.retournee{transform:rotateY(180deg)}
+
+.carte-face{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;padding:26px 22px;border-radius:16px;border:1px solid var(--line);background:#fff;
+  box-shadow:0 6px 20px rgba(43,40,70,.08);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.carte-arriere{transform:rotateY(180deg);background:#F7F6FD;border-color:#D8D2F0}
+
+.carte-langue{
+  font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey);
+}
+.carte-mot{
+  font-family:var(--font-display);font-size:31px;font-weight:500;color:var(--ink);
+  line-height:1.25;text-align:center;overflow-wrap:anywhere;
+}
+.carte-note{font-size:13.5px;color:var(--grey)}
+.carte-aide{font-size:12.5px;color:var(--grey);margin-top:6px}
+
+.actions--centre{justify-content:center}
+.carte:focus-visible .carte-face{outline:3px solid rgba(59,47,127,.35);outline-offset:3px}
+
+/* la carte occupe une hauteur fixe : le contenu ne fait pas sauter la page */
+@media (max-width:520px){
+  .carte{min-height:210px}
+  .carte-mot{font-size:26px}
+}
+
+/* Le retournement peut gêner : on le supprime si le système le demande. */
+@media (prefers-reduced-motion: reduce){
+  .carte{transition:none}
+}
+
+/* La face avant d'une carte. Elle n'avait jamais eu de style propre :
+   seule .carte-arriere était retournée, l'avant restait implicite.
+   L'écrire évite qu'un changement de .carte-face casse le retournement. */
+.carte-avant{transform:rotateY(0deg)}

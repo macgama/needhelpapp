@@ -1,0 +1,43 @@
+# ---- NeedHelpApp : configuration Apache (hébergement Web Infomaniak) ----
+
+# Toujours en HTTPS, sur le domaine sans www.
+RewriteEngine On
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^(.*)$ https://needhelpapp.com/$1 [R=301,L]
+
+# URL propres : /connexion au lieu de /connexion.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z0-9-]+)/?$ $1.php [L]
+
+DirectoryIndex index.php index.html
+ErrorDocument 404 /404.php
+
+# ---- En-têtes de sécurité ----
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+  # Polices, styles et scripts sont auto-hébergés. Les seules exceptions sont
+  # accounts.google.com, nécessaire au bouton de connexion Google, et
+  # checkout.stripe.com, vers lequel form-action doit autoriser la redirection.
+  # Retirez ces exceptions si vous n'activez ni Google ni Stripe.
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self' https://accounts.google.com/gsi/client; connect-src 'self' https://accounts.google.com; frame-src https://accounts.google.com; font-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self' https://checkout.stripe.com https://billing.stripe.com"
+</IfModule>
+
+# ---- Cache des ressources statiques ----
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 30 days"
+</IfModule>
+
+# ---- Fichiers jamais servis ----
+<FilesMatch "(^\.|\.(sql|md|log|ini)$|composer\.(json|lock))">
+  Require all denied
+</FilesMatch>

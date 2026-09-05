@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Questions fréquentes — Teaching</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=2026-11-05">
+<style>
+  .prose{max-width:720px;margin:0 auto}
+  .prose h2{font-family:var(--font-display);font-weight:500;font-size:19px;margin:30px 0 8px;color:var(--slate)}
+  .prose p,.prose li{font-size:15px;line-height:1.65}
+  .prose ul{padding-left:18px}
+  .prose a{color:var(--ink)}
+  .fill{background:#FFF8E8;border:1px dashed #D8C48A;border-radius:8px;padding:12px 14px;font-size:14px;color:#6B5A22;margin:12px 0}
+</style>
+</head>
+<body data-version="2026-11-05">
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="index.html">Accueil</a>
+      <a class="lien-app" href="dictee.html">La dictée</a>
+      <a class="lien-app" href="vocabulaire.html">Le vocabulaire</a>
+      <a class="lien-app" href="conjugaison.html">La conjugaison</a>
+      <a class="lien-app" href="mathematiques.html">Les mathématiques</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="profil.html" role="menuitem">Mon profil et mes données</a>
+        <a href="abonnement.html" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap prose">
+  <header class="top">
+    <div class="brand">
+      <h1 class="wordmark">Questions fréquentes</h1>
+    </div>
+  </header>
+
+
+
+
+  <p class="sub" style="margin-bottom:22px">Ce que l'on demande le plus souvent. Si votre question n'y figure pas, écrivez-nous.</p>
+
+  <h2>Faut-il payer pour se servir du site&nbsp;?</h2>
+  <p>Non. Les trois applications fonctionnent entièrement sans payer, et sans limite de temps : la dictée lue à voix haute puis corrigée mot à mot, les 984 verbes de la conjugaison à 24 temps, et les listes de vocabulaire. L'abonnement ne débloque pas des exercices : il ajoute la mémoire — garder son travail, le partager, suivre ses progrès.</p>
+
+  <h2>Faut-il créer un compte&nbsp;?</h2>
+  <p>Pas pour travailler. Mais un compte, gratuit, garde <b>cinq enregistrements par application</b> — cinq dictées, cinq listes de verbes, cinq listes de vocabulaire, cinq séries de calcul — et permet d'en reprendre <b>cinq dans chaque bibliothèque partagée</b>. Sans compte, tout reste sur l'appareil et disparaît en fermant l'onglet.</p>
+
+  <h2>Qu'arrive-t-il quand j'atteins les cinq&nbsp;?</h2>
+  <p>Rien n'est effacé et rien ne cesse de fonctionner : il faut simplement supprimer un élément pour en enregistrer un autre, ou prendre un abonnement pour ne plus compter. Publier, partager et suivre ses résultats demandent de toute façon un abonnement.</p>
+
+  <h2>Qu'apporte exactement l'abonnement&nbsp;?</h2>
+  <p>La fin du décompte des cinq, la publication dans les bibliothèques partagées, l'envoi par un lien, le suivi des résultats série après série, et les feuilles imprimables avec corrigé.</p>
+
+  <h2>Comment résilier&nbsp;?</h2>
+  <p>Depuis « Mon abonnement », bouton « Gérer ou résilier ». Deux clics, sans justification ni préavis. L'accès reste ouvert jusqu'à la fin de la période déjà payée, puis s'arrête sans reconduction.</p>
+
+  <h2>Que deviennent mes données si j'arrête de payer&nbsp;?</h2>
+  <p>Rien n'est effacé. Les dictées, les listes et les résultats restent consultables et exportables, y compris après l'échéance. Seuls l'enregistrement, le partage et les bibliothèques sont suspendus. L'export complet, au format JSON, se trouve dans « Mon profil ».</p>
+
+  <h2>La voix est mauvaise ou absente. Que faire&nbsp;?</h2>
+  <p>La lecture utilise la voix installée sur l'appareil, dont la qualité varie beaucoup. Sur ordinateur, Chrome et Edge proposent en général de meilleures voix françaises que Firefox ; sur mobile, elles se règlent dans les paramètres du système. Une voix de meilleure qualité peut aussi être utilisée en fournissant sa propre clé d'un service tiers, dans les réglages de la dictée.</p>
+
+  <h2>Puis-je importer une dictée depuis une photo ou un PDF&nbsp;?</h2>
+  <p>Oui, depuis « Créer une dictée ». Le texte est extrait dans le navigateur : le fichier n'est pas envoyé sur Internet. La reconnaissance d'une photo dépend de sa netteté ; relisez toujours le texte obtenu avant de lancer la dictée.</p>
+
+  <h2>Comment importer une liste de vocabulaire depuis Excel&nbsp;?</h2>
+  <p>Dans Excel : Fichier → Enregistrer sous → « CSV UTF-8 ». Puis, dans « Composer », bouton « Importer un fichier ». Deux colonnes suffisent — le mot et sa traduction —, une troisième peut porter l'article ou le pluriel. Le séparateur est reconnu tout seul.</p>
+
+  <h2>Pourquoi mon élève est-il compté faux alors qu'il a écrit le bon mot&nbsp;?</h2>
+  <p>En vocabulaire, le déterminant est exigé par défaut : « die Mutter » et non « Mutter ». La correction le dit alors explicitement, et distingue ce cas d'une vraie erreur de mot. L'exigence se lève par une case dans « Composer ». En dictée, les variantes de ponctuation — trois points ou points de suspension, guillemets droits ou français — sont acceptées.</p>
+
+  <h2>Puis-je modifier une dictée prise dans la bibliothèque&nbsp;?</h2>
+  <p>Oui. La copie que vous avez chez vous se modifie librement : elle devient alors la vôtre, et l'originale n'est pas touchée. En revanche, une version adaptée ne peut pas être republiée dans la bibliothèque : l'adapter pour soi est une chose, la rediffuser sous son nom en est une autre. La même règle vaut pour les listes de vocabulaire, les sélections de verbes et les séries de calcul.</p>
+
+  <h2>Puis-je utiliser le site avec ma classe&nbsp;?</h2>
+  <p>Oui. Publiez vos dictées et vos listes dans les bibliothèques partagées, ou envoyez-les par un lien : celui-ci s'ouvre sans compte. Une dictée ou une liste reprise reste attribuée à son auteur et ne peut être ni modifiée ni republiée par autrui.</p>
+
+  <h2>Mes données sont-elles vendues ou utilisées pour de la publicité&nbsp;?</h2>
+  <p>Non. Il n'y a aucune publicité, aucun traceur publicitaire, et rien n'est cédé à des tiers. Le détail figure sur la page de confidentialité.</p>
+
+  <h2>Quelle différence entre « Les cartes » et « S'entraîner »&nbsp;?</h2>
+  <p>Les cartes servent à apprendre : le mot s'affiche, on le retourne pour vérifier, et l'on se juge soi-même. L'exercice écrit sert à contrôler : on tape la réponse, elle est comparée à l'attendu, et le résultat s'enregistre dans « Mes résultats ». L'ordre naturel est les cartes d'abord, l'exercice ensuite.</p>
+
+  <h2>Comment ne réviser qu'une partie d'une liste de vocabulaire&nbsp;?</h2>
+  <p>Dans « Composer », chaque mot porte une case. Décochez ceux que vous ne travaillez pas aujourd'hui : l'exercice et la feuille imprimée ne prendront que les autres. La liste enregistrée, elle, garde tous ses mots.</p>
+
+  <h2>Puis-je changer la langue d'une dictée&nbsp;?</h2>
+  <p>Une dictée est liée à sa langue et ne se travaille que dans celle-là : la lire avec la voix d'une autre langue n'apprendrait ni la prononciation ni l'orthographe. Le choix se fait au moment d'écrire le texte. Si vous vous êtes trompé, un bouton « Corriger la langue de cette dictée » apparaît sur vos propres dictées.</p>
+
+  <h2>La lecture est trop rapide pour une dictée en allemand. Que faire&nbsp;?</h2>
+  <p>Les réglages de lecture sont propres à chaque langue : ralentir l'allemand ne touche pas au français, et l'on retrouve chaque réglage en changeant de langue. Une langue jamais réglée démarre d'ailleurs plus lentement et par groupes plus courts, comme il convient à une langue qu'on apprend.</p>
+
+  <h2>Puis-je payer avec TWINT&nbsp;?</h2>
+  <p>Oui, si vous êtes en Suisse : TWINT figure parmi les moyens de paiement à côté de la carte, et les montants sont en francs suisses. TWINT n'autorise qu'un seul mandat par personne et par commerçant : si vous vous réabonnez après avoir résilié, il peut être nécessaire de confirmer à nouveau depuis l'application TWINT.</p>
+
+  <h2>Y a-t-il de quoi travailler au cycle 3&nbsp;?</h2>
+  <p>Oui : un chapitre « Pour les plus grands » réunit les priorités des opérations, les entiers relatifs, les fractions, les changements d'unités, les pourcents et l'algèbre — réduire, développer, résoudre une équation du premier degré. Les réponses sont acceptées sous leurs écritures usuelles, et « x = 5 » vaut « 5 ». Une fraction juste mais non simplifiée est comptée juste — ce n'est pas une erreur de calcul —, avec un mot pour montrer comment aller au bout : « Juste. Mais 6/8 peut encore se simplifier : 3/4. »</p>
+
+  <h2>Comment régler la difficulté des quatre opérations&nbsp;?</h2>
+  <p>Par deux réglages : l'ordre de grandeur des nombres — de 10 à 100 000 — et le nombre de décimales, de zéro à trois. Pour la multiplication et la division s'ajoute la taille du multiplicateur ou du diviseur, et la division peut se faire avec ou sans reste. La réponse s'écrit alors « 12 reste 3 ».</p>
+
+  <h2>Les exercices de calcul sont-ils toujours les mêmes&nbsp;?</h2>
+  <p>Non. Une série enregistrée retient un réglage — par exemple « livrets de 6, 7 et 8 jusqu'à 12 » —, pas une liste de calculs. Ceux-ci sont tirés à chaque séance : refaire la même série ne redonne jamais exactement les mêmes questions, et une série publiée reste utile indéfiniment.</p>
+
+  <h2>Peut-on travailler l'allemand, l'anglais ou l'italien&nbsp;?</h2>
+  <p>Le site reste en français : ce sont les contenus qui changent de langue. La dictée se fait déjà en allemand, en anglais et en italien — la voix, le nom des signes de ponctuation et le texte suivent la langue choisie. La conjugaison propose les quatre langues, chacune avec ses temps propres : du <i>present simple</i> au <i>conditional perfect</i> en anglais, du <i>presente</i> au <i>congiuntivo trapassato</i> en italien, du <i>Präsens</i> au <i>Konjunktiv II</i> en allemand — verbes forts, particules séparables et choix entre <i>haben</i> et <i>sein</i> compris.</p>
+
+  <h2>Je suis enseignant. Puis-je obtenir un accès sans payer&nbsp;?</h2>
+  <p>C'est possible : un compte peut recevoir un rôle de modérateur, qui ouvre l'ensemble des fonctions sans abonnement. Écrivez-nous en expliquant votre situation.</p>
+
+  <h2>J'ai trouvé une erreur de conjugaison. Que faire&nbsp;?</h2>
+  <p>Signalez-la : le moteur couvre 984 verbes et 24 temps, mais le français réserve des surprises. Une correction profite à tout le monde.</p>
+  
+  <footer class="foot">
+    <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+    <a href="index.html">Accueil</a> ·
+    <a href="dictee.html">La dictée</a> ·
+    <a href="vocabulaire.html">Le vocabulaire</a> ·
+    <a href="conjugaison.html">La conjugaison</a> ·
+    <a href="mathematiques.html">Les mathématiques</a> ·
+    <a href="abonnement.html">L'abonnement</a> ·
+    <a href="profil.html">Mon profil</a> ·
+    <a href="mentions-legales.html">Mentions légales</a> ·
+    <a href="conditions.html">Conditions générales</a> ·
+    <a href="confidentialite.html">Confidentialité</a>
+  </footer>
+</div>
+<!-- compte ------------------------------------------------- -->
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Un seul compte pour la dictée et la conjugaison.</p>
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment on t'appelle ?">
+    </div>
+    <div class="field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/bienvenue.js?v=2026-11-05"></script>
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/compte.js?v=2026-11-05"></script>
+<script>window.Compte.demarrer(function(){});</script>
+</body>
+</html>

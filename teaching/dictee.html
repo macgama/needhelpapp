@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3B2F7F">
+<meta name="description" content="Une dictée lue à voix haute, groupe de mots par groupe de mots, avec le temps d'écrire entre chaque.">
+<title>La dictée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=2026-11-05">
+</head>
+<body data-version="2026-11-05">
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="index.html">Accueil</a>
+      <a class="lien-app" href="vocabulaire.html">Le vocabulaire</a>
+      <a class="lien-app" href="conjugaison.html">La conjugaison</a>
+      <a class="lien-app" href="mathematiques.html">Les mathématiques</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="profil.html" role="menuitem">Mon profil et mes données</a>
+        <a href="abonnement.html" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <h1 class="wordmark">La <span>dictée</span></h1>
+      <p class="tagline">Le texte est lu à voix haute, groupe de mots par groupe de mots, avec le temps d'écrire entre chaque.</p>
+    </div>
+  </header>
+
+  <nav class="steps" aria-label="Navigation">
+    <button class="step" id="tab-0" aria-current="true" data-panel="0" data-mode="neuve">Créer une dictée</button>
+    <button class="step" id="tab-5" data-panel="0" data-mode="ouverte" hidden>La dictée ouverte</button>
+    <button class="step" id="tab-3" data-panel="3">Mes dictées</button>
+    <button class="step" id="tab-4" data-panel="4">Bibliothèque partagée</button>
+    <span class="steps-sep" aria-hidden="true"></span>
+    <button class="step" id="tab-1" data-panel="1" disabled>La dictée</button>
+    <button class="step" id="tab-2" data-panel="2" disabled>La correction</button>
+    <button class="step" id="tab-6" data-panel="6">Mes résultats</button>
+  </nav>
+
+  <div class="warn" id="warn"></div>
+
+  <!-- CRÉER UNE DICTÉE -------------------------------------- -->
+  <section class="panel on" id="panel-0" aria-labelledby="tab-0">
+    <h2 class="title" id="editor-title">Créer une dictée</h2>
+    <p class="sub" id="editor-sub">Donne-lui un titre, colle ou importe le texte, et c'est prêt.</p>
+
+    <div class="setup">
+      <div class="setup-main">
+
+        <div class="card">
+          <div class="field">
+            <label for="save-name">Titre <span class="req">obligatoire</span></label>
+            <input type="text" id="save-name" maxlength="120" placeholder="Ex. L'orage — semaine 12">
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label for="d-author">Auteur <span class="opt">facultatif</span></label>
+              <input type="text" id="d-author" maxlength="120" placeholder="Ex. Mme Martin">
+            </div>
+            <div class="field">
+              <label for="d-level">Niveau scolaire</label>
+              <select id="d-level"></select>
+            </div>
+            <div class="field">
+              <label for="d-langue">Langue</label>
+              <select id="d-langue"></select>
+              <p class="hint" id="note-langue" hidden></p>
+              <button class="linkish" id="changer-langue" hidden>Corriger la langue de cette dictée</button>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="section-title" id="titre-preparer">Préparer le texte</h3>
+        <div id="drop-zone">
+          <div class="import-head" id="import-head">
+            <button class="btn btn--ghost btn--tiny" id="pick">Importer un PDF, une photo, un texte</button>
+            <button class="btn btn--ghost btn--tiny" id="restore">Restaurer un fichier</button>
+            <span class="hint" style="margin:0">ou glisse le fichier sur la feuille</span>
+            <input type="file" id="file" accept=".txt,.text,.md,.pdf,image/*" hidden>
+            <input type="file" id="restore-file" accept=".json,application/json" hidden>
+          </div>
+          <p class="status" id="import-status"></p>
+          <div class="sheet-wrap paper--margin">
+            <textarea class="sheet" id="text" spellcheck="false" placeholder="Écris ou colle ici le texte de la dictée…"></textarea>
+          </div>
+        </div>
+        <div class="samples">
+          <button class="chip" id="tidy">Remettre en forme</button>
+          <span class="hint" id="count" style="margin:0"></span>
+        </div>
+
+        <div class="card">
+          <div class="emprunt" id="emprunt" hidden>
+            <p id="emprunt-texte"></p>
+          </div>
+          <label class="check" id="public-ligne"><input type="checkbox" id="d-public"> Publier dans la bibliothèque partagée</label>
+          <p class="hint">Le titre, l'auteur, le niveau et le texte deviennent alors accessibles aux autres utilisateurs. Tu peux dépublier quand tu veux depuis « Mes dictées ».</p>
+          <div class="actions">
+            <button class="btn btn--big" id="start">Commencer la dictée</button>
+            <button class="btn btn--ghost" id="save">Enregistrer</button>
+            <button class="btn btn--ghost" id="preview">Écouter un groupe</button>
+          </div>
+          <p class="status" id="save-state"></p>
+        </div>
+      </div>
+
+      <details class="card settings" id="settings-card">
+        <summary><span id="titre-reglages-lecture">Réglages de lecture</span><span class="caret" aria-hidden="true"></span></summary>
+        <p class="hint" id="note-reglages-langue">Ces réglages sont propres à la langue choisie&nbsp;: le français et l'allemand gardent chacun les leurs.</p>
+        <div class="settings-body">
+
+          <div class="field">
+            <label for="voice">Voix du navigateur</label>
+            <select id="voice"></select>
+            <p class="hint" id="voice-hint"></p>
+            <details class="help">
+              <summary>Obtenir une voix plus naturelle, gratuitement</summary>
+              <ul>
+                <li><b>Windows&nbsp;11</b> : Paramètres → Heure et langue → Voix → Ajouter des voix → Français. Les voix dites «&nbsp;naturelles&nbsp;» (Denise, Henri) n'ont rien à voir avec celles installées d'origine.</li>
+                <li><b>macOS</b> : Réglages Système → Accessibilité → Contenu énoncé → Voix système → Gérer les voix → Français, puis télécharge une voix marquée <i>Premium</i> : Thomas, Amélie ou Audrey.</li>
+                <li><b>iPhone, iPad</b> : Réglages → Accessibilité → Contenu énoncé → Voix → Français → version Premium.</li>
+                <li><b>Android</b> : Paramètres → Gestion générale → Synthèse vocale → installer les données françaises de Google.</li>
+              </ul>
+              <p>Recharge la page après l'installation : la nouvelle voix apparaît dans la liste et sera choisie automatiquement.</p>
+            </details>
+          </div>
+
+          <div class="field">
+            <label class="check" style="margin-bottom:0"><input type="checkbox" id="ai-on"> Voix IA en ligne (facultatif)</label>
+            <p class="hint">Nettement plus naturelle, avec les liaisons et l'intonation du français. Il faut un compte chez un service de synthèse vocale et une connexion.</p>
+            <div id="ai-box" hidden style="margin-top:10px">
+              <select id="ai-provider">
+                <option value="elevenlabs">ElevenLabs — mise en route rapide</option>
+                <option value="google">Google Cloud — quota gratuit plus large</option>
+              </select>
+              <label for="ai-key" id="ai-key-label" style="margin:11px 0 6px">Clé API</label>
+              <input type="text" id="ai-key" placeholder="Colle ta clé ici" autocomplete="off" spellcheck="false">
+              <div class="ai-row">
+                <select id="ai-voice"><option value="">Voix par défaut</option></select>
+                <button class="btn btn--ghost btn--tiny" id="ai-load">Charger</button>
+                <button class="btn btn--ghost btn--tiny" id="ai-test">Tester</button>
+              </div>
+              <p class="status" id="ai-status"></p>
+              <p class="hint" id="ai-help"></p>
+              <p class="hint">La clé reste dans la page et n'est jamais enregistrée : il faut la recoller à chaque ouverture. Ne partage pas le fichier avec ta clé dedans.</p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="rate">Vitesse de lecture <span class="val" id="rate-val">0,85×</span></label>
+            <input type="range" id="rate" min="0.5" max="1.2" step="0.05" value="0.85">
+          </div>
+
+          <div class="field">
+            <label for="words">Mots par groupe <span class="val" id="words-val">6</span></label>
+            <input type="range" id="words" min="3" max="14" step="1" value="6">
+            <p class="hint">Le texte est découpé aux virgules et aux points, sans dépasser cette longueur.</p>
+          </div>
+
+          <div class="field">
+            <label for="speed">Temps pour écrire <span class="val" id="speed-val">normal</span></label>
+            <input type="range" id="speed" min="0.18" max="1.1" step="0.02" value="0.5">
+            <p class="hint">La pause s'adapte à la longueur du groupe. Ton enfant peut toujours l'allonger ou passer à la suite.</p>
+          </div>
+
+          <div class="field">
+            <label for="sys">Système scolaire</label>
+            <select id="sys">
+              <option value="ch" selected>Suisse — HarmoS, 3H à 11H</option>
+              <option value="fr">France — CP à 3e</option>
+              <option value="be">Belgique — P1 à S3</option>
+              <option value="qc">Québec — 1re année à secondaire 3</option>
+            </select>
+            <p class="hint">Sert uniquement à nommer les niveaux dans ton vocabulaire. Une dictée de 5H s'affiche comme CE2 pour un utilisateur français : ce sont les mêmes élèves.</p>
+          </div>
+
+          <div class="field">
+            <label for="opt-punct">Annonce de la ponctuation</label>
+            <select id="opt-punct">
+              <option value="apart" selected>À part, sur un autre ton</option>
+              <option value="inline">Dans la phrase</option>
+              <option value="off">Pas annoncée</option>
+            </select>
+            <p class="hint">Le nom du signe est dit après un silence, plus bas et un peu plus doucement, pour qu'on ne le prenne pas pour un mot du texte. La lecture d'ensemble et la relecture, elles, restent naturelles.</p>
+            <label class="check" id="ligne-signes-fr" hidden><input type="checkbox" id="opt-signes-fr">
+              Annoncer la ponctuation en français</label>
+            <p class="hint" id="aide-signes-fr" hidden>
+              Une dictée d'allemand se dicte normalement en allemand, « Punkt » compris.
+              Pour un débutant, entendre « point » peut aider.
+            </p>
+          </div>
+
+          <div class="field">
+            <label for="opt-repeat">Répétition du groupe</label>
+            <select id="opt-repeat">
+              <option value="2" selected>Deux fois de suite, puis j'écris</option>
+              <option value="mid">Une fois, puis relu pendant que j'écris</option>
+              <option value="1">Une seule fois</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label style="margin-bottom:10px">Options</label>
+            <label class="check"><input type="checkbox" id="opt-intro" checked> Lire le texte en entier avant de commencer</label>
+            <label class="check"><input type="checkbox" id="opt-review" checked> Relire le texte à la fin</label>
+            <label class="check"><input type="checkbox" id="opt-hide" checked> Cacher le texte pendant la dictée</label>
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- MES DICTÉES ------------------------------------------- -->
+  <section class="panel" id="panel-3" aria-labelledby="tab-3">
+    <h2 class="title">Mes dictées</h2>
+    <p class="sub">Toutes les dictées que tu as enregistrées.</p>
+
+    <div class="card" id="guest-note" hidden>
+      <p class="hint" style="margin:0 0 12px">
+        Tu utilises la dictée sans compte, et presque tout fonctionne : la lecture,
+        la correction, l'import d'un texte, les exemples de la bibliothèque. En
+        revanche rien n'est gardé — à ta prochaine visite, il faudra recoller le
+        texte. Un compte évite cela.
+      </p>
+      <button class="btn btn--ghost btn--tiny" id="guest-signup">Créer un compte</button>
+    </div>
+
+    <div class="card emprunt" id="abo-rappel" hidden>
+      <p>Ton abonnement n'est pas actif. Tes dictées restent consultables et exportables — rien n'est
+      effacé — mais l'enregistrement, le partage et la bibliothèque demandent un abonnement.
+      <a href="abonnement.html">Voir l'abonnement</a></p>
+    </div>
+
+    <div id="mine-box">
+      <h3 class="section-titre" id="titre-creations" hidden>Les dictées que j'ai créées</h3>
+      <ul id="saved-list"></ul>
+      <h3 class="section-titre" id="titre-reprises" hidden>Reprises dans la bibliothèque</h3>
+      <ul id="saved-reprises"></ul>
+      <p class="empty" id="saved-empty">Aucune dictée enregistrée pour l'instant.</p>
+      <p class="hint" id="saved-note"></p>
+      <div class="import-head" style="margin-top:14px">
+        <button class="btn btn--ghost btn--tiny" id="new-dictation">Créer une dictée</button>
+        <button class="chip" id="export">Exporter dans un fichier</button>
+        <button class="chip" id="delete-account" hidden style="color:var(--red);margin-left:auto">Supprimer mon compte</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BIBLIOTHÈQUE PARTAGÉE --------------------------------- -->
+  <section class="panel" id="panel-4" aria-labelledby="tab-4">
+    <h2 class="title">Bibliothèque partagée</h2>
+    <p class="sub">Les dictées publiées par les autres utilisateurs, et quelques exemples pour commencer.</p>
+
+    <div class="lib-search">
+      <input type="search" id="lib-q" placeholder="Titre ou auteur">
+      <select id="lib-langue"></select>
+      <select id="lib-level"></select>
+      <button class="btn btn--ghost btn--tiny" id="lib-go">Chercher</button>
+    </div>
+    <ul id="lib-list"></ul>
+    <p class="hint" id="lib-note"></p>
+  </section>
+
+  <!-- LA DICTÉE --------------------------------------------- -->
+  <section class="panel" id="panel-1" aria-labelledby="tab-1">
+    <div class="stage">
+      <div class="stage-head">
+        <div class="phase"><span class="dot" id="dot"></span><span id="phase-label" aria-live="polite">Prêt à commencer</span></div>
+        <div class="counter" id="counter">—</div>
+      </div>
+
+      <div class="paper paper--margin read" id="read">
+        <p id="read-text" class="masked">Écoute bien…</p>
+      </div>
+
+      <div class="strokebox" id="strokebox">
+        <div class="stroke-track">
+          <div class="stroke-fill" id="stroke-fill"></div>
+          <div class="stroke-nib" id="stroke-nib"></div>
+        </div>
+        <div class="stroke-meta">
+          <span id="stroke-label">Le trait avance pendant que tu écris.</span>
+          <b id="stroke-time"></b>
+        </div>
+      </div>
+
+      <div class="controls" id="controls">
+        <button class="ctrl main" id="play">▶ Lancer</button>
+        <button class="ctrl" id="repeat">↻ Répéter</button>
+        <button class="ctrl" id="prev">← Précédent</button>
+        <button class="ctrl" id="next">Suivant →</button>
+        <span class="spacer"></span>
+        <button class="ctrl" id="more">+5 secondes</button>
+        <button class="ctrl done" id="done">✓ J'ai fini d'écrire</button>
+      </div>
+      <p class="keys"><kbd>Espace</kbd> pause · <kbd>R</kbd> répéter · <kbd>Entrée</kbd> j'ai fini · <kbd>←</kbd> <kbd>→</kbd> changer de groupe · en écrivant, <kbd>Ctrl</kbd>+<kbd>Entrée</kbd> passe au groupe suivant</p>
+    </div>
+
+    <div>
+      <p class="hand-label">Tu peux aussi écrire directement ici :</p>
+      <div class="sheet-wrap paper--margin">
+        <textarea class="sheet" id="answer" spellcheck="false" placeholder="…ou écris sur ton cahier et laisse cette page vide."></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn" id="to-correction">Voir la correction</button>
+        <button class="btn btn--ghost" id="back-setup">Changer le texte</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LA CORRECTION ----------------------------------------- -->
+  <section class="panel" id="panel-2" aria-labelledby="tab-2">
+    <h2 class="title">La correction</h2>
+    <p class="sub">Recopie ta dictée si tu as écrit sur ton cahier, puis compare avec le texte d'origine.</p>
+
+    <div class="sheet-wrap paper--margin">
+      <textarea class="sheet" id="answer2" spellcheck="false" placeholder="Recopie ici ce que tu as écrit…"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="check">Corriger ma dictée</button>
+      <label class="check" style="margin:0"><input type="checkbox" id="opt-caps"> Compter les majuscules</label>
+      <label class="check" style="margin:0"><input type="checkbox" id="opt-punct-check"> Compter la ponctuation</label>
+    </div>
+
+    <div id="result"></div>
+    <p class="status" id="enregistrement-note"></p>
+
+    <div class="card history" id="history-card" hidden>
+      <h3>Mes résultats</h3>
+      <ul id="history-list"></ul>
+      <p class="hint" id="history-note"></p>
+    </div>
+  </section>
+
+  <!-- MES RÉSULTATS ------------------------------------------ -->
+  <section class="panel" id="panel-6" aria-labelledby="tab-6">
+    <h2 class="title">Mes résultats</h2>
+    <p class="sub">La progression, dictée par dictée : refaire un texte est le meilleur moyen de le fixer.</p>
+
+    <div class="card" id="res-invite" hidden>
+      <p class="hint" style="margin:0 0 12px" id="res-invite-texte"></p>
+      <button class="btn btn--ghost btn--tiny" id="res-bouton"></button>
+    </div>
+
+    <div id="res-box">
+      <ul class="suivi" id="res-liste"></ul>
+      <p class="hint" id="res-note"></p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+    Avec la voix du navigateur, tout se passe sur l'appareil&nbsp;: rien n'est envoyé sur Internet.
+    <br><a href="index.html">Accueil</a> ·
+    <a href="vocabulaire.html">Le vocabulaire</a> ·
+    <a href="conjugaison.html">La conjugaison</a> ·
+    <a href="mathematiques.html">Les mathématiques</a> ·
+    <a href="abonnement.html">L'abonnement</a> ·
+    <a href="profil.html">Mon profil</a> ·
+    <a href="faq.html">Questions fréquentes</a> ·
+    <a href="mentions-legales.html">Mentions légales</a> ·
+    <a href="conditions.html">Conditions générales</a> ·
+    <a href="confidentialite.html">Confidentialité</a>
+  </footer>
+</div>
+
+<!-- barre de commande fixe, sur petit écran uniquement -->
+<div class="dock" id="dock" hidden>
+  <button class="dock-btn" id="dock-repeat" aria-label="Répéter le groupe">↻</button>
+  <button class="dock-btn main" id="dock-play" aria-label="Lancer ou mettre en pause">▶</button>
+  <button class="dock-btn" id="dock-more" aria-label="Ajouter cinq secondes">+5s</button>
+  <button class="dock-btn done" id="dock-done" aria-label="J'ai fini d'écrire">✓</button>
+</div>
+
+<!-- compte ------------------------------------------------- -->
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Retrouve tes dictées et tes réglages sur tous tes appareils.</p>
+
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment on t'appelle ?">
+    </div>
+    <div class="field" id="email-field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+    <p class="hint">Le mot de passe n'est jamais conservé en clair. Voir la <a href="confidentialite.html" target="_blank" rel="noopener">page de confidentialité</a>.</p>
+  </div>
+</div>
+
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/bienvenue.js?v=2026-11-05"></script>
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/app.js?v=2026-11-05"></script>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3B2F7F">
+<meta name="description" content="Exercices de conjugaison française : choisis tes verbes, tes temps, et entraîne-toi.">
+<title>Le vocabulaire — Teaching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=2026-11-05">
+<link rel="stylesheet" href="assets/vocabulaire.css?v=2026-11-05">
+</head>
+<body data-version="2026-11-05">
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="index.html">Accueil</a>
+      <a class="lien-app" href="dictee.html">La dictée</a>
+      <a class="lien-app" href="conjugaison.html">La conjugaison</a>
+      <a class="lien-app" href="mathematiques.html">Les mathématiques</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="profil.html" role="menuitem">Mon profil et mes données</a>
+        <a href="abonnement.html" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <h1 class="wordmark">Le <span>vocabulaire</span></h1>
+      <p class="tagline">Des listes bilingues, chapitre par chapitre, et de quoi les apprendre par cœur.</p>
+    </div>
+  </header>
+
+  <nav class="steps" aria-label="Étapes">
+    <button class="step" id="onglet-composer" data-ecran="composer" aria-current="true">Créer une liste</button>
+    <button class="step" data-ecran="cartes">Les cartes</button>
+    <button class="step" data-ecran="exercice">S'entraîner</button>
+    <button class="step" data-ecran="listes">Mes listes</button>
+    <button class="step" data-ecran="biblio">Bibliothèque partagée</button>
+    <button class="step" data-ecran="resultats">Mes résultats</button>
+  </nav>
+
+  <div class="warn" id="warn"></div>
+
+  <!-- COMPOSER ------------------------------------------------ -->
+  <section class="panel on" id="ecran-composer">
+    <h2 class="title">Composer une liste</h2>
+    <p class="sub">Choisis tes langues, donne un nom et un chapitre, puis saisis les paires de mots.</p>
+
+    <div class="deux-colonnes composer-vocab">
+      <div>
+        <div class="card">
+          <h3>La liste</h3>
+          <div class="field">
+            <label for="v-nom">Nom <span class="req">obligatoire</span></label>
+            <input type="text" id="v-nom" maxlength="120" placeholder="Ex. La famille">
+          </div>
+          <div class="field">
+            <label for="v-chapitre">Chapitre <span class="opt">facultatif</span></label>
+            <input type="text" id="v-chapitre" maxlength="80" placeholder="Ex. Chapitre 2, Unité 3, Lektion 4">
+            <p class="hint">Pour suivre la progression du manuel utilisé en classe.</p>
+          </div>
+          <label class="check"><input type="checkbox" id="v-publique"> Publier dans la bibliothèque partagée</label>
+          <div class="actions">
+            <button class="btn btn--ghost" id="v-enregistrer">Enregistrer la liste</button>
+            <button class="btn btn--ghost" id="v-nouvelle">Nouvelle liste</button>
+          </div>
+          <p class="status" id="v-note"></p>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="temps-entete">
+            <h3 style="margin:0">Les mots</h3>
+            <span>
+              <button class="linkish" id="v-tout-cocher">Tout cocher</button>
+              <button class="linkish rouge" id="v-tout-decocher">Tout décocher</button>
+              <button class="linkish" id="v-ajouter-ligne">+ une ligne</button>
+            </span>
+          </div>
+          <p class="hint" style="margin:0 0 10px">
+            Une paire par ligne. Coche les mots à travailler aujourd'hui : l'exercice et la feuille
+            imprimée ne prendront que ceux-là. La liste enregistrée, elle, reste entière.
+          </p>
+          <div class="mot-entetes">
+            <span title="Travailler ce mot">✓</span>
+            <span id="entete-source">français</span>
+            <span id="entete-cible">allemand</span>
+            <span>note</span>
+            <span></span>
+          </div>
+          <div id="v-mots" class="mots-zone"></div>
+          <div class="actions">
+            <button class="chip" id="v-ajouter-dix">+ dix lignes</button>
+            <button class="chip" id="v-coller">Coller une liste</button>
+            <button class="chip" id="v-importer">Importer un fichier</button>
+            <button class="chip" id="v-pretes">Une liste toute prête</button>
+          </div>
+          <input type="file" id="v-fichier" accept=".csv,.tsv,.txt,text/csv,text/plain" hidden>
+          <p class="hint" id="v-compte-mots"></p>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3>L'exercice</h3>
+          <div class="field">
+            <label for="v-sens">Dans quel sens ?</label>
+            <select id="v-sens">
+              <option value="vers">Je vois ma langue, j'écris la langue apprise</option>
+              <option value="depuis">Je vois la langue apprise, j'écris dans ma langue</option>
+              <option value="melange">Les deux, au hasard</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="v-nb">Nombre de questions</label>
+            <select id="v-nb">
+              <option value="10">10 questions</option>
+              <option value="20" selected>20 questions</option>
+              <option value="0">Tous les mots de la liste</option>
+            </select>
+          </div>
+          <label class="check"><input type="checkbox" id="v-articles" checked> Exiger le déterminant</label>
+          <p class="hint">« die Mutter » et non « Mutter ». En allemand comme en français, le genre s'apprend avec le mot.</p>
+          <div class="actions">
+            <button class="btn btn--big" id="v-commencer">Commencer l'exercice</button>
+            <button class="btn btn--ghost" id="v-cartes">Réviser avec les cartes</button>
+            <button class="btn btn--ghost" id="v-imprimer">Imprimer en PDF</button>
+          </div>
+          <p class="hint">La feuille contient les mots à traduire, et le corrigé sur une page séparée.</p>
+          <p class="status" id="v-compose-note"></p>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Les langues</h3>
+          <div class="langues">
+            <div class="field">
+              <label for="langue-source">Ma langue</label>
+              <select id="langue-source"></select>
+            </div>
+            <span class="fleche-langues" aria-hidden="true">→</span>
+            <div class="field">
+              <label for="langue-cible">La langue apprise</label>
+              <select id="langue-cible"></select>
+            </div>
+          </div>
+          <p class="hint">Ce choix est retenu pour tes prochaines visites, et commande les colonnes de saisie.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LES CARTES ---------------------------------------------- -->
+  <section class="panel" id="ecran-cartes">
+    <div class="avance-ligne">
+      <span id="c-avance">Carte 1</span>
+      <div class="barre"><span id="c-barre"></span></div>
+    </div>
+
+    <div class="carte-zone">
+      <button class="carte" id="carte" aria-live="polite">
+        <span class="carte-face carte-avant">
+          <span class="carte-langue" id="c-langue-avant">français</span>
+          <span class="carte-mot" id="c-recto">—</span>
+          <span class="carte-aide">Clique pour retourner</span>
+        </span>
+        <span class="carte-face carte-arriere">
+          <span class="carte-langue" id="c-langue-arriere">allemand</span>
+          <span class="carte-mot" id="c-verso">—</span>
+          <span class="carte-note" id="c-note"></span>
+        </span>
+      </button>
+    </div>
+
+    <div class="actions actions--centre" id="c-jugement" hidden>
+      <button class="btn btn--ghost" id="c-revoir">À revoir</button>
+      <button class="btn" id="c-su">Je savais</button>
+    </div>
+    <p class="hint" id="c-aide">Espace ou Entrée retourne la carte. Ensuite, flèche gauche pour « à revoir », flèche droite pour « je savais ».</p>
+
+    <div class="actions">
+      <button class="chip" id="c-melanger">Mélanger</button>
+      <button class="chip" id="c-arreter">Arrêter</button>
+    </div>
+  </section>
+
+  <!-- BILAN DES CARTES ----------------------------------------- -->
+  <section class="panel" id="ecran-cartes-bilan">
+    <h2 class="title">Tour terminé</h2>
+    <div class="score">
+      <span class="score-chiffre" id="c-score">0/0</span>
+      <span class="score-mot" id="c-score-mot"></span>
+    </div>
+    <p class="hint">Les cartes ne comptent pas dans « Mes résultats » : on s'y note soi-même, et une note qu'on se donne ne mesure rien.</p>
+    <h3 class="section-title" id="c-titre-revoir" hidden>À revoir</h3>
+    <ul class="bilan" id="c-liste-revoir"></ul>
+    <div class="actions">
+      <button class="btn" id="c-refaire-revoir">Reprendre celles à revoir</button>
+      <button class="btn btn--ghost" id="c-refaire-tout">Refaire tout le paquet</button>
+      <button class="btn btn--ghost" id="c-vers-exercice">Passer à l'exercice écrit</button>
+    </div>
+  </section>
+
+  <!-- S'ENTRAÎNER --------------------------------------------- -->
+  <section class="panel" id="ecran-exercice">
+    <div class="avance-ligne">
+      <span id="v-avance">Question 1</span>
+      <div class="barre"><span id="v-barre"></span></div>
+    </div>
+
+    <div class="question">
+      <p class="q-consigne" id="v-consigne">Traduis :</p>
+      <p class="q-mot" id="v-mot">—</p>
+      <p class="q-note" id="v-indice-note"></p>
+      <div class="ai-row">
+        <input type="text" id="v-reponse" placeholder="Ta réponse" autocomplete="off"
+               autocapitalize="off" spellcheck="false">
+        <button class="btn" id="v-verifier">Vérifier</button>
+      </div>
+      <p class="verdict" id="v-verdict"></p>
+      <div class="actions">
+        <button class="chip" id="v-indice">Un indice</button>
+        <button class="chip" id="v-passer">Passer</button>
+        <button class="chip" id="v-arreter">Arrêter</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BILAN --------------------------------------------------- -->
+  <section class="panel" id="ecran-bilan">
+    <h2 class="title">C'est fini</h2>
+    <div class="score">
+      <span class="score-chiffre" id="v-score">0/0</span>
+      <span class="score-mot" id="v-score-mot"></span>
+    </div>
+    <p class="status" id="v-bilan-note"></p>
+    <h3 class="section-title" id="v-titre-fautes" hidden>Les mots à revoir</h3>
+    <ul class="bilan" id="v-fautes"></ul>
+    <div class="actions">
+      <button class="btn" id="v-recommencer">Refaire cette liste</button>
+      <button class="btn btn--ghost" id="v-revoir-fautes">Ne revoir que mes fautes</button>
+      <button class="btn btn--ghost" id="v-retour">Changer de liste</button>
+    </div>
+  </section>
+
+  <!-- MES LISTES ---------------------------------------------- -->
+  <section class="panel" id="ecran-listes">
+    <h2 class="title">Mes listes</h2>
+    <p class="sub">Tes listes de vocabulaire, et celles reprises dans la bibliothèque.</p>
+
+    <div class="card" id="v-hors-compte" hidden>
+      <p class="hint" style="margin:0 0 12px"></p>
+      <button class="btn btn--ghost btn--tiny" id="v-inscription">Créer un compte</button>
+    </div>
+
+    <div id="v-listes-box">
+      <div class="lib-search">
+        <input type="search" id="v-filtre" placeholder="Filtrer par nom ou par chapitre">
+        <select id="v-filtre-langue"></select>
+      </div>
+      <h3 class="section-title" id="v-titre-miennes" hidden>Mes listes</h3>
+      <ul class="saved-liste" id="v-mes-listes"></ul>
+      <h3 class="section-title" id="v-titre-reprises" hidden>Reprises dans la bibliothèque</h3>
+      <ul class="saved-liste" id="v-reprises"></ul>
+      <p class="empty" id="v-listes-vide">Aucune liste enregistrée pour l'instant.</p>
+      <p class="hint" id="v-listes-note"></p>
+    </div>
+  </section>
+
+  <!-- BIBLIOTHÈQUE -------------------------------------------- -->
+  <section class="panel" id="ecran-biblio">
+    <h2 class="title">Bibliothèque partagée</h2>
+    <p class="sub">Les listes publiées par les autres utilisateurs, classées par langue et par chapitre.</p>
+    <div class="lib-search">
+      <input type="search" id="v-biblio-q" placeholder="Nom, chapitre, ou auteur">
+      <select id="v-biblio-langue"></select>
+    </div>
+    <ul id="v-biblio-liste"></ul>
+    <p class="hint" id="v-biblio-note"></p>
+  </section>
+
+  <!-- MES RÉSULTATS ------------------------------------------- -->
+  <section class="panel" id="ecran-resultats">
+    <h2 class="title">Mes résultats</h2>
+    <p class="sub">La progression liste par liste : refaire une série est le meilleur moyen de fixer les mots.</p>
+    <div class="card" id="v-res-invite" hidden>
+      <p class="hint" style="margin:0 0 12px" id="v-res-invite-texte"></p>
+      <button class="btn btn--ghost btn--tiny" id="v-res-bouton"></button>
+    </div>
+    <div id="v-res-box">
+      <ul class="suivi" id="v-res-liste"></ul>
+      <p class="hint" id="v-res-note"></p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+    Les listes et les exercices restent sur l'appareil tant qu'aucun compte n'est créé.
+    <br><a href="index.html">Accueil</a> ·
+    <a href="dictee.html">La dictée</a> ·
+    <a href="conjugaison.html">La conjugaison</a> ·
+    <a href="mathematiques.html">Les mathématiques</a> ·
+    <a href="abonnement.html">L'abonnement</a> ·
+    <a href="profil.html">Mon profil</a> ·
+    <a href="faq.html">Questions fréquentes</a> ·
+    <a href="mentions-legales.html">Mentions légales</a> ·
+    <a href="conditions.html">Conditions générales</a> ·
+    <a href="confidentialite.html">Confidentialité</a>
+  </footer>
+</div>
+
+<!-- FEUILLE IMPRIMABLE --------------------------------------
+     Invisible à l'écran, elle occupe seule la page à l'impression.
+     Elle doit rester fille directe de <body> : voir vocabulaire.css. -->
+<div id="feuille" aria-hidden="true">
+  <section class="feuille-page" id="feuille-questions"></section>
+  <section class="feuille-page" id="feuille-corrige"></section>
+</div>
+
+<!-- compte ------------------------------------------------- -->
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Retrouve tes résultats sur tous tes appareils.</p>
+
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment on t'appelle ?">
+    </div>
+    <div class="field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+    <p class="hint">C'est le même compte que pour La dictée. Voir la <a href="confidentialite.html" target="_blank" rel="noopener">page de confidentialité</a>.</p>
+  </div>
+</div>
+
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/bienvenue.js?v=2026-11-05"></script>
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/compte.js?v=2026-11-05"></script>
+<script src="assets/vocab-listes.js?v=2026-11-05"></script>
+<script src="assets/vocabulaire.js?v=2026-11-05"></script>
+</body>
+</html>

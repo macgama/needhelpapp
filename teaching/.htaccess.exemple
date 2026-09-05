@@ -1,0 +1,14 @@
+# Teaching — à déposer à la racine du sous-domaine, renommé .htaccess
+
+# Le code de l'application : sans lui, les droits seraient lus pour
+# « portail » et non pour « teaching ».
+SetEnv NHA_APP teaching
+
+# HTTPS obligatoire : le cookie de session du portail est marqué Secure,
+# et ne serait pas envoyé en clair.
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Le dossier de configuration n'est jamais servi.
+RedirectMatch 404 ^/config/

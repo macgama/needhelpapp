@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3B2F7F">
+<meta name="description" content="Exercices de conjugaison française : choisis tes verbes, tes temps, et entraîne-toi.">
+<title>Les mathématiques — Teaching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=2026-11-05">
+<link rel="stylesheet" href="assets/mathematiques.css?v=2026-11-05">
+</head>
+<body data-version="2026-11-05">
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="index.html">Accueil</a>
+      <a class="lien-app" href="dictee.html">La dictée</a>
+      <a class="lien-app" href="vocabulaire.html">Le vocabulaire</a>
+      <a class="lien-app" href="conjugaison.html">La conjugaison</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="profil.html" role="menuitem">Mon profil et mes données</a>
+        <a href="abonnement.html" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <h1 class="wordmark">Les <span>mathématiques</span></h1>
+      <p class="tagline">Du livret de 7 aux équations : on s'entraîne autant qu'on veut, on se corrige seul.</p>
+    </div>
+  </header>
+
+  <nav class="steps" aria-label="Étapes">
+    <button class="step" id="onglet-composer" data-ecran="composer" aria-current="true">Créer une série</button>
+    <button class="step" data-ecran="exercice">S'entraîner</button>
+    <button class="step" data-ecran="series">Mes séries</button>
+    <button class="step" data-ecran="biblio">Bibliothèque partagée</button>
+    <button class="step" data-ecran="resultats">Mes résultats</button>
+  </nav>
+
+  <div class="warn" id="warn"></div>
+
+  <!-- COMPOSER ------------------------------------------------ -->
+  <section class="panel on" id="ecran-composer">
+    <h2 class="title">Composer une série</h2>
+    <p class="sub">Choisis un chapitre, puis une famille. Les calculs sont tirés à chaque fois : deux séances ne se ressemblent jamais.</p>
+
+    <div class="choix-serie">
+      <div class="etape-choix">
+        <span class="etape-num">1</span>
+        <div class="etape-corps">
+          <h3 class="etape-titre">Le chapitre</h3>
+          <div class="chapitres" id="chapitres"></div>
+        </div>
+      </div>
+
+      <div class="etape-choix">
+        <span class="etape-num">2</span>
+        <div class="etape-corps">
+          <h3 class="etape-titre">La famille d'exercices <span id="etape-dans"></span></h3>
+          <div class="familles" id="familles"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="deux-colonnes composer-maths">
+      <div>
+        <div class="card">
+          <h3 id="titre-reglages">Les réglages</h3>
+          <p class="hint" id="explication-famille" style="margin:0 0 12px"></p>
+          <div id="reglages"></div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3>L'exercice</h3>
+          <div class="field">
+            <label for="m-nb">Nombre de calculs</label>
+            <select id="m-nb">
+              <option value="10">10 calculs</option>
+              <option value="20" selected>20 calculs</option>
+              <option value="30">30 calculs</option>
+              <option value="50">50 calculs</option>
+            </select>
+          </div>
+          <label class="check"><input type="checkbox" id="m-chrono"> Prendre le temps</label>
+          <p class="hint">Le chronomètre s'affiche à la fin. Il ne s'arrête jamais en cours de route : on compte, on ne presse pas.</p>
+          <div class="actions">
+            <button class="btn btn--big" id="m-commencer">Commencer</button>
+            <button class="btn btn--ghost" id="m-imprimer">Imprimer en PDF</button>
+          </div>
+          <p class="status" id="m-compose-note"></p>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Enregistrer cette série</h3>
+          <div class="field">
+            <label for="m-nom">Nom <span class="req">obligatoire</span></label>
+            <input type="text" id="m-nom" maxlength="120" placeholder="Ex. Livrets de 6, 7 et 8">
+          </div>
+          <div class="field">
+            <label for="m-chapitre">Chapitre <span class="opt">facultatif</span></label>
+            <input type="text" id="m-chapitre" maxlength="80" placeholder="Ex. 5e année, période 2">
+          </div>
+          <label class="check"><input type="checkbox" id="m-publique"> Publier dans la bibliothèque partagée</label>
+          <div class="actions">
+            <button class="btn btn--ghost" id="m-enregistrer">Enregistrer</button>
+            <button class="btn btn--ghost" id="m-nouvelle">Nouvelle série</button>
+          </div>
+          <p class="status" id="m-note"></p>
+        </div>
+
+        <div class="card apercu" style="margin-top:16px">
+          <h3>Aperçu</h3>
+          <p class="hint" style="margin:0 0 10px">Cinq calculs tirés au hasard, tels qu'ils se présenteront.</p>
+          <ul id="m-apercu"></ul>
+          <button class="chip" id="m-retirer">Autres exemples</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S'ENTRAÎNER --------------------------------------------- -->
+  <section class="panel" id="ecran-exercice">
+    <div class="avance-ligne">
+      <span id="m-avance">Calcul 1</span>
+      <div class="barre"><span id="m-barre"></span></div>
+    </div>
+
+    <div class="question">
+      <p class="q-consigne" id="m-consigne">Calcule :</p>
+      <p class="calcul" id="m-enonce">—</p>
+      <div class="ai-row">
+        <input type="text" id="m-reponse" placeholder="Ta réponse" autocomplete="off"
+               inputmode="numeric" autocapitalize="off" spellcheck="false">
+        <button class="btn" id="m-verifier">Vérifier</button>
+      </div>
+      <p class="verdict" id="m-verdict"></p>
+      <div class="actions">
+        <button class="chip" id="m-indice">Un indice</button>
+        <button class="chip" id="m-passer">Passer</button>
+        <button class="chip" id="m-arreter">Arrêter</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BILAN --------------------------------------------------- -->
+  <section class="panel" id="ecran-bilan">
+    <h2 class="title">C'est fini</h2>
+    <div class="score">
+      <span class="score-chiffre" id="m-score">0/0</span>
+      <span class="score-mot" id="m-score-mot"></span>
+    </div>
+    <p class="hint" id="m-temps"></p>
+    <p class="status" id="m-bilan-note"></p>
+    <h3 class="section-title" id="m-titre-fautes" hidden>Les calculs à revoir</h3>
+    <ul class="bilan" id="m-fautes"></ul>
+    <div class="actions">
+      <button class="btn" id="m-recommencer">Une nouvelle série</button>
+      <button class="btn btn--ghost" id="m-revoir">Ne revoir que mes fautes</button>
+      <button class="btn btn--ghost" id="m-retour">Changer de famille</button>
+    </div>
+  </section>
+
+  <!-- MES SÉRIES ---------------------------------------------- -->
+  <section class="panel" id="ecran-series">
+    <h2 class="title">Mes séries</h2>
+    <p class="sub">Tes réglages enregistrés, et ceux repris dans la bibliothèque.</p>
+
+    <div class="card" id="m-hors-compte" hidden>
+      <p class="hint" style="margin:0 0 12px"></p>
+      <button class="btn btn--ghost btn--tiny" id="m-inscription">Créer un compte</button>
+    </div>
+
+    <div id="m-series-box">
+      <div class="lib-search">
+        <input type="search" id="m-filtre" placeholder="Filtrer par nom ou par chapitre">
+        <select id="m-filtre-famille"></select>
+      </div>
+      <h3 class="section-title" id="m-titre-miennes" hidden>Mes séries</h3>
+      <ul class="saved-liste" id="m-mes-series"></ul>
+      <h3 class="section-title" id="m-titre-reprises" hidden>Reprises dans la bibliothèque</h3>
+      <ul class="saved-liste" id="m-reprises"></ul>
+      <p class="empty" id="m-series-vide">Aucune série enregistrée pour l'instant.</p>
+      <p class="hint" id="m-series-note"></p>
+    </div>
+  </section>
+
+  <!-- BIBLIOTHÈQUE -------------------------------------------- -->
+  <section class="panel" id="ecran-biblio">
+    <h2 class="title">Bibliothèque partagée</h2>
+    <p class="sub">Les séries publiées par les autres utilisateurs, classées par famille et par chapitre.</p>
+    <div class="lib-search">
+      <input type="search" id="m-biblio-q" placeholder="Nom, chapitre, ou auteur">
+      <select id="m-biblio-famille"></select>
+    </div>
+    <ul id="m-biblio-liste"></ul>
+    <p class="hint" id="m-biblio-note"></p>
+  </section>
+
+  <!-- MES RÉSULTATS ------------------------------------------- -->
+  <section class="panel" id="ecran-resultats">
+    <h2 class="title">Mes résultats</h2>
+    <p class="sub">La progression série après série. Refaire la même famille est le meilleur moyen d'ancrer les automatismes.</p>
+    <div class="card" id="m-res-invite" hidden>
+      <p class="hint" style="margin:0 0 12px" id="m-res-invite-texte"></p>
+      <button class="btn btn--ghost btn--tiny" id="m-res-bouton"></button>
+    </div>
+    <div id="m-res-box">
+      <ul class="suivi" id="m-res-liste"></ul>
+      <p class="hint" id="m-res-note"></p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+    Les calculs sont engendrés dans le navigateur&nbsp;: rien n'est envoyé sur Internet.
+    <br><a href="index.html">Accueil</a> ·
+    <a href="dictee.html">La dictée</a> ·
+    <a href="vocabulaire.html">Le vocabulaire</a> ·
+    <a href="conjugaison.html">La conjugaison</a> ·
+    <a href="abonnement.html">L'abonnement</a> ·
+    <a href="profil.html">Mon profil</a> ·
+    <a href="faq.html">Questions fréquentes</a> ·
+    <a href="mentions-legales.html">Mentions légales</a> ·
+    <a href="conditions.html">Conditions générales</a> ·
+    <a href="confidentialite.html">Confidentialité</a>
+  </footer>
+</div>
+
+<!-- FEUILLE IMPRIMABLE -------------------------------------- -->
+<div id="feuille" aria-hidden="true">
+  <section class="feuille-page" id="feuille-questions"></section>
+  <section class="feuille-page" id="feuille-corrige"></section>
+</div>
+
+<!-- compte ------------------------------------------------- -->
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Retrouve tes résultats sur tous tes appareils.</p>
+
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment on t'appelle ?">
+    </div>
+    <div class="field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+    <p class="hint">C'est le même compte que pour La dictée. Voir la <a href="confidentialite.html" target="_blank" rel="noopener">page de confidentialité</a>.</p>
+  </div>
+</div>
+
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/bienvenue.js?v=2026-11-05"></script>
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/compte.js?v=2026-11-05"></script>
+<script src="assets/maths.js?v=2026-11-05"></script>
+<script src="assets/mathematiques.js?v=2026-11-05"></script>
+</body>
+</html>

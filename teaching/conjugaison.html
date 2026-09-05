@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3B2F7F">
+<meta name="description" content="Exercices de conjugaison française : choisis tes verbes, tes temps, et entraîne-toi.">
+<title>La conjugaison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=2026-11-05">
+<link rel="stylesheet" href="assets/conjugaison.css?v=2026-11-05">
+</head>
+<body data-version="2026-11-05">
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="index.html">Accueil</a>
+      <a class="lien-app" href="dictee.html">La dictée</a>
+      <a class="lien-app" href="vocabulaire.html">Le vocabulaire</a>
+      <a class="lien-app" href="mathematiques.html">Les mathématiques</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="profil.html" role="menuitem">Mon profil et mes données</a>
+        <a href="abonnement.html" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <h1 class="wordmark">La <span>conjugaison</span></h1>
+      <p class="tagline">Choisis les verbes et les temps que tu veux travailler, puis entraîne-toi question après question.</p>
+    </div>
+  </header>
+
+  <nav class="steps" aria-label="Navigation">
+    <button class="step" id="onglet-composer" data-ecran="composer" aria-current="true">Créer une sélection</button>
+    <button class="step" data-ecran="exercice">S'entraîner</button>
+    <button class="step" data-ecran="listes">Mes listes</button>
+    <button class="step" data-ecran="biblio">Bibliothèque partagée</button>
+    <button class="step" data-ecran="liste">Les verbes</button>
+    <button class="step" data-ecran="resultats">Mes résultats</button>
+  </nav>
+
+  <div class="warn" id="warn"></div>
+
+  <!-- COMPOSER ---------------------------------------------- -->
+<section class="panel on" id="ecran-composer">
+    <div class="choix-langue">
+      <label for="c-langue">Langue des verbes</label>
+      <select id="c-langue">
+        <option value="fr">français</option>
+        <option value="en">anglais</option>
+        <option value="it">italien</option>
+        <option value="de">allemand</option>
+      </select>
+      <span class="hint" id="c-langue-note">984 verbes français, 24 temps.</span>
+    </div>
+    <h2 class="title">Composer un exercice</h2>
+    <p class="sub">Choisis les verbes, les temps, et le nombre de questions.</p>
+
+    <div class="deux-colonnes">
+      <div>
+        <div class="card">
+          <h3>Les verbes</h3>
+          <p class="hint" style="margin:0 0 10px">Ajoute les verbes un à un, ou pioche dans une liste toute prête.</p>
+          <div class="ai-row" style="margin-top:0">
+            <input type="text" id="ajout-verbe" placeholder="prendre, venir, écrire…" autocomplete="off" spellcheck="false">
+            <button class="btn btn--ghost btn--tiny" id="ajouter-verbe">Ajouter</button>
+          </div>
+          <div class="mots" id="raccourcis" style="margin-top:10px"></div>
+          <div class="mots" id="verbes-choisis" style="margin-top:12px"></div>
+          <p class="status" id="verbes-note"></p>
+          <div class="actions" style="margin-top:6px">
+            <button class="chip" id="vider-verbes">Tout retirer</button>
+            <button class="chip" id="vers-mes-listes">Reprendre une de mes listes</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3>Enregistrer cette sélection</h3>
+          <div class="field">
+            <label for="liste-nom">Nom de la liste <span class="opt">verbes et temps choisis</span></label>
+            <input type="text" id="liste-nom" maxlength="120" placeholder="Ex. Leçon 7 — le passé simple">
+          </div>
+          <label class="check"><input type="checkbox" id="liste-publique"> Publier dans la bibliothèque partagée</label>
+          <p class="hint">Les autres utilisateurs pourront s'en servir et la reprendre chez eux. Tu peux dépublier quand tu veux.</p>
+          <div class="actions">
+            <button class="btn btn--ghost" id="liste-enregistrer">Enregistrer</button>
+            <button class="btn btn--ghost" id="liste-nouvelle">Nouvelle sélection</button>
+          </div>
+          <p class="status" id="liste-note"></p>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3>Le nombre de questions</h3>
+          <div class="field">
+            <select id="nb-questions">
+              <option value="10">10 questions — rapide</option>
+              <option value="20" selected>20 questions</option>
+              <option value="30">30 questions</option>
+              <option value="50">50 questions — série longue</option>
+            </select>
+          </div>
+          <div class="actions">
+            <button class="btn btn--big" id="composer-btn">Commencer l'exercice</button>
+            <button class="btn btn--ghost" id="imprimer-btn">Imprimer en PDF</button>
+          </div>
+          <p class="hint" id="imprimer-aide">La feuille contient les questions, et le corrigé sur une page séparée.</p>
+          <p class="status" id="compose-note"></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="temps-entete">
+          <h3 style="margin:0">Les temps</h3>
+          <span>
+            <button class="linkish" id="tout-cocher">Tout cocher</button>
+            <button class="linkish rouge" id="tout-decocher">Tout décocher</button>
+          </span>
+        </div>
+        <div id="temps" class="temps-grille"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S'ENTRAÎNER ------------------------------------------- -->
+  <section class="panel" id="ecran-exercice">
+    <div class="avance-ligne">
+      <span id="avance">Question 1</span>
+      <button class="chip" id="abandonner">Arrêter</button>
+    </div>
+    <div class="avance-piste"><div class="avance-barre" id="barre-avance"></div></div>
+
+    <div class="question">
+      <p class="q-consigne">Conjugue <b id="q-verbe">chanter</b> à <b id="q-temps">l'imparfait</b></p>
+      <div class="q-ligne">
+        <span class="q-sujet" id="q-sujet"></span>
+        <span class="q-pronom" id="q-pronom">nous</span>
+        <input type="text" id="reponse" autocomplete="off" autocapitalize="off" autocorrect="off"
+               spellcheck="false" aria-label="Ta réponse">
+      </div>
+      <p class="verdict" id="verdict"></p>
+      <div class="actions">
+        <button class="btn btn--big" id="verifier">Vérifier</button>
+        <button class="chip" id="indice">Un indice</button>
+      </div>
+      <p class="hint" id="indice-texte" hidden></p>
+    </div>
+  </section>
+
+  <!-- BILAN -------------------------------------------------- -->
+  <section class="panel" id="ecran-bilan">
+    <h2 class="title">Bilan</h2>
+    <div class="score">
+      <div class="mark" id="score-chiffre">0/0</div>
+      <div class="score-detail">
+        <p><strong id="score-mot"></strong></p>
+        <p class="hint">Les formes manquées sont listées ci-dessous. Refaire la même série est le meilleur moyen de les fixer.</p>
+      </div>
+    </div>
+
+    <p class="empty" id="bilan-vide" hidden>Toutes les réponses étaient justes.</p>
+    <ul class="bilan" id="bilan-liste"></ul>
+
+    <div class="actions">
+      <button class="btn" id="recommencer">Refaire une série</button>
+      <button class="btn btn--ghost" id="nouvel-exercice">Changer les réglages</button>
+    </div>
+  </section>
+
+  <!-- MES LISTES ------------------------------------------- -->
+  <section class="panel" id="ecran-listes">
+    <h2 class="title">Mes listes</h2>
+    <p class="sub">Tes sélections enregistrées, et celles que tu as reprises dans la bibliothèque.</p>
+
+    <div class="card" id="listes-hors-compte" hidden>
+      <p class="hint" style="margin:0 0 12px"></p>
+      <button class="btn btn--ghost btn--tiny" id="listes-inscription">Créer un compte</button>
+    </div>
+
+    <div id="listes-box">
+      <h3 class="section-title" id="titre-mes-listes" hidden>Mes sélections</h3>
+      <ul class="saved-liste" id="mes-listes"></ul>
+      <h3 class="section-title" id="titre-reprises-listes" hidden>Reprises dans la bibliothèque</h3>
+      <ul class="saved-liste" id="listes-reprises"></ul>
+      <p class="empty" id="listes-vide">Aucune liste enregistrée. Compose une sélection dans « Composer », puis enregistre-la.</p>
+      <p class="hint" id="mes-listes-note"></p>
+    </div>
+  </section>
+
+  <!-- BIBLIOTHÈQUE DE LISTES ---------------------------------- -->
+  <section class="panel" id="ecran-biblio">
+    <h2 class="title">Bibliothèque partagée</h2>
+    <p class="sub">Les sélections publiées par les autres utilisateurs : leurs verbes et leurs temps.</p>
+
+    <div class="lib-search">
+      <input type="search" id="biblio-q" placeholder="Nom de la liste ou de son auteur">
+      <button class="btn btn--ghost btn--tiny" id="biblio-go">Chercher</button>
+    </div>
+    <ul id="biblio-liste"></ul>
+    <p class="hint" id="biblio-note"></p>
+  </section>
+
+  <!-- LES VERBES --------------------------------------------- -->
+  <section class="panel" id="ecran-liste">
+    <h2 class="title">Les verbes</h2>
+    <p class="sub">Cherche un verbe ou parcours la liste : sa conjugaison complète s'affiche, à tous les temps.</p>
+
+    <div class="lib-search">
+      <input type="search" id="verbe-consulte" placeholder="Chercher un verbe, ou en conjuguer un autre"
+             autocomplete="off" spellcheck="false">
+      <select id="liste-groupe">
+        <option value="">Tous les groupes</option>
+        <option value="g1">1er groupe — verbes en -er</option>
+        <option value="g2">2e groupe — nous finissons</option>
+        <option value="g3">3e groupe — irréguliers</option>
+      </select>
+    </div>
+    <p class="status" id="consulte-note"></p>
+
+    <div id="zone-tableau" hidden>
+      <div class="actions" style="margin:4px 0 10px">
+        <button class="chip" id="retour-liste">← Revenir à la liste</button>
+        <button class="chip" id="ajouter-ce-verbe">Ajouter à ma sélection</button>
+      </div>
+      <div id="tableau" class="tableau"></div>
+    </div>
+
+    <div id="zone-liste">
+      <nav class="alphabet" id="alphabet" aria-label="Aller à une lettre"></nav>
+      <div id="liste-verbes" class="liste-verbes"></div>
+      <p class="hint" id="liste-note"></p>
+    </div>
+  </section>
+
+  <!-- MES RÉSULTATS ------------------------------------------ -->
+  <section class="panel" id="ecran-resultats">
+    <h2 class="title">Mes résultats</h2>
+    <p class="sub">Les séries terminées, la plus récente en premier.</p>
+    <div class="card" id="res-hors-compte" hidden>
+      <p class="hint" style="margin:0 0 12px">
+        Sans compte, les résultats disparaissent en fermant l'onglet. Un compte les garde
+        d'une séance à l'autre, et il est le même que pour La dictée.
+      </p>
+      <button class="btn btn--ghost btn--tiny" id="res-inscription">Créer un compte</button>
+    </div>
+    <ul class="bilan" id="res-liste"></ul>
+    <p class="hint" id="res-note"></p>
+  </section>
+
+  <footer class="foot">
+    <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+    Les exercices sont composés dans le navigateur&nbsp;: rien n'est envoyé sur Internet.
+    <br><a href="index.html">Accueil</a> ·
+    <a href="dictee.html">La dictée</a> ·
+    <a href="vocabulaire.html">Le vocabulaire</a> ·
+    <a href="abonnement.html">L'abonnement</a> ·
+    <a href="profil.html">Mon profil</a> ·
+    <a href="faq.html">Questions fréquentes</a> ·
+    <a href="mentions-legales.html">Mentions légales</a> ·
+    <a href="conditions.html">Conditions générales</a> ·
+    <a href="confidentialite.html">Confidentialité</a>
+  </footer>
+</div>
+
+<!-- FEUILLE IMPRIMABLE --------------------------------------
+     Invisible à l'écran, elle occupe seule la page à l'impression.
+     Le navigateur se charge du PDF : « Imprimer » puis « Enregistrer
+     au format PDF ». Aucune bibliothèque, rien à envoyer au serveur. -->
+<div id="feuille" aria-hidden="true">
+  <section class="feuille-page" id="feuille-questions"></section>
+  <section class="feuille-page" id="feuille-corrige"></section>
+</div>
+
+
+<!-- compte ------------------------------------------------- -->
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Retrouve tes résultats sur tous tes appareils.</p>
+
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment on t'appelle ?">
+    </div>
+    <div class="field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+    <p class="hint">C'est le même compte que pour La dictée. Voir la <a href="confidentialite.html" target="_blank" rel="noopener">page de confidentialité</a>.</p>
+  </div>
+</div>
+
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/bienvenue.js?v=2026-11-05"></script>
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/compte.js?v=2026-11-05"></script>
+<script src="assets/conjugueur.js?v=2026-11-05"></script>
+<script src="assets/conjugueur-en.js?v=2026-11-05"></script>
+<script src="assets/conjugueur-it.js?v=2026-11-05"></script>
+<script src="assets/conjugueur-de.js?v=2026-11-05"></script>
+<script src="assets/verbes.js?v=2026-11-05"></script>
+<script src="assets/verbes-en.js?v=2026-11-05"></script>
+<script src="assets/verbes-it.js?v=2026-11-05"></script>
+<script src="assets/verbes-de.js?v=2026-11-05"></script>
+<script src="assets/conjugaison.js?v=2026-11-05"></script>
+</body>
+</html>

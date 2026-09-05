@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3B2F7F">
+<meta name="description" content="Deux outils gratuits pour travailler le français à la maison ou en classe : la dictée lue à voix haute et les exercices de conjugaison.">
+<title>Teaching — le français, autrement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=2026-11-05">
+<style>
+  /* Ce qui n'appartient qu'à l'accueil. Le reste — cartes, bannière,
+     vignettes — vit maintenant dans app.css, où les quatre applications
+     peuvent y puiser. */
+  .hero{padding:var(--s4) 0 var(--s2)}
+  .hero .wordmark{font-size:clamp(30px,5vw,42px)}
+  .hero p{max-width:56ch;margin:var(--s2) 0 0;color:var(--grey);font-size:16px}
+  .hero--suite{margin-top:var(--s6)}
+  .accueil-compte{justify-content:flex-end;min-height:38px}
+
+  /* une application annoncée mais pas encore ouverte */
+  .app-card--attente{cursor:default;opacity:.72}
+  .app-card--attente:hover{border-color:var(--line);transform:none;box-shadow:none}
+  .app-card--attente .go{color:var(--grey-soft)}
+</style>
+</head>
+<body data-version="2026-11-05">
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="dictee.html">La dictée</a>
+      <a class="lien-app" href="vocabulaire.html">Le vocabulaire</a>
+      <a class="lien-app" href="conjugaison.html">La conjugaison</a>
+      <a class="lien-app" href="mathematiques.html">Les mathématiques</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="profil.html" role="menuitem">Mon profil et mes données</a>
+        <a href="abonnement.html" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+
+
+  <section class="accueil-banniere">
+    <div class="fond" aria-hidden="true">
+      <picture>
+        <source srcset="assets/img/cahier.webp" type="image/webp">
+        <img src="assets/img/cahier.png" alt="" loading="eager" fetchpriority="high"
+             onerror="this.closest('.fond').remove()">
+      </picture>
+    </div>
+    <div class="dedans">
+      <span class="sur-titre">Quatre outils, un seul compte</span>
+      <h2>On apprend en <em>refaisant</em>, pas en relisant.</h2>
+      <p>Dictée, conjugaison, vocabulaire et calcul. On s'exerce autant qu'on veut,
+         on se corrige seul, et l'on voit ses progrès. Rien n'est jamais effacé.</p>
+      <a class="btn btn--big" href="dictee.html">Commencer par la dictée
+        <span class="fleche" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <header class="hero">
+    <h1 class="wordmark">Apprentissage <span>·</span> les langues</h1>
+    <p id="accueil-mot">Trois outils pour travailler à la maison ou en classe. Gratuits, sans publicité, et utilisables sans créer de compte.</p>
+  </header>
+
+  <div class="apps">
+    <a class="app-card" href="dictee.html">
+      <div class="vignette"><span>Le petit chat gris<br>dort sur le tapis.</span></div>
+      <h2>La <em>dictée</em> <span class="langues-carte">fr · de · en · it</span></h2>
+      <p>Le texte est lu à voix haute, groupe de mots par groupe de mots, avec le temps d'écrire entre chaque — puis corrigé mot à mot.</p>
+      <ul>
+        <li>Import d'un PDF ou d'une photo de la fiche</li>
+        <li>Ponctuation annoncée sur un autre ton</li>
+        <li>Correction au stylo rouge, faute par faute</li>
+        <li>Bibliothèque de dictées partagées</li>
+      </ul>
+      <span class="go">Ouvrir la dictée →</span>
+    </a>
+
+    <a class="app-card" href="conjugaison.html">
+      <div class="vignette"><span>nous prenions<br>vous prendrez</span></div>
+      <h2>La <em>conjugaison</em> <span class="langues-carte">fr · de · en · it</span></h2>
+      <p>Choisis tes verbes et tes temps, et enchaîne les questions. Chaque erreur est corrigée sur-le-champ, avec un bilan à la fin.</p>
+      <ul>
+        <li>Tous les temps, de l'indicatif au subjonctif</li>
+        <li>Verbes réguliers, irréguliers et pièges d'orthographe</li>
+        <li>Ajoute les verbes de ton choix</li>
+        <li>Consultation complète d'un verbe</li>
+      </ul>
+      <span class="go">Ouvrir la conjugaison →</span>
+    </a>
+
+    <a class="app-card" href="vocabulaire.html">
+      <div class="vignette"><span>die Mutter<br>la mère</span></div>
+      <h2>Le <em>vocabulaire</em> <span class="langues-carte">fr · de · en · it</span></h2>
+      <p>Saisis les mots de la leçon, chapitre par chapitre, et apprends-les dans les deux sens. Allemand, anglais, italien.</p>
+      <ul>
+        <li>Listes calquées sur le manuel de la classe</li>
+        <li>Dans les deux sens, ou au hasard</li>
+        <li>L'article et le pluriel notés à part</li>
+        <li>Bibliothèque de listes partagées</li>
+      </ul>
+      <span class="go">Ouvrir le vocabulaire →</span>
+    </a>
+  </div>
+
+  <header class="hero hero--suite">
+    <h1 class="wordmark">Apprentissage <span>·</span> les mathématiques</h1>
+    <p>Le même esprit, appliqué au calcul : s'exercer autant qu'on veut, se corriger seul, et voir ses progrès.</p>
+  </header>
+
+  <div class="apps">
+    <a class="app-card" href="mathematiques.html?c=mental">
+      <div class="vignette"><span>7 × 8 = 56<br>486 + 279 = 765</span></div>
+      <h2>Le <em>calcul</em> <span class="langues-carte">11 familles</span></h2>
+      <p>Le calcul mental — livrets, compléments, doubles, progressions — et les quatre opérations à poser, jusqu'à cent mille et trois décimales.</p>
+      <ul>
+        <li>Chaque famille se règle finement</li>
+        <li>Les calculs sont tirés à chaque fois</li>
+        <li>Chronomètre facultatif</li>
+      </ul>
+      <span class="go">S'entraîner →</span>
+    </a>
+
+    <a class="app-card" href="mathematiques.html?c=nombres">
+      <div class="vignette"><span>3/4 + 1/6 = 11/12<br>120 km/h · 1:25 000</span></div>
+      <h2>Nombres et <em>mesures</em> <span class="langues-carte">12 familles</span></h2>
+      <p>Les fractions, les nombres négatifs, les priorités, les arrondis, la notation scientifique — puis les unités, les durées, les vitesses, les échelles et les intérêts.</p>
+      <ul>
+        <li>PGDC, PPMC et facteurs premiers</li>
+        <li>Une fraction juste mais non simplifiée est expliquée</li>
+        <li>Cinq grandeurs à convertir</li>
+      </ul>
+      <span class="go">S'entraîner →</span>
+    </a>
+
+    <a class="app-card" href="mathematiques.html?c=algebre">
+      <div class="vignette"><span>(2x + 3)(x − 5)<br>a² + b² = c²</span></div>
+      <h2>Fonctions, algèbre et <em>espace</em> <span class="langues-carte">10 familles</span></h2>
+      <p>La proportionnalité, les fonctions affines, les produits de binômes, les équations — et la géométrie qui se calcule.</p>
+      <ul>
+        <li>Équations des deux premiers degrés</li>
+        <li>Aires, volumes, Pythagore, angles</li>
+        <li>Sinus, cosinus et tangente</li>
+      </ul>
+      <span class="go">S'entraîner →</span>
+    </a>
+  </div>
+
+  <footer class="foot">
+    <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+    Les textes et les exercices restent sur l'appareil tant qu'aucun compte n'est créé.
+    <br><a href="dictee.html">La dictée</a> ·
+    <a href="vocabulaire.html">Le vocabulaire</a> ·
+    <a href="conjugaison.html">La conjugaison</a> ·
+    <a href="mathematiques.html">Les mathématiques</a> ·
+    <a href="abonnement.html">L'abonnement</a> ·
+    <a href="profil.html">Mon profil</a> ·
+    <a href="faq.html">Questions fréquentes</a> ·
+    <a href="mentions-legales.html">Mentions légales</a> ·
+    <a href="conditions.html">Conditions générales</a> ·
+    <a href="confidentialite.html">Confidentialité</a>
+  </footer>
+</div>
+<!-- compte ------------------------------------------------- -->
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Un seul compte pour la dictée et la conjugaison.</p>
+
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment on t'appelle ?">
+    </div>
+    <div class="field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+    <p class="hint">Le mot de passe n'est jamais conservé en clair. Voir la <a href="confidentialite.html">page de confidentialité</a>.</p>
+  </div>
+</div>
+
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/bienvenue.js?v=2026-11-05"></script>
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/compte.js?v=2026-11-05"></script>
+<script>
+  window.Compte.demarrer(function(){
+    var u = window.Compte.utilisateur();
+    var p = document.getElementById('accueil-mot');
+    if (p) p.textContent = u
+      ? 'Tes dictées, tes listes de verbes et tes résultats te suivent d\u2019un appareil à l\u2019autre.'
+      : 'Deux outils pour travailler à la maison ou en classe. Gratuits, sans publicité, et utilisables sans créer de compte.';
+  });
+</script>
+</body>
+</html>

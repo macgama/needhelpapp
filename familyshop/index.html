@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr" data-version="2026-11-05">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B6547">
+<title>FamilyShop — les menus de la semaine et la liste de courses</title>
+<meta name="description" content="Choisissez les plats de la semaine : la liste de courses se compose toute seule, triée par rayon, et se partage avec toute la famille.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/app.css?v=2026-11-05">
+</head>
+<body>
+
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="https://teaching.needhelpapp.com/">L'apprentissage</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="https://needhelpapp.com/profil.php" data-profil role="menuitem">Mon profil et mes données</a>
+        <a href="https://needhelpapp.com/abonnement.php" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1 class="wordmark">Family<span>Shop</span></h1>
+      <p class="tagline" id="tagline">Les plats de la semaine, et la liste qui va avec.</p>
+    </div>
+  </header>
+
+  <!-- ===================== ACCUEIL, SANS COMPTE ===================== -->
+  <section class="panel on" id="ecran-accueil">
+    <div class="fs-banniere">
+      <div class="fond" aria-hidden="true">
+        <picture>
+          <source srcset="assets/img/marche.webp" type="image/webp">
+          <img src="assets/img/marche.png" alt="" loading="eager" fetchpriority="high"
+               onerror="this.closest('.fond').remove()">
+        </picture>
+      </div>
+      <div class="dedans">
+        <span class="sur-titre">Les menus, puis les courses</span>
+        <h2 class="title" style="font-size:clamp(28px,5vw,44px);letter-spacing:-.03em;line-height:1.08">
+          La liste de courses se compose <em>toute seule</em>.</h2>
+        <p class="sub" style="font-size:17px;color:var(--slate)">Choisissez les plats de la
+           semaine&nbsp;: les ingrédients se rassemblent, les quantités s'additionnent, et
+           la liste se range dans l'ordre du magasin.</p>
+        <button class="btn btn--big" id="banniere-commencer">Commencer
+          <span class="fleche" aria-hidden="true">→</span></button>
+      </div>
+    </div>
+
+    <div class="accroche">
+      <div class="arguments">
+        <div class="argument">
+          <b>Une seule ligne par produit</b>
+          <p>Trois recettes qui demandent des oignons ne font pas trois lignes.
+             Les grammes s'additionnent entre eux, les pièces entre elles.</p>
+        </div>
+        <div class="argument">
+          <b>Rangée comme le magasin</b>
+          <p>Les légumes, puis la boucherie, puis la crémerie. Un seul passage
+             au lieu de trois allers-retours.</p>
+        </div>
+        <div class="argument">
+          <b>Partagée avec la famille</b>
+          <p>Un code à huit lettres, et vous êtes deux à tenir la même liste.
+             Ce qui est coché au magasin disparaît chez l'autre.</p>
+        </div>
+      </div>
+      <p style="margin-top:26px">
+        <button class="btn btn--big" id="accueil-connexion">Créer mon foyer
+          <span class="fleche" aria-hidden="true">→</span></button>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== L'APPLICATION ===================== -->
+  <div id="application" hidden>
+    <nav class="steps" id="onglets" aria-label="Écrans">
+      <button class="step" data-ecran="liste" aria-current="true">La liste</button>
+      <button class="step" data-ecran="semaine">La semaine</button>
+      <button class="step" data-ecran="recettes">Les recettes</button>
+      <button class="step" data-ecran="foyer">Le foyer</button>
+    </nav>
+
+    <!-- ---------- LA LISTE ---------- -->
+    <section class="panel on" id="ecran-liste">
+      <div class="entete-ecran">
+        <div>
+          <h2 class="title">La liste de courses</h2>
+          <p class="sub" id="liste-resume">—</p>
+        </div>
+        <div class="actions-ecran">
+          <button class="btn btn--ghost btn--tiny" id="liste-imprimer">Imprimer</button>
+          <button class="btn btn--ghost btn--tiny" id="liste-ranger">Retirer ce qui est pris</button>
+        </div>
+      </div>
+
+      <form class="ajout-rapide" id="ajout-forme">
+        <input id="ajout-quantite" class="q" type="text" inputmode="decimal"
+               placeholder="2" aria-label="Quantité" autocomplete="off">
+        <select id="ajout-unite" aria-label="Unité"></select>
+        <input id="ajout-label" type="text" placeholder="Ajouter un article…"
+               aria-label="Article à ajouter" autocomplete="off">
+        <button class="btn" type="submit">Ajouter</button>
+      </form>
+      <div class="suggestions" id="ajout-suggestions" hidden></div>
+
+      <div class="habitudes" id="habitudes" hidden>
+        <span class="titre-habitudes">Souvent chez vous</span>
+        <div class="puces" id="puces-habitudes"></div>
+      </div>
+
+      <div id="liste-corps"></div>
+      <p class="vide" id="liste-vide" hidden>
+        La liste est vide. Ajoutez un article ci-dessus, ou composez la semaine :
+        les ingrédients viendront tout seuls.
+      </p>
+    </section>
+
+    <!-- ---------- LA SEMAINE ---------- -->
+    <section class="panel" id="ecran-semaine">
+      <div class="entete-ecran">
+        <div>
+          <h2 class="title">La semaine</h2>
+          <p class="sub">Posez un plat sur un repas : ses ingrédients rejoignent la liste.</p>
+        </div>
+        <div class="actions-ecran">
+          <button class="btn btn--ghost btn--tiny" id="semaine-precedente">←</button>
+          <button class="btn btn--ghost btn--tiny" id="semaine-aujourdhui">Cette semaine</button>
+          <button class="btn btn--ghost btn--tiny" id="semaine-suivante">→</button>
+        </div>
+      </div>
+      <div id="semaine-corps"></div>
+    </section>
+
+    <!-- ---------- LES RECETTES ---------- -->
+    <section class="panel" id="ecran-recettes">
+      <div class="entete-ecran">
+        <div>
+          <h2 class="title">Les recettes</h2>
+          <p class="sub" id="recettes-resume">—</p>
+        </div>
+        <div class="actions-ecran">
+          <button class="btn btn--ghost btn--tiny" id="recette-web">Depuis une adresse</button>
+          <button class="btn btn--tiny" id="recette-nouvelle">Nouvelle recette</button>
+        </div>
+      </div>
+
+      <div class="lib-search">
+        <input id="recettes-recherche" type="search" placeholder="Chercher une recette"
+               aria-label="Chercher une recette">
+      </div>
+
+      <div class="grille-recettes" id="recettes-corps"></div>
+      <div class="vide" id="recettes-vide" hidden>
+        <p style="margin:0 0 12px">Aucune recette pour l'instant. La première prend deux
+           minutes&nbsp;: un nom, et la liste de ce qu'il faut.</p>
+        <p style="margin:0">Ou commencez avec trente plats de tous les jours&nbsp;:
+           gratin, lasagnes, curry, papet vaudois. Ils deviendront les vôtres,
+           modifiables et supprimables.</p>
+        <p style="margin:14px 0 0">
+          <button class="btn btn--tiny" id="importer-depart">Ajouter les 30 recettes</button>
+        </p>
+      </div>
+
+      <!-- l'éditeur -->
+      <div class="editeur" id="recette-editeur" hidden>
+        <h3 class="title" id="recette-titre">Nouvelle recette</h3>
+        <div class="ligne-champs">
+          <label class="champ grand">
+            <span>Nom du plat</span>
+            <input id="r-nom" type="text" placeholder="Lasagnes de ma mère" maxlength="120">
+          </label>
+          <label class="champ">
+            <span>Pour combien</span>
+            <input id="r-couverts" type="number" min="1" max="20" value="4">
+          </label>
+          <label class="champ">
+            <span>Minutes</span>
+            <input id="r-minutes" type="number" min="0" max="600" value="0">
+          </label>
+          <label class="champ">
+            <span>Catégorie</span>
+            <select id="r-categorie">
+              <option value="plat">Plat</option>
+              <option value="entree">Entrée</option>
+              <option value="dessert">Dessert</option>
+              <option value="petit-dejeuner">Petit-déjeuner</option>
+              <option value="apero">Apéritif</option>
+            </select>
+          </label>
+        </div>
+
+        <h4 class="sous-titre">Les ingrédients</h4>
+        <p class="hint">Le rayon est deviné d'après le nom. Laissez la quantité vide
+           pour ce qui ne se compte pas — le sel, le poivre.</p>
+        <div id="r-ingredients"></div>
+        <button class="btn btn--ghost btn--tiny" id="r-ajouter-ligne">+ Un ingrédient</button>
+
+        <p class="hint" id="r-source" hidden></p>
+
+        <label class="champ" style="margin-top:16px">
+          <span>Notes, préparation</span>
+          <textarea id="r-notes" rows="4" placeholder="Facultatif : la façon de faire, un tour de main…"></textarea>
+        </label>
+
+        <div class="actions-editeur">
+          <button class="btn" id="r-enregistrer">Enregistrer</button>
+          <button class="btn btn--ghost" id="r-annuler">Annuler</button>
+          <button class="btn btn--ghost btn--danger" id="r-supprimer" hidden>Supprimer</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- LE FOYER ---------- -->
+    <section class="panel" id="ecran-foyer">
+      <div class="entete-ecran">
+        <div>
+          <h2 class="title">Le foyer</h2>
+          <p class="sub">Tout ce qui est ici appartient au foyer, pas à vous seul.</p>
+        </div>
+      </div>
+
+      <div class="carte-foyer">
+        <div class="ligne-champs">
+          <label class="champ grand">
+            <span>Nom du foyer</span>
+            <input id="f-nom" type="text" maxlength="80">
+          </label>
+          <label class="champ">
+            <span>Couverts d'habitude</span>
+            <input id="f-couverts" type="number" min="1" max="20">
+          </label>
+          <div class="champ" style="align-self:end">
+            <button class="btn btn--tiny" id="f-enregistrer">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sous-titre">Inviter quelqu'un</h3>
+      <p class="hint">Donnez ce code à la personne : elle le saisira ci-dessous et
+         partagera votre liste. Il évite les O et les 0 pour se dicter au téléphone.</p>
+      <div class="code-foyer">
+        <span class="code" id="f-code">————————</span>
+        <button class="btn btn--ghost btn--tiny" id="f-copier">Copier</button>
+        <button class="btn btn--ghost btn--tiny" id="f-nouveau-code">Changer le code</button>
+      </div>
+
+      <h3 class="sous-titre">Les membres</h3>
+      <ul class="membres" id="f-membres"></ul>
+
+      <h3 class="sous-titre">Rejoindre un autre foyer</h3>
+      <p class="hint">Attention : vous quitterez le vôtre. Ses recettes et sa liste
+         resteront chez ceux qui y sont encore.</p>
+      <form class="rejoindre" id="f-rejoindre-forme">
+        <input id="f-code-saisi" type="text" placeholder="ABCD2345" maxlength="9"
+               aria-label="Code du foyer à rejoindre" autocomplete="off">
+        <button class="btn btn--ghost" type="submit">Rejoindre</button>
+      </form>
+    </section>
+  </div>
+</div>
+
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Un compte NeedHelpApp ouvre toutes les applications.</p>
+
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment vous appelez-vous ?">
+    </div>
+    <div class="field" id="email-field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+    <p class="hint">Le mot de passe n'est jamais conservé en clair. Voir la
+       <a href="https://needhelpapp.com/confidentialite.php" target="_blank" rel="noopener">page de confidentialité</a>.</p>
+  </div>
+</div>
+
+<div id="feuille" aria-hidden="true"></div>
+
+<footer class="foot">
+  <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+  <a href="https://needhelpapp.com/conditions.php">Conditions</a> ·
+  <a href="https://needhelpapp.com/confidentialite.php">Confidentialité</a> ·
+  <a href="https://needhelpapp.com/contact.php">Nous écrire</a>
+</footer>
+
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/compte.js?v=2026-11-05"></script>
+<script src="assets/ingredients.js?v=2026-11-05"></script>
+<script src="assets/consolider.js?v=2026-11-05"></script>
+<script src="assets/recettes-depart.js?v=2026-11-05"></script>
+<script src="assets/familyshop.js?v=2026-11-05"></script>
+</body>
+</html>

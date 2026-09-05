@@ -1,0 +1,862 @@
+@charset "utf-8";
+
+/* =====================================================================
+   NeedHelpApp — feuille de style
+
+   Direction : la table de famille. Chêne usé, lin, encre indigo,
+   terre cuite. Une lumière de fenêtre, des objets réels, aucune
+   illustration abstraite — cela vieillira mieux que les dégradés
+   à la mode, et cela dit ce que le portail est : des outils pour
+   la vie de tous les jours, pas une démonstration de technique.
+
+   Le portail est la vitrine : c'est ici que va l'ambition. Les
+   applications, elles, restent sobres — on ne fait pas défiler des
+   choses sous le nez d'un enfant qui écrit une dictée.
+   ===================================================================== */
+
+:root{
+  /* --- l'encre et le papier --- */
+  --encre:#1C1A24;
+  --encre-doux:#5C5668;
+  --encre-tenu:#8C8798;
+  --papier:#F7F5F0;          /* lin, plus chaud que l'ancien lilas */
+  --papier-creux:#EFEBE3;
+  --panneau:#FFFEFC;
+  --trait:#E2DCD1;
+  --trait-fort:#CFC7B8;
+
+  /* --- les accents --- */
+  --indigo:#2E2A5C;
+  --indigo-fonce:#22203F;
+  --indigo-clair:#E8E5F2;
+  --terre:#B4552A;           /* terre cuite : l'accent chaud */
+  --terre-clair:#F7EBE4;
+  --rouge:#8E2A2A;
+  --rouge-clair:#FBEEEE;
+  --vert:#1B6547;
+  --vert-clair:#EAF3EE;
+
+  /* --- les domaines --- */
+  --d-ecole:#3B2F7F;
+  --d-sport:#1B6547;
+  --d-artisan:#A0521A;
+  --d-asso:#7A2E4E;
+  --d-admin:#1F5570;
+  --d-quartier:#6B6215;
+  --d-familyshop:#1B6547;
+
+  /* --- les caractères --- */
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+
+  /* --- l'espace ---
+     Une échelle, pas des valeurs au hasard : c'est ce qui donne
+     à une page l'impression d'avoir été composée. */
+  --e1:.375rem; --e2:.75rem; --e3:1.25rem; --e4:2rem;
+  --e5:3.25rem; --e6:5rem; --e7:8rem;
+  --large:clamp(1.25rem,4vw,2.5rem);
+  --enveloppe:76rem;
+
+  /* --- le mouvement ---
+     Une seule durée et une seule courbe pour tout le site. Le
+     mouvement sert à expliquer d'où vient une chose, jamais à
+     se faire remarquer. */
+  --duree:.34s;
+  --courbe:cubic-bezier(.22,.61,.36,1);
+
+  --ombre-douce:0 1px 2px rgba(28,26,36,.04), 0 8px 24px rgba(28,26,36,.06);
+  --ombre-portee:0 2px 4px rgba(28,26,36,.05), 0 18px 48px rgba(28,26,36,.10);
+  --rayon:.875rem;
+  --rayon-grand:1.25rem;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+}
+
+body{
+  margin:0;background:var(--papier);color:var(--encre);
+  font-family:var(--sans);font-size:1.0625rem;line-height:1.65;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  font-feature-settings:"kern" 1;
+}
+
+/* ---------------------------------------------------------------
+   Typographie
+
+   Le sérif porte les titres, la linéale le texte courant. Les
+   titres sont serrés (letter-spacing négatif) et les paragraphes
+   bornés à 62 caractères : au-delà, l'œil perd la ligne.
+   --------------------------------------------------------------- */
+h1,h2,h3,h4{
+  font-family:var(--serif);font-weight:400;margin:0;
+  letter-spacing:-.022em;line-height:1.12;text-wrap:balance;
+}
+h1{font-size:clamp(2.25rem,6vw,4.25rem)}
+h2{font-size:clamp(1.7rem,3.6vw,2.75rem)}
+h3{font-size:clamp(1.2rem,2vw,1.5rem)}
+h1 em,h2 em,h3 em{font-style:italic;color:var(--terre)}
+
+p{margin:0 0 var(--e3);max-width:62ch;text-wrap:pretty}
+a{color:var(--indigo);text-decoration-thickness:1px;text-underline-offset:.18em}
+a:hover{color:var(--terre)}
+
+::selection{background:var(--indigo);color:#fff}
+
+:focus-visible{
+  outline:2px solid var(--indigo);outline-offset:3px;border-radius:.25rem;
+}
+
+.saut-contenu{
+  position:absolute;left:-9999px;top:0;background:var(--encre);color:#fff;
+  padding:.75rem 1.25rem;z-index:200;border-radius:0 0 var(--rayon) 0;
+}
+.saut-contenu:focus{left:0}
+
+/* ---------------------------------------------------------------
+   La grille
+   --------------------------------------------------------------- */
+.enveloppe{max-width:var(--enveloppe);margin:0 auto;padding-inline:var(--large)}
+.enveloppe.etroit{max-width:44rem}
+.section{padding-block:var(--e6)}
+.section + .section{padding-top:0}
+.separateur{border:0;border-top:1px solid var(--trait);margin:0}
+
+/* ---------------------------------------------------------------
+   L'en-tête
+   --------------------------------------------------------------- */
+.entete{
+  position:sticky;top:0;z-index:80;
+  background:rgba(247,245,240,.82);backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid transparent;transition:border-color var(--duree) var(--courbe);
+}
+.entete.pose{border-bottom-color:var(--trait)}
+.entete .enveloppe{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--e3);
+  min-height:4.5rem;
+}
+.marque{
+  font-family:var(--serif);font-size:1.3rem;text-decoration:none;color:var(--encre);
+  white-space:nowrap;letter-spacing:-.02em;
+}
+.marque:hover{color:var(--encre)}
+.marque em,.marque .aide{
+  /* La marque écrit « Need<span class="aide">Help</span>App ». La classe
+     .aide sert ailleurs à un texte d'explication gris : ici elle doit
+     porter l'accent, pas l'effacer. */
+  font-style:italic;color:var(--terre);font-size:inherit;margin:0;
+}
+
+.navigation{display:flex;align-items:center;gap:var(--e3);flex-wrap:wrap}
+.navigation a{
+  color:var(--encre-doux);text-decoration:none;font-size:.9375rem;
+  position:relative;padding-block:.35rem;
+}
+.navigation a::after{
+  content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;
+  background:var(--terre);transition:right var(--duree) var(--courbe);
+}
+.navigation a:hover{color:var(--encre)}
+.navigation a:hover::after,.navigation a[aria-current="page"]::after{right:0}
+.navigation a[aria-current="page"]{color:var(--encre)}
+.navigation .connexion{
+  background:var(--encre);color:var(--panneau);padding:.6rem 1.1rem;
+  border-radius:100px;font-size:.9375rem;
+}
+.navigation .connexion::after{display:none}
+.navigation .connexion:hover{background:var(--indigo);color:#fff}
+
+/* ---------------------------------------------------------------
+   Les boutons
+   --------------------------------------------------------------- */
+.bouton{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.85rem 1.6rem;min-height:48px;
+  background:var(--encre);color:var(--panneau);
+  border:1px solid var(--encre);border-radius:100px;
+  font:inherit;font-size:1rem;font-weight:500;text-decoration:none;cursor:pointer;
+  transition:background var(--duree) var(--courbe),
+             border-color var(--duree) var(--courbe),
+             transform .12s var(--courbe);
+}
+.bouton:hover{background:var(--indigo);border-color:var(--indigo);color:#fff}
+.bouton:active{transform:translateY(1px)}
+.bouton.fantome{background:transparent;color:var(--encre);border-color:var(--trait-fort)}
+.bouton.fantome:hover{background:var(--panneau);border-color:var(--encre);color:var(--encre)}
+.bouton.danger{background:var(--rouge);border-color:var(--rouge)}
+.bouton.danger:hover{background:#7A2222;border-color:#7A2222}
+.bouton.petit{padding:.5rem .95rem;min-height:auto;font-size:.875rem}
+
+/* la flèche qui avance au survol : le seul geste décoratif du site */
+.bouton .fleche{transition:transform var(--duree) var(--courbe)}
+.bouton:hover .fleche{transform:translateX(.25rem)}
+
+/* ---------------------------------------------------------------
+   L'accueil — la bannière
+
+   Le texte est posé sur la photographie, à gauche, là où l'image
+   a été composée vide. Un voile en dégradé garantit le contraste
+   quel que soit le rendu de l'image.
+   --------------------------------------------------------------- */
+.banniere{
+  position:relative;isolation:isolate;overflow:hidden;
+  background:var(--papier-creux);
+  min-height:min(78vh,44rem);display:flex;align-items:flex-end;
+}
+.banniere-image{
+  position:absolute;inset:0;z-index:-2;
+  background-size:cover;background-position:center right;
+}
+.banniere-image img{width:100%;height:100%;object-fit:cover;object-position:center right;display:block}
+.banniere::after{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(100deg,
+    rgba(247,245,240,.97) 0%, rgba(247,245,240,.92) 28%,
+    rgba(247,245,240,.55) 52%, rgba(247,245,240,.10) 78%, transparent 100%);
+}
+.banniere .enveloppe{padding-block:var(--e6) var(--e5);width:100%}
+.banniere-texte{max-width:34rem}
+.banniere h1{margin-bottom:var(--e3)}
+.banniere .chapeau{
+  font-size:1.1875rem;color:var(--encre-doux);max-width:38ch;margin-bottom:var(--e4);
+}
+.banniere .actions{display:flex;gap:.75rem;flex-wrap:wrap}
+
+.sur-titre{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-family:var(--sans);font-size:.8125rem;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--terre);
+  margin-bottom:var(--e3);
+}
+.sur-titre::before{content:"";width:2rem;height:1px;background:var(--terre)}
+
+@media (max-width:860px){
+  .banniere{min-height:auto;align-items:stretch}
+  .banniere::after{
+    background:linear-gradient(180deg,
+      rgba(247,245,240,.96) 0%, rgba(247,245,240,.90) 45%,
+      rgba(247,245,240,.55) 100%);
+  }
+  .banniere .enveloppe{padding-block:var(--e5)}
+  .banniere-image img{object-position:center}
+}
+
+/* ---------------------------------------------------------------
+   L'apparition au défilement
+
+   Une translation de 14 px et une opacité, rien de plus. Une
+   animation qui se remarque est une animation ratée — et elle
+   est désactivée pour qui a demandé moins de mouvement.
+   --------------------------------------------------------------- */
+.apparait{
+  opacity:0;transform:translateY(14px);
+  transition:opacity .7s var(--courbe), transform .7s var(--courbe);
+}
+.apparait.vu{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){
+  .apparait{opacity:1;transform:none}
+}
+
+/* ---------------------------------------------------------------
+   Le catalogue des applications
+
+   Chaque application porte sa couleur, tirée de son domaine. Une
+   carte n'est pas une boîte décorative : c'est une porte, et le
+   survol doit le faire sentir sans agiter la page.
+   --------------------------------------------------------------- */
+.tuiles{
+  list-style:none;padding:0;margin:0;display:grid;gap:1px;
+  background:var(--trait);border:1px solid var(--trait);
+  border-radius:var(--rayon-grand);overflow:hidden;
+  grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));
+}
+.tuile{
+  position:relative;background:var(--panneau);padding:var(--e4);
+  display:flex;flex-direction:column;gap:.75rem;
+  transition:background var(--duree) var(--courbe);
+}
+.tuile:hover{background:var(--papier-creux)}
+.tuile::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--teinte,var(--indigo));
+  transform:scaleY(0);transform-origin:top;
+  transition:transform var(--duree) var(--courbe);
+}
+.tuile:hover::before,.tuile:focus-within::before{transform:scaleY(1)}
+.tuile h3{font-size:1.375rem}
+.tuile h3 em{font-style:italic;color:var(--teinte,var(--terre))}
+.tuile .chapeau{color:var(--encre-doux);font-size:.9375rem;margin:0}
+.tuile ul{list-style:none;padding:0;margin:.5rem 0 0;font-size:.9375rem}
+.tuile ul li{
+  position:relative;padding-left:1.15rem;margin-bottom:.35rem;color:var(--encre-doux);
+}
+.tuile ul li::before{
+  content:"";position:absolute;left:0;top:.62em;width:.4rem;height:1px;
+  background:var(--teinte,var(--indigo));
+}
+.tuile .ouvrir{margin-top:auto;padding-top:var(--e3)}
+.tuile .ouvrir a{
+  text-decoration:none;font-weight:500;color:var(--encre);
+  display:inline-flex;align-items:center;gap:.4rem;
+}
+.tuile .ouvrir a .fleche{transition:transform var(--duree) var(--courbe)}
+.tuile:hover .ouvrir a .fleche{transform:translateX(.3rem)}
+/* toute la tuile est cliquable, sans piéger le clavier */
+.tuile .ouvrir a::after{content:"";position:absolute;inset:0}
+
+.etat{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--encre-tenu);font-weight:600;
+}
+.etat::before{
+  content:"";width:.45rem;height:.45rem;border-radius:50%;background:var(--encre-tenu);
+}
+.etat.en_ligne{color:var(--vert)}
+.etat.en_ligne::before{background:var(--vert)}
+.etat.construction::before{background:var(--terre)}
+
+/* ---------------------------------------------------------------
+   Les colonnes explicatives
+   --------------------------------------------------------------- */
+.colonnes{
+  display:grid;gap:var(--e4);margin-top:var(--e4);
+  grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));
+}
+.colonnes h3{
+  font-family:var(--sans);font-size:1.0625rem;font-weight:600;
+  letter-spacing:0;margin-bottom:.5rem;
+}
+.colonnes .numero{
+  display:block;font-family:var(--serif);font-size:2.5rem;line-height:1;
+  color:var(--trait-fort);margin-bottom:.75rem;
+}
+.colonnes p{font-size:.9375rem;color:var(--encre-doux);margin:0}
+
+/* ---------------------------------------------------------------
+   Panneaux, cartes, listes
+   --------------------------------------------------------------- */
+.panneau{
+  background:var(--panneau);border:1px solid var(--trait);
+  border-radius:var(--rayon-grand);padding:var(--e4);
+}
+.duo{display:grid;gap:var(--e4);grid-template-columns:repeat(auto-fit,minmax(17rem,1fr))}
+.rangee{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+.grille{display:grid;gap:var(--e3);grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+
+dl .paire{
+  display:flex;justify-content:space-between;gap:var(--e3);
+  padding:.85rem 0;border-bottom:1px solid var(--trait);
+}
+dl .paire:last-child{border-bottom:0}
+dl dt{color:var(--encre-doux);font-size:.9375rem}
+dl dd{margin:0;font-weight:500;text-align:right}
+
+.pastille{
+  display:inline-block;padding:.2rem .65rem;border-radius:100px;
+  background:var(--indigo-clair);color:var(--indigo);
+  font-size:.8125rem;font-weight:600;letter-spacing:.02em;
+}
+.pastille.libre{background:var(--papier-creux);color:var(--encre-doux)}
+
+.mono{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.8125rem;color:var(--encre-doux);
+}
+/* « discret » qualifie un texte effacé. Sur un lien il garde son
+   soulignement au survol ; sur un bouton, la règle .bouton.discret
+   plus bas reprend la main, sans quoi le texte sortait gris sur
+   fond sombre. */
+.discret{color:var(--encre-doux);font-size:.9375rem}
+a.discret{text-decoration:underline;text-underline-offset:.18em}
+a.discret:hover{color:var(--terre)}
+.vide{
+  color:var(--encre-doux);background:var(--panneau);
+  border:1px dashed var(--trait-fort);border-radius:var(--rayon);
+  padding:var(--e3) var(--e4);margin:0;
+}
+
+/* ---------------------------------------------------------------
+   Champs et formulaires
+   --------------------------------------------------------------- */
+.champ{display:flex;flex-direction:column;gap:.4rem;margin-bottom:var(--e3)}
+.champ label,.champ > span{font-size:.875rem;font-weight:500;color:var(--encre-doux)}
+input[type=text],input[type=email],input[type=password],input[type=search],
+input[type=url],input[type=number],select,textarea{
+  width:100%;padding:.8rem 1rem;min-height:48px;
+  background:var(--panneau);border:1px solid var(--trait-fort);
+  border-radius:.6rem;font:inherit;color:var(--encre);
+  transition:border-color var(--duree) var(--courbe), box-shadow var(--duree) var(--courbe);
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px var(--indigo-clair);
+}
+input::placeholder,textarea::placeholder{color:var(--encre-tenu)}
+.aide-champ{font-size:.8125rem;color:var(--encre-doux);margin:.35rem 0 0}
+/* .bascule est le déclencheur du menu sur petit écran, et rien d'autre.
+   Je lui avais donné par erreur le style d'une ligne à cocher : le bouton
+   « Menu » s'affichait alors en plein milieu de l'en-tête, sur grand écran
+   où il n'a rien à faire. */
+.bascule{
+  display:none;                      /* invisible tant qu'on a la place */
+  align-items:center;gap:.5rem;
+  background:transparent;border:1px solid var(--trait-fort);border-radius:100px;
+  padding:.5rem 1rem;min-height:42px;
+  font:inherit;font-size:.9375rem;color:var(--encre);cursor:pointer;
+}
+.bascule:hover{border-color:var(--encre);background:var(--panneau)}
+
+/* une ligne à cocher : le libellé à côté de la case, pas dessous */
+.coche{display:flex;align-items:flex-start;gap:.65rem;margin-bottom:var(--e3)}
+.coche input{width:auto;min-height:auto;margin-top:.3rem;flex:none}
+
+/* ---------------------------------------------------------------
+   Avis
+   --------------------------------------------------------------- */
+.avis,.avertir{
+  border:1px solid var(--trait);border-left:3px solid var(--encre-tenu);
+  background:var(--panneau);border-radius:.5rem;
+  padding:var(--e3);margin-bottom:var(--e3);
+}
+.avis p:last-child,.avertir p:last-child{margin-bottom:0}
+.avis.succes{border-left-color:var(--vert);background:var(--vert-clair)}
+.avis.erreur,.avertir{border-left-color:var(--rouge);background:var(--rouge-clair)}
+.avis.info{border-left-color:var(--indigo);background:var(--indigo-clair)}
+
+/* ---------------------------------------------------------------
+   Documents : conditions, confidentialité, questions
+   --------------------------------------------------------------- */
+/* .doc est portée par le <section> lui-même, pas par un bloc intérieur.
+   Lui donner une largeur de lecture comprimait la page entière au lieu
+   du seul texte : c'est .lecture, à l'intérieur, qui borne les lignes. */
+.doc{padding-block:var(--e5) var(--e6)}
+.doc h1,.auth h1{margin-bottom:var(--e3)}
+.doc > .enveloppe > p:first-of-type,
+.auth > .enveloppe > p:first-of-type{
+  font-size:1.125rem;color:var(--encre-doux);margin-bottom:var(--e4);
+}
+.doc h2{margin:var(--e5) 0 var(--e2);font-size:clamp(1.4rem,2.6vw,1.9rem)}
+.doc h3{margin:var(--e4) 0 .5rem;font-family:var(--sans);font-size:1.0625rem;font-weight:600}
+.doc p,.doc li{color:var(--encre-doux)}
+.doc li{margin-bottom:.4rem}
+.a-completer{
+  background:#FFF6D8;border-bottom:1px solid #D9A441;
+  padding:0 .25rem;color:#6B5310;font-weight:500;
+}
+.sommaire{
+  background:var(--panneau);border:1px solid var(--trait);
+  border-radius:var(--rayon);padding:var(--e3) var(--e4);margin-bottom:var(--e4);
+}
+.sommaire ul{margin:0;padding-left:1.1rem}
+.date-maj{font-size:.875rem;color:var(--encre-tenu)}
+
+/* Les questions dépliables. Le repère « + » doit rester sur sa ligne
+   quand la question passe à deux lignes, et la zone de clic couvrir
+   toute la ligne — pas seulement le texte. */
+.question{
+  border-bottom:1px solid var(--trait);padding:0;
+}
+.question summary{padding:var(--e3) 0}
+.question summary:hover{color:var(--terre)}
+.question[open] summary{padding-bottom:.5rem}
+.question > *:not(summary){padding-bottom:var(--e3)}
+.question summary{
+  cursor:pointer;font-family:var(--serif);font-size:1.2rem;list-style:none;
+  display:flex;justify-content:space-between;gap:var(--e3);align-items:baseline;
+}
+.question summary::-webkit-details-marker{display:none}
+.question summary::after{content:"+";color:var(--terre);font-size:1.4rem;line-height:1}
+.question[open] summary::after{content:"−"}
+.question p{margin-top:.75rem;color:var(--encre-doux)}
+
+/* ---------------------------------------------------------------
+   Le pied
+   --------------------------------------------------------------- */
+.pied{
+  border-top:1px solid var(--trait);background:var(--papier-creux);
+  padding-block:var(--e5) var(--e4);margin-top:var(--e6);
+}
+.pied .liens{
+  list-style:none;padding:0;margin:0 0 var(--e3);
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:var(--e2) var(--e4);
+}
+.pied a{color:var(--encre-doux);text-decoration:none;font-size:.9375rem}
+.pied a:hover{color:var(--terre);text-decoration:underline}
+.pied .marque{font-size:1.1rem;display:block;text-align:center;margin-bottom:var(--e2)}
+
+/* La mention d'hébergement ferme la page : centrée, plus petite, et
+   sans la largeur de lecture des paragraphes courants — sinon elle se
+   coupait en deux lignes au milieu d'une phrase. */
+.pied p{
+  max-width:none;text-align:center;margin:0;
+  font-size:.8125rem;color:var(--encre-tenu);
+}
+.pied .domaines{font-size:.8125rem;color:var(--encre-tenu);margin:0}
+
+/* ---------------------------------------------------------------
+   Compteurs et jauges
+   --------------------------------------------------------------- */
+.compteur{display:flex;gap:var(--e4);flex-wrap:wrap;margin-top:var(--e3)}
+.compteur > div{min-width:8rem}
+.compteur b{
+  display:block;font-family:var(--serif);font-size:2.25rem;line-height:1.05;
+  color:var(--indigo);font-weight:400;
+}
+.compteur span{font-size:.875rem;color:var(--encre-doux)}
+.jauge{height:.4rem;background:var(--papier-creux);border-radius:100px;overflow:hidden}
+.jauge > div{height:100%;background:var(--indigo);border-radius:100px}
+
+/* ---------------------------------------------------------------
+   L'administration
+   --------------------------------------------------------------- */
+.admin-onglets{
+  background:var(--panneau);border-bottom:1px solid var(--trait);
+  position:sticky;top:4.5rem;z-index:40;
+}
+.admin-onglets .enveloppe{
+  display:flex;gap:.5rem;padding-top:.6rem;
+  /* La barre défile quand elle déborde, mais son ascenseur reste
+     invisible : sur un écran large où tout tient, une glissière grise
+     apparaissait à droite sans rien avoir à faire défiler. */
+  overflow-x:auto;
+  scrollbar-width:none;              /* Firefox */
+  -ms-overflow-style:none;           /* anciens Edge */
+}
+.admin-onglets .enveloppe::-webkit-scrollbar{display:none}
+.admin-onglets a{
+  flex:0 0 auto;padding:.7rem 1.05rem;margin-bottom:-1px;
+  color:var(--encre-doux);text-decoration:none;font-size:.9375rem;white-space:nowrap;
+  border-bottom:2px solid transparent;border-radius:.4rem .4rem 0 0;
+}
+.admin-onglets a:hover{color:var(--encre);background:var(--papier-creux)}
+.admin-onglets a[aria-current="page"]{color:var(--terre);border-bottom-color:var(--terre);font-weight:600}
+
+.admin-chiffres{
+  list-style:none;padding:0;margin:var(--e4) 0 0;display:grid;gap:.75rem;
+  grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));
+}
+.admin-chiffres li{
+  background:var(--panneau);border:1px solid var(--trait);
+  border-radius:var(--rayon);padding:1.1rem 1.2rem;
+}
+.admin-chiffres b{
+  display:block;font-family:var(--serif);font-size:2rem;line-height:1.05;
+  font-weight:400;color:var(--indigo);
+}
+.admin-chiffres span{display:block;margin-top:.35rem;font-size:.85rem;color:var(--encre-doux)}
+
+.admin-filtres{display:flex;flex-wrap:wrap;gap:.6rem;margin:var(--e4) 0 var(--e3);align-items:center}
+.admin-filtres input{flex:1 1 16rem;min-width:0}
+.admin-filtres select{flex:0 1 15rem}
+.admin-filtres .bouton{flex:0 0 auto}
+
+.admin-tableau-cadre{
+  overflow-x:auto;border:1px solid var(--trait);
+  border-radius:var(--rayon);background:var(--panneau);
+}
+.admin-tableau{width:100%;border-collapse:collapse;font-size:.92rem}
+.admin-tableau th{
+  text-align:left;font-weight:600;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--encre-doux);padding:.85rem 1rem;border-bottom:1px solid var(--trait);
+  white-space:nowrap;background:var(--papier-creux);
+}
+.admin-tableau td{padding:.85rem 1rem;border-bottom:1px solid var(--trait);vertical-align:top;line-height:1.45}
+.admin-tableau tr:last-child td{border-bottom:0}
+.admin-tableau tbody tr:hover td{background:var(--papier-creux)}
+.admin-tableau tr.supprime td{opacity:.5}
+.admin-tableau select{padding:.45rem .6rem;min-height:auto;font-size:.88rem;width:auto}
+.admin-tableau .mono{word-break:break-all}
+.admin-alerte{color:var(--rouge);font-size:.8rem;font-weight:600}
+
+.admin-message{margin:var(--e3) 0;padding:.8rem 1.1rem;border-radius:.6rem;font-size:.93rem}
+.admin-message.ok{background:var(--vert-clair);color:var(--vert)}
+.admin-message.err{background:var(--rouge-clair);color:var(--rouge)}
+.admin-pages{display:flex;gap:var(--e3);align-items:center;margin-top:var(--e3);font-size:.92rem}
+.admin-pages span{color:var(--encre-doux)}
+
+/* ---------------------------------------------------------------
+   Le partage de l'abonnement
+   --------------------------------------------------------------- */
+.places-compte{margin:var(--e3) 0 .75rem;color:var(--encre-doux)}
+.membres-abo{list-style:none;padding:0;margin:0 0 var(--e3)}
+.membres-abo li{
+  display:flex;align-items:center;gap:.85rem;background:var(--panneau);
+  border:1px solid var(--trait);border-radius:var(--rayon);
+  padding:.8rem 1rem;margin-bottom:.5rem;
+}
+.pastille-abo{
+  flex:none;width:2.1rem;height:2.1rem;border-radius:50%;background:var(--indigo);
+  color:#fff;display:flex;align-items:center;justify-content:center;font-size:.95rem;
+}
+.membres-abo .qui{flex:1;min-width:0}
+.membres-abo .qui b{display:block;font-weight:600}
+.membres-abo .adresse{font-size:.85rem;color:var(--encre-doux);word-break:break-all}
+.ajout-place{display:flex;gap:.5rem;flex-wrap:wrap}
+.ajout-place input{flex:1 1 16rem;min-width:0}
+
+/* ---------------------------------------------------------------
+   Petits écrans
+   --------------------------------------------------------------- */
+@media (max-width:720px){
+  :root{--e6:3.5rem;--e5:2.5rem}
+  .entete .enveloppe{min-height:3.75rem}
+
+  /* Le bouton paraît, et la navigation se replie derrière lui. */
+  .bascule{display:inline-flex}
+  .navigation{
+    display:none;position:absolute;left:0;right:0;top:100%;
+    flex-direction:column;align-items:stretch;gap:0;
+    background:var(--panneau);border-block:1px solid var(--trait);
+    padding:var(--e2) var(--large) var(--e3);
+    box-shadow:var(--ombre-portee);
+  }
+  .navigation.ouverte{display:flex}
+  .navigation a{padding:.85rem 0;font-size:1rem;border-bottom:1px solid var(--trait)}
+  .navigation a::after{display:none}
+  .navigation a:last-child{border-bottom:0}
+  .navigation .connexion{
+    margin-top:var(--e2);text-align:center;border-radius:100px;
+  }
+  .entete .enveloppe{position:relative}
+  .admin-onglets{top:3.75rem}
+  .admin-tableau{font-size:.86rem}
+  .admin-tableau th,.admin-tableau td{padding:.7rem}
+  .tuile{padding:var(--e3)}
+}
+
+/* ---------------------------------------------------------------
+   Les classes héritées
+
+   Elles sont employées par les pages existantes : les laisser sans
+   style aurait cassé l'inscription, l'abonnement et les documents
+   sans que rien ne le signale. Elles sont réécrites dans le nouveau
+   langage plutôt que recopiées de l'ancien.
+   --------------------------------------------------------------- */
+
+/* la colonne étroite d'un formulaire d'authentification */
+/* Même chose pour .auth : c'est un <section>. La largeur vient de
+   .enveloppe.etroit, à l'intérieur. La page de contact sortait comprimée
+   à vingt-six rem, texte et formulaire ensemble. */
+.auth{padding-block:var(--e5) var(--e6)}
+.auth .panneau .champ:last-of-type,
+.auth .panneau label:last-of-type{margin-bottom:var(--e4)}
+
+/* une explication sous un champ ou dans un en-tête */
+.aide{font-size:.875rem;color:var(--encre-doux);margin:.4rem 0 0}
+
+/* la case à cocher et son libellé */
+.case{display:flex;align-items:flex-start;gap:.65rem;margin-bottom:var(--e3)}
+.case input{width:auto;min-height:auto;margin-top:.32rem;flex:none}
+.case span,.case label{font-size:.9375rem;color:var(--encre-doux)}
+
+/* le lien discret sous un bouton principal */
+.sous-lien{
+  display:block;text-align:center;margin-top:var(--e3);
+  font-size:.9375rem;color:var(--encre-doux);
+}
+
+/* un repli dépliable, pour un détail qu'on ne lit pas toujours */
+.details{border-top:1px solid var(--trait);padding-top:var(--e3);margin-top:var(--e3)}
+.details summary{cursor:pointer;font-weight:500;color:var(--encre-doux);font-size:.9375rem}
+.details summary:hover{color:var(--encre)}
+.details > *:not(summary){margin-top:.75rem}
+
+/* la colonne de lecture d'un texte long */
+.lecture{max-width:44rem}
+.lecture p,.lecture li{color:var(--encre-doux)}
+
+/* une largeur pleine dans une grille en deux colonnes */
+.large{grid-column:1 / -1}
+
+/* le bloc de recherche du catalogue */
+.recherche .champ{margin-bottom:.5rem}
+
+/* dans l'administration, le sélecteur de rôle et le bouton de retrait
+   n'ont pas de style propre : ils héritent de select et de .bouton */
+
+/* ---------------------------------------------------------------
+   Les formulaires écrits sans classe
+
+   Sept pages emploient un <label> nu qui enveloppe son <span> et son
+   champ. C'est la forme la plus naturelle à écrire, et il serait
+   absurde d'aller ajouter une classe sur dix-sept balises alors que
+   le sélecteur suffit. On les met en forme comme un .champ.
+   --------------------------------------------------------------- */
+form label{display:block;margin-bottom:var(--e3)}
+form label > span{
+  display:block;margin-bottom:.4rem;
+  font-size:.875rem;font-weight:500;color:var(--encre-doux);
+}
+form label > input,form label > select,form label > textarea{margin:0}
+
+/* une case à cocher garde son libellé sur la même ligne */
+form label:has(> input[type=checkbox]),
+form label:has(> input[type=radio]){
+  display:flex;align-items:flex-start;gap:.65rem;
+}
+form label:has(> input[type=checkbox]) > span,
+form label:has(> input[type=radio]) > span{margin:0;font-weight:400;color:var(--encre)}
+form label > input[type=checkbox],form label > input[type=radio]{
+  width:auto;min-height:auto;margin-top:.32rem;flex:none;
+}
+
+form textarea{min-height:7rem;resize:vertical}
+form .bouton{margin-top:.5rem}
+
+/* le message de réponse d'un formulaire : caché tant qu'il est vide */
+form .avis:empty{display:none}
+
+/* ---------------------------------------------------------------
+   Les tableaux écrits sans classe
+
+   Le profil liste les appareils connectés, les documents ont des
+   tableaux de données. Sans style, ils sortaient collés, sans
+   séparation ni respiration.
+   --------------------------------------------------------------- */
+table{width:100%;border-collapse:collapse;font-size:.9375rem}
+table th{
+  text-align:left;font-weight:600;font-size:.75rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--encre-doux);
+  padding:.75rem .9rem;border-bottom:1px solid var(--trait);white-space:nowrap;
+}
+table td{
+  padding:.75rem .9rem;border-bottom:1px solid var(--trait);
+  vertical-align:top;line-height:1.5;
+}
+table tr:last-child td{border-bottom:0}
+table td:last-child,table th:last-child{text-align:right}
+
+/* ---------------------------------------------------------------
+   Les listes de définitions
+
+   .paire est un <div> dans un <dl> : le passage à la ligne doit se
+   faire sur petit écran, sinon une longue valeur écrase son libellé.
+   --------------------------------------------------------------- */
+@media (max-width:520px){
+  dl .paire{flex-direction:column;gap:.15rem}
+  dl dd{text-align:left}
+  table th,table td{padding:.6rem .5rem}
+  table td:last-child,table th:last-child{text-align:left}
+}
+
+/* ---------------------------------------------------------------
+   Une tuile seule dans une grille
+
+   Le profil affiche ses applications avec .tuiles / .tuile. Quand il
+   n'y en a qu'une, la grille l'étirait sur toute la largeur : une
+   carte de dix centimètres de haut pour trois lignes de texte.
+   --------------------------------------------------------------- */
+.tuiles:has(> .tuile:only-child){grid-template-columns:minmax(0,26rem)}
+
+/* Dans le profil, les tuiles ne sont pas des portes : elles listent
+   ce à quoi on a accès. Le trait de couleur au survol n'a alors pas
+   de sens, puisqu'il n'y a rien à ouvrir. */
+.tuiles .tuile:not(:has(a))::before{display:none}
+.tuiles .tuile:not(:has(a)):hover{background:var(--panneau)}
+
+/* ---------------------------------------------------------------
+   Les combinaisons de classes
+
+   Certaines pages écrivent « bouton discret » ou « bouton large ».
+   Prises séparément, ces classes se contredisent : .discret met le
+   texte en gris, ce qui donnait du gris sur fond sombre — illisible.
+   On tranche ici plutôt que d'aller réécrire les pages.
+   --------------------------------------------------------------- */
+
+/* un bouton effacé : c'est une action secondaire, pas un texte gris */
+.bouton.discret{
+  background:transparent;color:var(--encre-doux);border-color:var(--trait-fort);
+  font-size:.9375rem;font-weight:400;
+}
+.bouton.discret:hover{background:var(--panneau);color:var(--encre);border-color:var(--encre-doux)}
+
+/* un bouton pleine largeur : « large » sert de largeur de grille
+   ailleurs, mais sur un bouton il veut dire « prend toute la place » */
+.bouton.large{width:100%;grid-column:auto}
+.bouton.large.danger{background:var(--rouge);border-color:var(--rouge);color:#fff}
+
+/* un lien qui doit ressembler à du texte, pas à un bouton */
+.linkish{
+  background:none;border:0;padding:0;font:inherit;color:var(--indigo);
+  text-decoration:underline;text-underline-offset:.18em;cursor:pointer;
+}
+.linkish:hover{color:var(--terre)}
+
+
+/* ---------------------------------------------------------------
+   Les tableaux dans un document
+
+   La confidentialité en compte deux : les données collectées et les
+   cookies. Sans cadre, ils se confondaient avec le texte courant.
+   --------------------------------------------------------------- */
+.doc table{
+  background:var(--panneau);border:1px solid var(--trait);
+  border-radius:var(--rayon);overflow:hidden;
+  margin:var(--e3) 0 var(--e4);
+}
+.doc table th{background:var(--papier-creux)}
+.doc table td:last-child,.doc table th:last-child{text-align:left}
+.doc table td{color:var(--encre-doux)}
+
+/* Le sommaire d'un document long : une colonne, pas un paragraphe. */
+.sommaire ul{list-style:none;padding:0;margin:0}
+.sommaire li{margin-bottom:.35rem}
+.sommaire a{
+  color:var(--encre-doux);text-decoration:none;
+  display:inline-flex;align-items:baseline;gap:.5rem;
+}
+.sommaire a::before{content:"—";color:var(--trait-fort)}
+.sommaire a:hover{color:var(--terre)}
+
+/* Les listes d'un document respirent : un texte juridique se lit mal
+   quand les points se touchent. */
+.doc ul,.doc ol{padding-left:1.35rem;margin-bottom:var(--e3)}
+.doc ol{list-style:decimal}
+.doc li{margin-bottom:.5rem;max-width:62ch}
+
+/* La date de mise à jour, en tête d'un document. */
+.date-maj{
+  display:block;font-size:.8125rem;color:var(--encre-tenu);
+  margin-bottom:var(--e4);
+}
+
+/* ---------------------------------------------------------------
+   Les messages reçus
+
+   Une liste de messages n'est pas un tableau : le texte y est long
+   et de longueur variable. Une carte par message se lit mieux.
+   --------------------------------------------------------------- */
+.messages-recus{list-style:none;padding:0;margin:0}
+.message{
+  background:var(--panneau);border:1px solid var(--trait);
+  border-left:3px solid var(--terre);border-radius:var(--rayon);
+  padding:var(--e3) var(--e4);margin-bottom:.75rem;
+}
+.message.traite{border-left-color:var(--trait-fort);opacity:.7}
+.message-entete{
+  display:flex;justify-content:space-between;gap:var(--e3);
+  flex-wrap:wrap;align-items:baseline;margin-bottom:.75rem;
+}
+.message-entete b{display:block}
+.message-meta{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+.message-corps{
+  white-space:pre-line;color:var(--encre);margin:0 0 var(--e3);
+  max-width:70ch;line-height:1.6;
+}
+.message-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+
+/* Le formulaire de réponse, replié sous un message. */
+.reponse{
+  border-top:1px solid var(--trait);margin-top:var(--e3);padding-top:var(--e3);
+}
+.reponse textarea{min-height:7rem}
+.reponse .rangee{align-items:center;gap:.5rem}
+.reponse .mono{flex:1 1 14rem}
+
+.etat.maintenance{color:var(--terre)}
+.etat.maintenance::before{background:var(--terre)}

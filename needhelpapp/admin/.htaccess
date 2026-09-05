@@ -1,0 +1,8 @@
+# Le socle n'est jamais servi directement : il n'a pas de sortie propre,
+# et l'exposer reviendrait à publier la logique d'accès.
+<FilesMatch "^_">
+    Require all denied
+</FilesMatch>
+
+# Pas de listage du dossier
+Options -Indexes
