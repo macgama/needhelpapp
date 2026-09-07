@@ -447,6 +447,67 @@ function ouvrirChoixRecette(jour, repas, pose, actionsSup){
 }
 
 /* ---------- les recettes ---------- */
+/* ---------------------------------------------------------
+   L'illustration du plat
+
+   Réservée aux administrateurs de NeedHelpApp — le rôle vient du
+   portail, le serveur le revérifie, et masquer le bloc ne protège
+   rien : c'est du confort, pas une barrière.
+   --------------------------------------------------------- */
+function estAdmin(){
+  const u = window.Compte.utilisateur();
+  return !!(u && u.role === 'admin');
+}
+
+function majIllustration(r){
+  const bloc = $('r-illustration');
+  if (!bloc) return;
+  bloc.hidden = !estAdmin();
+  if (bloc.hidden) return;
+
+  const img = $('r-image-apercu');
+  const a = r && r.image;
+  img.hidden = !a;
+  if (a) img.src = r.image;
+  $('r-image-retirer').hidden = !a;
+  $('r-image-fichier').value = '';
+  $('r-image-etat').textContent = r
+    ? (a ? 'Cette image sert à toutes les familles qui ont ce plat.'
+         : 'Aucune image pour ce plat.')
+    : 'Enregistrez d\u2019abord la recette : l\u2019image se rattache à son nom.';
+  $('r-image-poser').disabled = !r;
+}
+
+async function deposerIllustration(){
+  const nom = ($('r-nom').value || '').trim();
+  const f = $('r-image-fichier').files[0];
+  if (!nom){ Avis.erreur('Donnez d\u2019abord un nom au plat.'); return; }
+  if (!f){ Avis.erreur('Choisissez une image.'); return; }
+
+  const paquet = new FormData();
+  paquet.append('libelle', nom);
+  paquet.append('image', f);
+
+  const bouton = $('r-image-poser');
+  bouton.disabled = true;
+  const avant = bouton.textContent;
+  bouton.textContent = 'Envoi…';
+  try {
+    const d = await appel('illustration_poser', paquet);
+    Avis.succes('Image déposée (' + d.largeur + '×' + d.hauteur
+                + ', ' + Math.round(d.octets / 1024) + ' Ko).');
+    absorber(await appel('tout'));
+    peindreRecettes();
+    const maj = (etat.recettes || []).find(x => recetteEditee && x.id === recetteEditee.id);
+    majIllustration(maj || recetteEditee);
+  } catch (e){
+    Avis.erreur(e.message);
+  } finally {
+    bouton.disabled = false;
+    bouton.textContent = avant;
+  }
+}
+
 function peindreRecettes(){
   const corps = $('recettes-corps');
   const filtre = ($('recettes-recherche').value || '').toLowerCase().trim();
@@ -471,7 +532,10 @@ function peindreRecettes(){
     const apercu = r.ingredients.slice(0, 5).map(i => i.label).join(', ')
       + (r.ingredients.length > 5 ? '…' : '');
     b.innerHTML =
-        '<span class="etoile" role="img" aria-label="' + (r.favori ? 'Favori' : 'Pas favori') + '">'
+        (r.image
+          ? '<img class="vignette" loading="lazy" alt="" src="' + echappe(r.image) + '">'
+          : '')
+      + '<span class="etoile" role="img" aria-label="' + (r.favori ? 'Favori' : 'Pas favori') + '">'
       +   (r.favori ? '★' : '☆') + '</span>'
       + '<h3>' + echappe(r.nom) + '</h3>'
       + '<span class="meta">pour ' + r.couverts + (r.minutes ? ' · ' + r.minutes + ' min' : '') + '</span>'
@@ -502,6 +566,7 @@ function ouvrirRecette(r){
   $('r-notes').value = r ? r.notes : '';
   $('r-supprimer').hidden = !r;
   $('r-source').hidden = true;
+  majIllustration(r);
 
   const zone = $('r-ingredients');
   zone.innerHTML = '';
@@ -858,6 +923,20 @@ $('r-ajouter-ligne').onclick = () => {
 };
 $('r-enregistrer').onclick = enregistrerRecette;
 $('r-annuler').onclick = () => { $('recette-editeur').hidden = true; recetteEditee = null; };
+$('r-image-poser').onclick = deposerIllustration;
+$('r-image-retirer').onclick = async () => {
+  const nom = ($('r-nom').value || '').trim();
+  if (!nom || !confirm('Retirer l\u2019illustration de « ' + nom + ' » ?\n\n'
+      + 'Elle disparaîtra pour toutes les familles qui ont ce plat.')) return;
+  try {
+    await appel('illustration_retirer', { libelle: nom });
+    Avis.succes('Illustration retirée.');
+    absorber(await appel('tout'));
+    peindreRecettes();
+    majIllustration(null);
+  } catch (e){ Avis.erreur(e.message); }
+};
+
 $('r-supprimer').onclick = () => {
   if (!recetteEditee) return;
   const nom = recetteEditee.nom;

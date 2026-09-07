@@ -14,6 +14,13 @@ teaching/includes/nha-core.php
 familyshop/includes/nha-core.php
 budget/includes/nha-core.php
 
+# Les illustrations de recettes : déposées par un administrateur, elles
+# vivent sur le serveur et pas dans le dépôt. Le dossier et son .htaccess
+# sont versionnés, leur contenu non.
+familyshop/assets/recettes/*
+!familyshop/assets/recettes/.htaccess
+!familyshop/assets/recettes/LISEZ-MOI.md
+
 # Données de production et fichiers de travail
 */data/
 *.sqlite

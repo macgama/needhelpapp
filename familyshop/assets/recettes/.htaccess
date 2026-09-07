@@ -1,0 +1,25 @@
+# Ce dossier ne contient QUE des images, déposées par un administrateur
+# et réencodées par le serveur. Rien n'y est exécutable.
+#
+# Le réencodage est la vraie protection — un fichier déguisé en image ne
+# survit pas à un aller-retour par GD. Ces règles sont la seconde
+# barrière : si un jour une image arrivait sans passer par là, elle ne
+# pourrait toujours pas s'exécuter.
+
+<FilesMatch "\.(php|phtml|php[0-9]|phar|pl|py|cgi|sh|htaccess)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+Options -Indexes -ExecCGI
+AddType text/plain .php .phtml .phar
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Content-Disposition "inline"
+    # Une illustration ne change pas : elle est renommée quand elle change.
+    Header always set Cache-Control "public, max-age=2592000, immutable"
+</IfModule>

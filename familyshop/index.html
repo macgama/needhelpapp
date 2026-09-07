@@ -213,6 +213,20 @@
           </label>
         </div>
 
+        <div class="illustration" id="r-illustration" hidden>
+          <h4>L'illustration du plat</h4>
+          <p class="hint">Réservé aux administrateurs de NeedHelpApp. L'image est
+             réencodée par le serveur, et vaut pour <b>toutes les familles</b> qui
+             ont ce plat — elle est rattachée au nom, pas à cette recette.</p>
+          <img class="apercu-image" id="r-image-apercu" alt="" hidden>
+          <input type="file" id="r-image-fichier" accept="image/jpeg,image/png,image/webp">
+          <div class="ligne-boutons" style="margin-top:10px">
+            <button class="btn btn--tiny" type="button" id="r-image-poser">Déposer l'image</button>
+            <button class="btn btn--ghost btn--tiny" type="button" id="r-image-retirer" hidden>Retirer</button>
+          </div>
+          <p class="partagee" id="r-image-etat"></p>
+        </div>
+
         <h4 class="sous-titre">Les ingrédients</h4>
         <p class="hint">Le rayon est deviné d'après le nom. Laissez la quantité vide
            pour ce qui ne se compte pas — le sel, le poivre.</p>
