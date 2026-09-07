@@ -149,6 +149,10 @@ function echeancier(array $pret): array {
     $amortPeriodique = isset($pret['amortissement_periodique'])
         ? (int) $pret['amortissement_periodique'] : null;
 
+    /* Un amortissement contractuel ne vaut que pour 'direct' : ailleurs,
+       le rythme de remboursement découle du mode lui-même. */
+    $contractuel = ($mode === 'direct' && $amortPeriodique !== null && $amortPeriodique > 0);
+
     $lignes = [];
     $restant = $capital;
     $totalInterets = 0;
@@ -175,9 +179,16 @@ function echeancier(array $pret): array {
 
             case 'constant':
             case 'direct':
-                if ($mode === 'direct' && $amortPeriodique !== null && $amortPeriodique > 0) {
-                    // Amortissement contractuel fixe : on rembourse ce
-                    // montant tant qu'il reste de la dette.
+                if ($contractuel) {
+                    /* Amortissement contractuel fixe : on rembourse ce
+                       montant, et RIEN DE PLUS à la dernière échéance.
+                       C'est tout l'objet d'une tranche hypothécaire à
+                       taux fixe : au terme, le capital non amorti reste
+                       dû et se renégocie. Le solder d'office ferait
+                       apparaître un remboursement de plusieurs centaines
+                       de milliers de francs en un trimestre — une
+                       fiction, et un échéancier qui ment sur le poste le
+                       plus lourd d'un ménage. */
                     $partCapital = min($amortPeriodique, $restant);
                 } else {
                     /* On répartit par différence de cumuls plutôt que
@@ -185,8 +196,8 @@ function echeancier(array $pret): array {
                        redistribuent au fil des échéances au lieu de
                        s'entasser sur la dernière. */
                     $partCapital = (int) round($capital * $k / $n) - (int) round($capital * ($k - 1) / $n);
+                    if ($derniere) { $partCapital = $restant; }
                 }
-                if ($derniere) { $partCapital = $restant; }
                 break;
 
             case 'indirect':
@@ -221,7 +232,7 @@ function echeancier(array $pret): array {
 
         /* Un amortissement contractuel peut solder la dette avant le
            terme prévu. Continuer produirait des échéances à zéro. */
-        if ($restant === 0 && $mode === 'direct' && $amortPeriodique !== null && !$derniere) {
+        if ($restant === 0 && $contractuel && !$derniere) {
             break;
         }
     }
@@ -235,6 +246,12 @@ function echeancier(array $pret): array {
         'total_interets'  => $totalInterets,
         'total_capital'   => $totalCapital,
         'total_verse'     => $totalInterets + $totalCapital,
+        /* Ce qui restera dû au terme. Zéro pour un prêt qui s'amortit ;
+           le capital entier en amortissement indirect ; le solde non
+           amorti pour une tranche hypothécaire à taux fixe. C'est le
+           chiffre qu'un ménage doit avoir sous les yeux : c'est celui
+           qu'il devra refinancer. */
+        'reste_du_au_terme' => $restant,
         // Hors échéancier, et c'est voulu : ce versement ne va pas à la
         // banque mais sur le 3e pilier nanti, qui est un actif.
         'versement_amortissement' => $versementAmortissement,

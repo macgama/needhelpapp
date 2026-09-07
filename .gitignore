@@ -1,0 +1,20 @@
+# Les configurations réelles : mots de passe de base, clés Stripe, et
+# pour budget la clé de chiffrement des données financières. Le contrôle
+# « Aucun secret n'a-t-il été commité ? » les refuse déjà, mais mieux
+# vaut qu'elles n'arrivent jamais jusque-là.
+needhelpapp/config/nha.php
+*/config/nha.php
+*/api/config.php
+
+# Le socle du portail, copié à la main lors du déploiement. Il ne se
+# versionne pas dans les applications : seul needhelpapp/includes/ fait
+# foi, et diagnostic.php compare les marqueurs de version pour repérer
+# une copie oubliée.
+teaching/includes/nha-core.php
+familyshop/includes/nha-core.php
+budget/includes/nha-core.php
+
+# Données de production et fichiers de travail
+*/data/
+*.sqlite
+*.log
