@@ -33,7 +33,33 @@ jobs:
           --health-interval=5s --health-timeout=5s --health-retries=20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      # Un flux de travail dont un bloc run: est mal cité ne se voit
+      # qu'à l'exécution — et pour deploiement.yml, cela voudrait dire
+      # sur le site en production. Une apostrophe française échappée
+      # entre apostrophes simples avale silencieusement la fin du
+      # script : c'est exactement ce qui est arrivé ici.
+      - name: La syntaxe des flux de travail eux-mêmes
+        run: |
+          python3 - <<'PY'
+          import yaml, subprocess, sys, glob
+          mauvais = 0
+          for f in sorted(glob.glob('.github/workflows/*.yml')):
+              d = yaml.safe_load(open(f, encoding='utf-8'))
+              for job in d.get('jobs', {}).values():
+                  for i, s in enumerate(job.get('steps', []), 1):
+                      if 'run' not in s: continue
+                      titre = s.get('name', 'étape %d' % i)
+                      r = subprocess.run(['bash', '-n'], input=s['run'],
+                                         text=True, capture_output=True)
+                      if r.returncode:
+                          mauvais += 1
+                          print('::error file=%s::%s — %s' % (f, titre, r.stderr.strip()))
+                      else:
+                          print('  ok  %s · %s' % (f, titre))
+          sys.exit(1 if mauvais else 0)
+          PY
 
       - name: La version de PHP
         run: |
@@ -115,8 +141,14 @@ jobs:
             # On cherche les erreurs plutôt que d'afficher la fin du
             # journal : la panne est souvent au début, noyée sous les
             # requêtes qui ont suivi.
-            echo '--- les erreurs, dans l\'ordre ---'
-            grep -iE 'fatal error|uncaught' /tmp/serveur.log | sed 's/^/  /' | sort -u | head -20
+            # Guillemets doubles : une apostrophe française ne peut pas
+            # être échappée entre apostrophes simples en bash, et la
+            # tentative avale silencieusement la fin du fichier.
+            echo "--- les erreurs, dans l'ordre ---"
+            # -a : le journal du serveur contient des octets que grep
+            # juge binaires, et il masquerait alors les lignes au moment
+            # précis où l'on veut les lire.
+            grep -aiE 'fatal error|uncaught' /tmp/serveur.log | sed 's/^/  /' | sort -u | head -20
             exit 1
           fi
           echo "$vues pages et points d'entrée, aucune erreur fatale."

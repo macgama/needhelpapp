@@ -58,7 +58,7 @@ jobs:
             variable: CHEMIN_BUDGET
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 2   # il en faut deux pour comparer au précédent
 
