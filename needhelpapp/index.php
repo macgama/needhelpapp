@@ -15,6 +15,9 @@ $apps = nha_db()->query(
 // Les puces de chaque carte. Elles décrivent des fonctionnalités, pas des
 // données de catalogue : elles restent dans le code du portail.
 $puces = [
+  'budget'   => ['Comptes, cartes, épargne et biens',
+                 'Hypothèques et emprunts, avec leur échéancier',
+                 'Montants et libellés chiffrés dans la base'],
   'teaching' => ['Dictée en français, allemand, anglais, italien',
                  '33 familles d\'exercices de mathématiques',
                  'Utilisable sans créer de compte'],
