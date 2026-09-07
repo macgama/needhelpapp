@@ -34,15 +34,18 @@ nha_page_debut(
     <h2 id="editeur">L'éditeur du site</h2>
     <p>Le site <strong>needhelpapp.com</strong> et ses sous-domaines sont édités par&nbsp;:</p>
     <table>
-      <tr><th>Raison sociale</th><td><span class="a-completer">[Raison sociale complète, forme juridique comprise]</span></td></tr>
-      <tr><th>Siège</th><td><span class="a-completer">[Rue et numéro, NPA, localité, Suisse]</span></td></tr>
-      <tr><th>Numéro IDE</th><td><span class="a-completer">[CHE-000.000.000]</span></td></tr>
-      <tr><th>Numéro de TVA</th><td><span class="a-completer">[CHE-000.000.000 TVA, ou : non assujetti]</span></td></tr>
-      <tr><th>Responsable de la publication</th><td><span class="a-completer">[Prénom et nom]</span></td></tr>
+      <tr><th>Éditeur</th><td>Gaël Manigley, entreprise individuelle</td></tr>
+      <tr><th>Adresse</th><td>Chemin les Jordils 2, 1085 Vulliens, Suisse</td></tr>
+      <tr><th>Registre du commerce</th><td>Non inscrite</td></tr>
+      <tr><th>Numéro IDE</th><td>Aucun</td></tr>
+      <tr><th>TVA</th><td>Non assujetti</td></tr>
+      <tr><th>Responsable de la publication</th><td>Gaël Manigley</td></tr>
     </table>
-    <p>Si vous n'êtes pas encore inscrit au registre du commerce, indiquez-le
-      ici en toutes lettres plutôt que de laisser la ligne vide&nbsp;: une
-      mention absente se remarque davantage qu'une mention modeste.</p>
+    <p>NeedHelpApp est une entreprise individuelle. Il n'y a derrière ce site
+      ni société, ni investisseur, ni conseil d'administration&nbsp;: une
+      personne en répond, et son nom comme son adresse figurent ci-dessus.
+      C'est aussi pour cela que nous ne vendons pas vos données — nous n'avons
+      personne à qui rendre des comptes trimestriels.</p>
 
     <h2 id="contact">Nous joindre</h2>
     <p>Par le <a href="/contact.php">formulaire de contact</a>, qui aboutit
@@ -104,7 +107,7 @@ nha_page_debut(
 
     <h2 id="droit">Droit applicable et for</h2>
     <p>Le droit suisse s'applique. Le for est à
-      <span class="a-completer">[Localité du for judiciaire]</span>, sous
+      Vulliens (canton de Vaud), sous
       réserve des dispositions impératives protégeant les consommateurs, qui
       peuvent vous ouvrir le for de votre domicile.</p>
     <p>Avant toute procédure, écrivez-nous&nbsp;: presque tout se règle par

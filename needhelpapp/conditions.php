@@ -46,7 +46,8 @@ nha_page_debut(
     <h2 id="article-1">1. Objet et acceptation</h2>
     <p>Les présentes conditions règlent l'utilisation de NeedHelpApp, un
       ensemble d'applications indépendantes reliées par un compte unique,
-      éditées par <span class="a-completer">[Raison sociale de la structure]</span> (« nous »). Elles valent pour needhelpapp.com et pour
+      éditées par Gaël Manigley, entreprise individuelle, Chemin les Jordils 2,
+      1085 Vulliens (« nous »). Elles valent pour needhelpapp.com et pour
       tous ses sous-domaines.</p>
     <p>Vous les acceptez en créant un compte. Si vous utilisez une
       application sans compte — ce que plusieurs d'entre elles permettent —
@@ -96,9 +97,11 @@ nha_page_debut(
     <h2 id="article-4">4. L'abonnement, le paiement, la résiliation</h2>
     <h3>Les tarifs</h3>
     <table>
-      <tr><th>Formule mensuelle</th><td><span class="a-completer">[montant mensuel, TVA comprise ou non]</span></td></tr>
-      <tr><th>Formule annuelle</th><td><span class="a-completer">[montant annuel, TVA comprise ou non]</span></td></tr>
+      <tr><th>Formule mensuelle</th><td>4.90 CHF par mois</td></tr>
+      <tr><th>Formule annuelle</th><td>49.00 CHF par an, soit deux mois offerts</td></tr>
     </table>
+    <p>Ces montants sont nets&nbsp;: l'éditeur n'est pas assujetti à la TVA,
+      aucune taxe ne s'y ajoute et aucun frais de dossier ne s'y cache.</p>
     <p>Les prix affichés sur la page <a href="/abonnement.php">Abonnement</a>
       font foi&nbsp;; ceux d'ici les reprennent. Un changement de tarif ne
       s'applique jamais à une période déjà réglée.</p>
@@ -113,7 +116,8 @@ nha_page_debut(
       des personnes que vous y invitez.</p>
     <h3>Le paiement</h3>
     <p>Il est encaissé par
-      <span class="a-completer">[Nom du prestataire de paiement et son pays]</span>, qui traite seul les données de votre carte. Nous ne les
+      Stripe Payments Europe, Limited, à Dublin (Irlande), qui traite seul les
+      données de votre carte. Nous ne les
       voyons jamais et n'en conservons aucune trace&nbsp;: seul un
       identifiant de client nous revient, sans numéro ni date de validité.</p>
     <p>L'abonnement est reconduit tacitement à chaque échéance, jusqu'à
@@ -218,7 +222,7 @@ nha_page_debut(
       urgence ou obligation légale, nous vous prévenons d'abord et vous
       laissons vous expliquer.</p>
     <p>En cas d'impayé, les fonctions payantes sont suspendues après
-      <span class="a-completer">[délai de suspension pour impayé, en jours]</span> à compter du premier échec de paiement, et après un
+      trente jours à compter du premier échec de paiement, et après un
       rappel envoyé à votre adresse. Vos données ne sont pas effacées&nbsp;:
       le compte revient simplement à la formule gratuite, et tout redevient
       accessible dès la régularisation.</p>
@@ -237,7 +241,7 @@ nha_page_debut(
     <p>Le droit suisse s'applique, à l'exclusion des règles de conflit de
       lois et de la Convention de Vienne sur les ventes internationales.</p>
     <p>Le for exclusif est à
-      <span class="a-completer">[Localité du for judiciaire]</span>. Cette
+      Vulliens (canton de Vaud). Cette
       clause ne prive pas le consommateur du for de son domicile lorsque la
       loi le lui réserve.</p>
     <p>Avant d'aller plus loin, écrivez-nous&nbsp;: presque tout se règle par

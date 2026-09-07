@@ -52,9 +52,9 @@ nha_page_debut(
       protection des données (nLPD) et, lorsqu'il s'applique, du règlement
       européen (RGPD) est&nbsp;:</p>
     <table>
-      <tr><th>Responsable</th><td><span class="a-completer">[Raison sociale et adresse complète]</span></td></tr>
+      <tr><th>Responsable</th><td>Gaël Manigley, entreprise individuelle,<br>Chemin les Jordils 2, 1085 Vulliens, Suisse</td></tr>
       <tr><th>Contact</th><td><a href="mailto:donnees@needhelpapp.com">donnees@needhelpapp.com</a></td></tr>
-      <tr><th>Représentant dans l'UE</th><td><span class="a-completer">[Nom et adresse du représentant, ou : sans objet]</span></td></tr>
+      <tr><th>Représentant dans l'UE</th><td>Sans objet — le service s'adresse au public suisse</td></tr>
     </table>
     <p>Chaque application peut traiter en plus les données qui lui sont
       propres — les exercices d'une dictée, les menus d'un foyer. Le compte,
@@ -140,7 +140,7 @@ nha_page_debut(
     <table>
       <tr><th>Prestataire</th><th>Ce qu'il traite</th><th>Où</th></tr>
       <tr><td>Infomaniak Network SA</td><td>Hébergement du site, de la base et des e-mails</td><td>Suisse</td></tr>
-      <tr><td><span class="a-completer">[Nom du prestataire de paiement]</span></td><td>Paiement de l'abonnement et facturation</td><td><span class="a-completer">[Pays du prestataire de paiement]</span></td></tr>
+      <tr><td>Stripe Payments Europe, Limited</td><td>Paiement de l'abonnement et facturation</td><td>Irlande</td></tr>
       <tr><td>Google Ireland Ltd.</td><td>Uniquement si vous choisissez la connexion Google</td><td>Union européenne</td></tr>
     </table>
     <p>Nous ne vendons ni ne louons aucune donnée. Nous n'en transmettons à
