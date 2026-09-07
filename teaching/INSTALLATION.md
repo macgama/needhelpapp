@@ -40,6 +40,7 @@ api/index.php                  l'API : comptes, dictées, réglages, résultats
 api/stripe.php                 réception des notifications de paiement
 api/migrer.php                 met la base à jour, en n'appliquant que ce qui manque
 api/paiement-test.php          vérifie la configuration Stripe et explique les refus
+api/portail-test.php           vérifie le rattachement au portail NeedHelpApp
 api/db.php                     connexion, session, envoi d'e-mails, utilitaires
 api/config.example.php         à copier en config.php et à renseigner
 api/.htaccess                  interdit l'accès direct à la configuration
@@ -898,8 +899,15 @@ réabonne peut devoir confirmer à nouveau dans son application.
 
 ### Quand le paiement est refusé
 
-Ouvrez `api/paiement-test.php`. La page lit votre configuration, interroge
-Stripe et traduit son refus. Elle ne modifie rien et ne facture rien.
+Ouvrez `api/paiement-test.php?cle=…`, avec la clé de `maintenance_token`
+(la même que pour `api/migrer.php`). La page lit votre configuration,
+interroge Stripe et traduit son refus. Elle ne modifie rien et ne facture
+rien.
+
+La clé est nécessaire parce que cette page dit quelles clés sont posées et
+si le compte tourne en test ou en production : c'est un état des lieux du
+paiement, il n'a pas à être public. Sans `maintenance_token` dans
+`config.php`, la page reste fermée.
 
 Les causes les plus fréquentes, toutes reconnues par cette page :
 
@@ -1819,7 +1827,11 @@ préfixée `[teaching]`.
 Ouvrez, **depuis un navigateur où vous êtes déjà connecté sur
 needhelpapp.com** :
 
-    https://teaching.needhelpapp.com/api/portail-test.php
+    https://teaching.needhelpapp.com/api/portail-test.php?cle=…
+
+La clé est celle de `maintenance_token` dans `api/config.php`, la même que
+pour `api/migrer.php`. Sans elle, la page reste fermée : elle décrit
+l'intérieur du serveur, et il n'y a aucune raison de l'offrir à qui passe.
 
 Il suit la chaîne dans l'ordre où elle peut rompre — transport, cookie,
 fichiers copiés, code d'application, base centrale, session, ancrage local,
