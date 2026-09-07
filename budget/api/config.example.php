@@ -1,6 +1,11 @@
 <?php
 /**
- * Copiez ce fichier en  config.php  puis renseignez-le.
+ * CE FICHIER EST UN GABARIT. NE LE REMPLISSEZ JAMAIS.
+ *
+ * Copiez-le en  config.php  — qui n'est ni versionné ni déployé — et
+ * renseignez la copie. Le remplir ici publie vos identifiants : c'est
+ * arrivé, et le dépôt est public.
+ *
  * config.php ne doit jamais être publié ni versionné : il porte le mot
  * de passe de la base ET la clé de chiffrement des données financières.
  *
@@ -10,10 +15,10 @@
  */
 return [
     // ---- la base de l'application ----
-    'host'     => '6l3nq9.myd.infomaniak.com',
+    'host'     => 'localhost',
     'database' => '6l3nq9_budget',
-    'user'     => '6l3nq9_macgama',
-    'password' => 'AurTimEli_78_',
+    'user'     => 'utilisateur_de_la_base',
+    'password' => 'mot_de_passe_de_la_base',
 
     /* ================================================================
        LA CLÉ DE CHIFFREMENT
@@ -38,7 +43,7 @@ return [
        retirez jamais une clé tant qu'une seule ligne s'y réfère.
        ================================================================ */
     'coffre_cles' => [
-        1 => 'Yv47ocwTkL1CJnQQCmae1Z1GCgi09Tr7TRjG7is6+ko=',   // 32 octets en base64
+        1 => '',   // 32 octets en base64
     ],
     'coffre_cle_active' => 1,
 

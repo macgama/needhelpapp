@@ -190,5 +190,33 @@ jobs:
           if grep -rInE '(sk_live_|whsec_)[A-Za-z0-9]{10,}' --include='*.php' --include='*.js' . ; then
             echo "::error::Une clé Stripe semble écrite en dur."; trouve=1
           fi
+
+          # UN GABARIT REMPLI EST UNE FUITE.
+          #
+          # Ce contrôle ne regardait que les config.php et les clés
+          # Stripe. Un vrai mot de passe de base et une vraie clé de
+          # chiffrement sont passés dans budget/api/config.example.php,
+          # sur un dépôt public, sans qu'aucune alerte ne se déclenche.
+          # Les fichiers d'exemple sont faits pour être versionnés : ils
+          # doivent donc rester des gabarits.
+          python3 - <<'PY' || trouve=1
+          import glob, re, sys
+          GABARITS = ('mot_de_passe_de_la_base', 'mot_de_passe_de_la_boite',
+                      'utilisateur_de_la_base', 'a-remplacer', '')
+          mauvais = 0
+          for f in glob.glob('*/api/config.example.php') + glob.glob('*/config/*.exemple.php') \
+                 + glob.glob('*/api/config.exemple.php'):
+              t = open(f, encoding='utf-8').read()
+              for cle, val in re.findall(r"'(password|db_pass|smtp_pass)'\s*=>\s*'([^']*)'", t):
+                  if val not in GABARITS:
+                      print("::error file=%s::'%s' contient une valeur réelle, pas un gabarit." % (f, cle))
+                      mauvais += 1
+              # une clé de coffre valide fait 32 octets une fois décodée
+              for val in re.findall(r"=>\s*'([A-Za-z0-9+/]{42,44}=*)'", t):
+                  print("::error file=%s::une clé de chiffrement semble écrite en clair." % f)
+                  mauvais += 1
+          print('  ok  les gabarits sont restés des gabarits.' if not mauvais else '')
+          sys.exit(1 if mauvais else 0)
+          PY
           [ $trouve -eq 0 ] && echo "Rien de suspect."
           exit $trouve
