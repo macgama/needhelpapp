@@ -27,13 +27,24 @@ const NHA_BUILD_MAILER = '2026-09-03.3';
  * Garde-fou contre un dépôt FTP incomplet.
  *
  * Jusqu'à la version 2026-09-03.2, nha_mail() était définie dans http.php.
- * Si ce fichier-là n'a pas été remplacé, la redéclarer ici provoquerait une
- * erreur fatale « Cannot redeclare function nha_mail() ». On préfère un
- * message qui nomme le fichier fautif.
+ * Si ce fichier-là n'a pas été remplacé, il faut le dire clairement plutôt
+ * que de laisser le site tomber sur une erreur sans rapport.
+ *
+ * La première version testait function_exists('nha_mail'), et se déclenchait
+ * sur elle-même : PHP enregistre les fonctions déclarées au premier niveau
+ * d'un fichier dès la compilation de ce fichier, donc AVANT d'en exécuter la
+ * première ligne. nha_mail() existait déjà quand le test tournait, et le
+ * portail entier levait cette exception à chaque page — includes/http.php
+ * étant chargé par toutes.
+ *
+ * Ce test-ci ne peut pas se déclencher tout seul : il compare deux marqueurs
+ * de version, et celui de http.php n'est défini que si ce fichier-là a été
+ * chargé. C'est aussi le contrôle que diagnostic.php présente en clair.
  */
-if (function_exists('nha_mail')) {
+if (defined('NHA_BUILD_HTTP') && NHA_BUILD_HTTP !== NHA_BUILD_MAILER) {
     throw new RuntimeException(
-        'includes/http.php est une ancienne version : il définit encore nha_mail(). '
+        'includes/http.php est en version ' . NHA_BUILD_HTTP . ' alors que '
+        . 'includes/mailer.php est en version ' . NHA_BUILD_MAILER . '. '
         . 'Redéposez includes/http.php, includes/mailer.php et includes/nha-core.php '
         . 'en écrasant les fichiers existants.'
     );
