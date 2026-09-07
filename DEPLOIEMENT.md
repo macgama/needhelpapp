@@ -74,9 +74,15 @@ Le mot de passe et la clé de chiffrement ne passent jamais par GitHub :
 ils vivent dans `config.php` sur le serveur, et le déploiement n'y touche
 pas. C'est le sens de la liste d'exclusions.
 
-Une application dont le chemin n'est pas déclaré est ignorée sans bruit.
-C'est ainsi qu'on laisse budget de côté : on ne déclare pas
-`CHEMIN_BUDGET`.
+Une application dont le chemin n'est pas déclaré est ignorée. C'est ainsi
+qu'on laisse budget de côté tant que son sous-domaine n'existe pas : on
+ne déclare pas `CHEMIN_BUDGET`.
+
+> **Mais si AUCUN chemin n'est déclaré, le déploiement s'arrête en
+> erreur** et vous dit ce qui manque. C'est arrivé : trois exécutions se
+> sont succédé, vertes, en sautant chaque transfert faute de variables —
+> et le serveur n'avait jamais reçu une ligne. Une coche verte qui ne
+> veut rien dire est pire que pas de coche du tout.
 
 ## 4. Déposer
 

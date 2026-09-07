@@ -37,7 +37,53 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # UN DÉPLOIEMENT QUI NE DÉPOSE RIEN NE DOIT PAS RESSEMBLER À UN
+  # DÉPLOIEMENT QUI A MARCHÉ.
+  #
+  # La première version ignorait « sans bruit » toute application dont le
+  # chemin n'était pas déclaré. Aucun chemin n'ayant jamais été renseigné,
+  # trois exécutions se sont succédé, vertes, en sautant chaque transfert
+  # — et le site n'a jamais reçu une ligne. Une coche verte qui ne veut
+  # rien dire est pire que pas de coche du tout.
+  #
+  # Ignorer UNE application reste normal : c'est ainsi qu'on laisse
+  # budget de côté tant que son sous-domaine n'existe pas. Les ignorer
+  # TOUTES est une erreur de réglage, et cela s'arrête ici.
+  verifier-reglages:
+    name: Le déploiement est-il réglé ?
+    runs-on: ubuntu-latest
+    steps:
+      - name: Le secret et les variables sont-ils là ?
+        env:
+          CLE:  ${{ secrets.INFOMANIAK_CLE_SSH }}
+          HOTE: ${{ vars.INFOMANIAK_HOTE }}
+          UTIL: ${{ vars.INFOMANIAK_UTILISATEUR }}
+          P: ${{ vars.CHEMIN_PORTAIL }}
+          T: ${{ vars.CHEMIN_TEACHING }}
+          F: ${{ vars.CHEMIN_FAMILYSHOP }}
+          B: ${{ vars.CHEMIN_BUDGET }}
+        run: |
+          manque=0
+          dire() { echo "::error::$1"; manque=1; }
+
+          [ -n "$CLE" ]  || dire "Secret manquant : INFOMANIAK_CLE_SSH (Settings → Secrets and variables → Actions → Secrets)."
+          [ -n "$HOTE" ] || dire "Variable manquante : INFOMANIAK_HOTE, par exemple xxxxx.ftp.infomaniak.com."
+          [ -n "$UTIL" ] || dire "Variable manquante : INFOMANIAK_UTILISATEUR, votre nom d'utilisateur SSH."
+
+          declares=0
+          for v in "$P" "$T" "$F" "$B"; do [ -n "$v" ] && declares=$((declares+1)); done
+          if [ $declares -eq 0 ]; then
+            dire "Aucun chemin de destination déclaré. Renseignez au moins une variable parmi CHEMIN_PORTAIL, CHEMIN_TEACHING, CHEMIN_FAMILYSHOP et CHEMIN_BUDGET — sinon ce flux ne dépose rien tout en paraissant réussir."
+            echo "Pour trouver les chemins : connectez-vous en SSH, puis « pwd » et « ls sites/ »."
+          else
+            echo "$declares application(s) déclarée(s) sur 4."
+          fi
+
+          [ $manque -eq 0 ] || { echo; echo "Voir DEPLOIEMENT.md, section « Côté GitHub »."; exit 1; }
+          echo "Réglage complet."
+
   deposer:
+    needs: verifier-reglages
     name: ${{ matrix.app }}
     runs-on: ubuntu-latest
     strategy:
