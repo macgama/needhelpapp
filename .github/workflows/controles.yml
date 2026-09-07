@@ -1,0 +1,141 @@
+name: Contrôles
+
+# Ce fichier existe à cause d'une panne précise.
+#
+# Le garde-fou de includes/mailer.php se déclenchait sur lui-même et
+# faisait tomber en erreur 500 toutes les pages du portail — l'accueil,
+# la connexion, l'administration, les vingt-et-un points d'entrée de
+# l'API. Rien ne le signalait : les fichiers étaient syntaxiquement
+# corrects, et php -l n'y voyait que du feu.
+#
+# On ne contrôle donc pas seulement la syntaxe : on monte une vraie base,
+# on lance un vrai serveur, et on ouvre vraiment chaque page.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  controler:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        # La même version qu'en production, et ce n'est pas un détail :
+        # un schéma qui passe sur MySQL 8 peut échouer sur MariaDB 10.11.
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: essai
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: La version de PHP
+        run: |
+          php -v | head -1
+          php -r 'exit(version_compare(PHP_VERSION, "8.1", ">=") ? 0 : 1);' \
+            || { echo "::error::Il faut PHP 8.1 au minimum."; exit 1; }
+
+      - name: La syntaxe de tous les fichiers PHP
+        run: |
+          erreurs=0
+          while IFS= read -r f; do
+            php -l "$f" >/dev/null 2>&1 || { echo "::error file=$f::$(php -l "$f" 2>&1 | head -2 | tail -1)"; erreurs=1; }
+          done < <(find . -name '*.php' -not -path './.git/*')
+          [ $erreurs -eq 0 ] && echo "$(find . -name '*.php' -not -path './.git/*' | wc -l) fichiers, aucune erreur de syntaxe."
+          exit $erreurs
+
+      - name: La syntaxe de tous les fichiers JavaScript
+        run: |
+          erreurs=0
+          while IFS= read -r f; do
+            node --check "$f" >/dev/null 2>&1 || { echo "::error file=$f::syntaxe JavaScript"; erreurs=1; }
+          done < <(find . -name '*.js' -not -path './.git/*')
+          [ $erreurs -eq 0 ] && echo "$(find . -name '*.js' -not -path './.git/*' | wc -l) fichiers, aucune erreur de syntaxe."
+          exit $erreurs
+
+      - name: Les schémas se chargent-ils sur MariaDB ?
+        run: |
+          m() { mysql -h 127.0.0.1 -P 3306 -u root -pessai "$@"; }
+          m -e "CREATE DATABASE \`6l3nq9_core\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          m 6l3nq9_core < needhelpapp/sql/schema.sql
+          m 6l3nq9_core < needhelpapp/sql/applications.sql
+          echo "socle : $(m -N -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='6l3nq9_core';") tables"
+          if [ -f budget/sql/schema.sql ]; then
+            m -e "CREATE DATABASE \`6l3nq9_budget\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+            m 6l3nq9_budget < budget/sql/schema.sql
+            echo "budget : $(m -N -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='6l3nq9_budget';") tables"
+          fi
+
+      # LE CONTRÔLE QUI COMPTE. Une configuration jetable, un serveur, et
+      # chaque page ouverte pour de vrai. Une erreur 500 arrête tout.
+      - name: Chaque page du portail répond-elle ?
+        run: |
+          cat > needhelpapp/config/nha.php <<'PHP'
+          <?php
+          return ['db_host' => '127.0.0.1', 'db_core' => '6l3nq9_core',
+                  'db_user' => 'root', 'db_pass' => 'essai',
+                  'diagnostic_jeton' => 'controle', 'purge_jeton' => 'controle'];
+          PHP
+          # La base d'essai répond-elle ? Sans cette vérification, une
+          # base injoignable ferait tomber les quarante-six pages d'un
+          # coup et le rapport accuserait le code d'une panne du banc
+          # d'essai. On veut un message, pas quarante-six.
+          php -r '
+            require "needhelpapp/includes/nha-core.php";
+            try { nha_db()->query("SELECT 1"); echo "base d\x27essai joignable\n"; }
+            catch (Throwable $e) {
+              fwrite(STDERR, "::error::La base d\x27essai est injoignable : " . $e->getMessage()
+                   . " — c\x27est le banc d\x27essai qui est en cause, pas le code.\n");
+              exit(1);
+            }'
+
+          php -S 127.0.0.1:8099 -t needhelpapp > /tmp/serveur.log 2>&1 &
+          for i in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:8099/ && break; sleep 0.3; done
+
+          fatales=0; vues=0
+          verifier() {
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8099/$1")
+            vues=$((vues+1))
+            printf '  %-34s %s\n' "$1" "$code"
+            [ "$code" = "500" ] && { echo "::error::$1 répond 500"; fatales=$((fatales+1)); }
+            return 0
+          }
+          for f in $(cd needhelpapp && ls *.php); do verifier "$f"; done
+          for f in $(cd needhelpapp && ls admin/*.php api/*.php); do verifier "$f"; done
+
+          rm -f needhelpapp/config/nha.php
+          if [ $fatales -gt 0 ]; then
+            echo "::error::$fatales page(s) en erreur fatale sur $vues."
+            # On cherche les erreurs plutôt que d'afficher la fin du
+            # journal : la panne est souvent au début, noyée sous les
+            # requêtes qui ont suivi.
+            echo '--- les erreurs, dans l\'ordre ---'
+            grep -iE 'fatal error|uncaught' /tmp/serveur.log | sed 's/^/  /' | sort -u | head -20
+            exit 1
+          fi
+          echo "$vues pages et points d'entrée, aucune erreur fatale."
+
+      - name: Le coffre et les échéanciers de budget
+        if: hashFiles('budget/api/calcul-test.php') != ''
+        run: php budget/api/calcul-test.php
+
+      - name: Aucun secret n'a-t-il été commité ?
+        run: |
+          trouve=0
+          # Les vrais fichiers de configuration ne doivent jamais entrer
+          # dans le dépôt : ils portent mots de passe et clé de coffre.
+          for interdit in needhelpapp/config/nha.php teaching/api/config.php \
+                          familyshop/api/config.php budget/api/config.php; do
+            [ -f "$interdit" ] && { echo "::error::$interdit est dans le dépôt."; trouve=1; }
+          done
+          if grep -rInE '(sk_live_|whsec_)[A-Za-z0-9]{10,}' --include='*.php' --include='*.js' . ; then
+            echo "::error::Une clé Stripe semble écrite en dur."; trouve=1
+          fi
+          [ $trouve -eq 0 ] && echo "Rien de suspect."
+          exit $trouve

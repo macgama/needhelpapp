@@ -1,0 +1,9 @@
+# La configuration ne doit jamais être servie en clair, même si le
+# serveur cessait un jour d'interpréter le PHP. Elle porte la clé de
+# chiffrement : la servir reviendrait à publier toute la base.
+<FilesMatch "^(config|config\.example)\.php$">
+    Require all denied
+</FilesMatch>
+
+# Pas de listage du dossier
+Options -Indexes

@@ -1,0 +1,184 @@
+name: Déploiement sur Infomaniak
+
+# Deux façons de le déclencher :
+#
+#   — automatiquement, à chaque envoi sur main : seules les applications
+#     dont un fichier a changé sont déposées ;
+#   — à la main, depuis l'onglet Actions de GitHub : vous choisissez
+#     l'application, et la simulation est cochée par défaut.
+#
+# Aucune action tierce n'est utilisée. Tout passe par ssh et rsync, qui
+# sont déjà sur la machine de GitHub. C'est le même principe que le reste
+# du projet : pas de dépendance qu'on ne peut pas lire.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      application:
+        description: Quelle application déposer
+        type: choice
+        default: toutes
+        options: [toutes, portail, teaching, familyshop, budget]
+      simulation:
+        description: "Simulation — montre ce qui serait fait, sans rien écrire"
+        type: boolean
+        default: true
+      supprimer:
+        description: "DANGEREUX — effacer sur le serveur ce qui n'est plus dans le dépôt"
+        type: boolean
+        default: false
+
+# Deux déploiements qui se chevauchent laisseraient le site à
+# moitié dans un état et à moitié dans l'autre.
+concurrency:
+  group: deploiement-infomaniak
+  cancel-in-progress: false
+
+jobs:
+  deposer:
+    name: ${{ matrix.app }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false     # qu'un site échoue n'empêche pas les autres
+      matrix:
+        include:
+          - app: portail
+            source: needhelpapp
+            variable: CHEMIN_PORTAIL
+          - app: teaching
+            source: teaching
+            variable: CHEMIN_TEACHING
+          - app: familyshop
+            source: familyshop
+            variable: CHEMIN_FAMILYSHOP
+          - app: budget
+            source: budget
+            variable: CHEMIN_BUDGET
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # il en faut deux pour comparer au précédent
+
+      # Une application dont le chemin n'est pas renseigné est ignorée
+      # sans bruit. C'est ainsi qu'on laisse budget de côté tant que son
+      # sous-domaine n'existe pas : on ne déclare pas CHEMIN_BUDGET.
+      - name: Y a-t-il quelque chose à faire ?
+        id: decision
+        env:
+          CIBLE: ${{ vars[matrix.variable] }}
+          CHOIX: ${{ inputs.application }}
+          EVENEMENT: ${{ github.event_name }}
+        run: |
+          if [ -z "$CIBLE" ]; then
+            echo "::notice::${{ matrix.app }} : aucun chemin déclaré (variable ${{ matrix.variable }}), on passe."
+            echo "faire=non" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ "$EVENEMENT" = "workflow_dispatch" ] \
+             && [ "$CHOIX" != "toutes" ] && [ "$CHOIX" != "${{ matrix.app }}" ]; then
+            echo "faire=non" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ "$EVENEMENT" = "push" ]; then
+            # Sur un envoi, on ne dépose que ce qui a bougé. Si la
+            # comparaison échoue — premier envoi, historique réécrit — on
+            # dépose plutôt que de ne rien faire : mieux vaut un transfert
+            # inutile qu'une correction qui n'arrive jamais.
+            if git rev-parse HEAD^ >/dev/null 2>&1; then
+              if git diff --name-only HEAD^ HEAD | grep -q "^${{ matrix.source }}/"; then
+                echo "::notice::${{ matrix.app }} : des fichiers ont changé."
+              else
+                echo "::notice::${{ matrix.app }} : rien n'a changé, on passe."
+                echo "faire=non" >> "$GITHUB_OUTPUT"; exit 0
+              fi
+            fi
+          fi
+          echo "faire=oui" >> "$GITHUB_OUTPUT"
+
+      - name: Ouvrir la connexion
+        if: steps.decision.outputs.faire == 'oui'
+        env:
+          CLE: ${{ secrets.INFOMANIAK_CLE_SSH }}
+          HOTE: ${{ vars.INFOMANIAK_HOTE }}
+          PORT: ${{ vars.INFOMANIAK_PORT || '22' }}
+        run: |
+          if [ -z "$CLE" ] || [ -z "$HOTE" ]; then
+            echo "::error::Il manque le secret INFOMANIAK_CLE_SSH ou la variable INFOMANIAK_HOTE. Voir DEPLOIEMENT.md."
+            exit 1
+          fi
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$CLE" > ~/.ssh/id_deploiement
+          chmod 600 ~/.ssh/id_deploiement
+          # On enregistre l'empreinte du serveur plutôt que de désactiver
+          # la vérification : sans elle, n'importe quelle machine qui
+          # répond à cette adresse recevrait le site.
+          ssh-keyscan -p "$PORT" -H "$HOTE" >> ~/.ssh/known_hosts 2>/dev/null
+          if ! grep -q . ~/.ssh/known_hosts; then
+            echo "::error::Le serveur $HOTE ne répond pas sur le port $PORT."
+            exit 1
+          fi
+
+      - name: Le serveur sait-il recevoir ?
+        if: steps.decision.outputs.faire == 'oui'
+        env:
+          HOTE: ${{ vars.INFOMANIAK_HOTE }}
+          UTIL: ${{ vars.INFOMANIAK_UTILISATEUR }}
+          PORT: ${{ vars.INFOMANIAK_PORT || '22' }}
+          CIBLE: ${{ vars[matrix.variable] }}
+        run: |
+          ssh -i ~/.ssh/id_deploiement -p "$PORT" -o BatchMode=yes "$UTIL@$HOTE" \
+              "rsync --version >/dev/null 2>&1 || { echo MANQUE_RSYNC; exit 3; }; \
+               [ -d '$CIBLE' ] || { echo DOSSIER_ABSENT; exit 4; }" \
+          || { code=$?
+               [ $code -eq 3 ] && echo "::error::rsync n'est pas disponible sur ce serveur. Voir la section « Si rsync manque » de DEPLOIEMENT.md."
+               [ $code -eq 4 ] && echo "::error::Le dossier $CIBLE n'existe pas sur le serveur. Vérifiez la variable ${{ matrix.variable }}."
+               [ $code -eq 255 ] && echo "::error::Connexion SSH refusée. La clé publique est-elle bien déclarée dans le Manager Infomaniak ?"
+               exit 1; }
+
+      # Ce qui n'est jamais déposé, et — c'est le même effet — jamais
+      # effacé par --delete. La liste est le cœur de la sûreté de ce
+      # fichier : elle protège tout ce qui vit sur le serveur sans être
+      # dans le dépôt.
+      - name: Déposer
+        if: steps.decision.outputs.faire == 'oui'
+        env:
+          HOTE: ${{ vars.INFOMANIAK_HOTE }}
+          UTIL: ${{ vars.INFOMANIAK_UTILISATEUR }}
+          PORT: ${{ vars.INFOMANIAK_PORT || '22' }}
+          CIBLE: ${{ vars[matrix.variable] }}
+        run: |
+          OPTIONS="-rltvz --chmod=D755,F644 --human-readable"
+
+          # La simulation n'est le défaut QUE pour un lancement à la main.
+          # Un envoi sur main dépose pour de bon, sinon rien n'arriverait
+          # jamais sur le serveur.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] \
+             && [ "${{ inputs.simulation }}" = "true" ]; then
+            OPTIONS="$OPTIONS --dry-run"
+            echo "::warning::SIMULATION — rien ne sera écrit sur le serveur."
+          fi
+
+          if [ "${{ inputs.supprimer }}" = "true" ]; then
+            OPTIONS="$OPTIONS --delete"
+            echo "::warning::Les fichiers absents du dépôt seront EFFACÉS sur le serveur."
+          fi
+
+          rsync $OPTIONS \
+            -e "ssh -i ~/.ssh/id_deploiement -p $PORT -o BatchMode=yes" \
+            --exclude='.git*' \
+            --exclude='*.md' \
+            --exclude='*.sqlite' \
+            --exclude='sql/' \
+            --exclude='data/' \
+            --exclude='.htaccess.exemple' \
+            --exclude='config.php' \
+            --exclude='api/config.php' \
+            --exclude='config/nha.php' \
+            --exclude='assets/fonts/' \
+            --exclude='assets/img/' \
+            "${{ matrix.source }}/" "$UTIL@$HOTE:$CIBLE/"
+
+      - name: Refermer
+        if: always()
+        run: rm -f ~/.ssh/id_deploiement
