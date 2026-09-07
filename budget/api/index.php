@@ -714,6 +714,21 @@ try {
             $empId = (int) db()->lastInsertId();
         }
 
+        /* Le compte de dette porte le capital emprunté, en négatif.
+           Sans cela, un ménage qui saisit une hypothèque de 400 000 voit
+           sa fortune nette inchangée : l'emprunt existait dans sa propre
+           table sans jamais peser sur le patrimoine. C'était le chiffre
+           principal de l'application, et il était faux.
+
+           Le solde de départ seul est écrit : les remboursements
+           s'enregistrent comme des virements vers ce compte et le font
+           remonter vers zéro. Un compte de dette suit donc un emprunt,
+           et un seul — deux emprunts veulent deux comptes. */
+        if ($comptes[$compte]['type'] === 'dette') {
+            db()->prepare('UPDATE comptes SET solde_initial = ? WHERE id = ? AND livre_id = ?')
+                ->execute([chiffrerMontantPour($id, 'comptes.solde_initial', -$capital), $compte, $id]);
+        }
+
         $n = regenererEcheancier($id, $empId);
         journaliser($id, $u['id'], 'emprunt_enregistre', 'emprunt', $empId);
         jsonOut(['ok' => true, 'id' => $empId, 'echeances' => $n, 'version' => toucher($id)]);

@@ -1,0 +1,210 @@
+/* Version lue par le script au chargement : une feuille restée en
+   arrière produit des mises en page incompréhensibles, et c'est la
+   panne la plus difficile à diagnostiquer de l'extérieur. */
+:root{ --css-version:"2026-09-07"; }
+
+/* =========================================================
+   budget — feuille de style
+   Direction : le registre. Papier de comptable, encre indigo,
+   filets fins. Pas le vert potager de familyshop : on ne tient
+   pas ses comptes comme on fait ses courses.
+   Petit écran d'abord — une dépense se note debout, au sortir
+   du magasin, pas assis à un bureau.
+   ========================================================= */
+:root{
+  --papier:#FAF8F3;
+  --papier-creux:#F1EDE3;
+  --panneau:#FFFEFB;
+  --trait:#E3DCCC;
+  --trait-net:#C9C0AC;
+
+  --encre:#2B3A55;
+  --encre-fort:#1C2739;
+  --encre-doux:#5A6376;
+  --encre-tenu:#8A8FA0;
+  --encre-lave:#E8ECF3;
+
+  --entree:#1B6547;      /* ce qui rentre */
+  --entree-lave:#E6F0EA;
+  --sortie:#8E2A2A;      /* ce qui sort */
+  --sortie-lave:#FAEAEA;
+  --alerte:#A0521A;
+  --alerte-lave:#FBF0E4;
+
+  --serif:"Newsreader",Georgia,serif;
+  --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+
+  --e1:.25rem; --e2:.5rem; --e3:.85rem; --e4:1.35rem; --e5:2.1rem; --e6:3.4rem;
+  --rayon:10px;
+  --ombre:0 1px 2px rgba(28,39,57,.05), 0 6px 20px rgba(28,39,57,.06);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--papier); color:var(--encre-fort);
+  font-family:var(--sans); font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:var(--serif); font-weight:500; line-height:1.2; margin:0}
+h1{font-size:clamp(1.6rem,4vw,2.2rem)}
+h2{font-size:clamp(1.25rem,3vw,1.6rem)}
+h3{font-size:1.05rem}
+em{font-style:italic; color:var(--encre)}
+a{color:var(--encre); text-decoration-thickness:1px; text-underline-offset:3px}
+.enveloppe{max-width:64rem; margin:0 auto; padding:0 var(--e3)}
+.discret{color:var(--encre-tenu); font-size:.85rem}
+[hidden]{display:none !important}
+
+/* --- la barre du haut, commune aux applications --- */
+.barre{background:var(--encre-fort); color:#EFEFF3; font-size:.85rem}
+.barre .enveloppe{display:flex; align-items:center; gap:var(--e3); min-height:44px}
+.barre a{color:#C9CEDA; text-decoration:none; padding:.4rem 0}
+.barre a:hover{color:#fff}
+.barre .marque{font-family:var(--serif); font-size:1rem; color:#fff; margin-right:auto}
+.barre .marque span{color:#9AA6BE}
+
+/* --- l'en-tête --- */
+.entete{padding:var(--e4) 0 var(--e3); border-bottom:1px solid var(--trait)}
+.entete .enveloppe{display:flex; align-items:baseline; gap:var(--e3); flex-wrap:wrap}
+.entete .titre{font-family:var(--serif); font-size:1.5rem}
+.entete .livre{color:var(--encre-doux); font-size:.9rem; margin-left:auto}
+
+/* --- les onglets --- */
+.onglets{
+  display:flex; gap:var(--e1); overflow-x:auto; scrollbar-width:none;
+  border-bottom:1px solid var(--trait); background:var(--papier);
+  position:sticky; top:0; z-index:20;
+}
+.onglets::-webkit-scrollbar{display:none}
+.onglets button{
+  flex:none; background:none; border:0; border-bottom:2px solid transparent;
+  padding:var(--e3) var(--e3); font:inherit; font-size:.9rem; color:var(--encre-doux);
+  cursor:pointer; white-space:nowrap; min-height:44px;
+}
+.onglets button[aria-selected=true]{color:var(--encre); border-bottom-color:var(--encre); font-weight:600}
+
+/* --- les panneaux --- */
+.panneau{display:none; padding:var(--e4) 0 var(--e6)}
+.panneau.actif{display:block}
+
+/* --- les cartes --- */
+.cartes{display:grid; gap:var(--e3); grid-template-columns:repeat(auto-fill,minmax(15rem,1fr))}
+.carte{
+  background:var(--panneau); border:1px solid var(--trait); border-radius:var(--rayon);
+  padding:var(--e3) var(--e4); box-shadow:var(--ombre);
+  border-left:3px solid var(--teinte,var(--encre));
+}
+.carte .nom{font-weight:600; font-size:.95rem}
+.carte .type{color:var(--encre-tenu); font-size:.78rem; text-transform:uppercase; letter-spacing:.05em}
+.carte .somme{font-family:var(--mono); font-size:1.35rem; margin-top:var(--e2); font-variant-numeric:tabular-nums}
+.carte.archive{opacity:.55}
+
+/* --- les sommes --- */
+.somme{font-variant-numeric:tabular-nums}
+.positif{color:var(--entree)}
+.negatif{color:var(--sortie)}
+
+/* --- le bandeau de synthèse --- */
+.synthese{
+  display:grid; gap:var(--e3); grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));
+  background:var(--panneau); border:1px solid var(--trait); border-radius:var(--rayon);
+  padding:var(--e4); margin-bottom:var(--e4); box-shadow:var(--ombre);
+}
+.synthese div{min-width:0}
+.synthese .etiquette{font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:var(--encre-tenu)}
+.synthese .valeur{font-family:var(--mono); font-size:1.3rem; font-variant-numeric:tabular-nums; word-break:break-all}
+
+/* --- les listes d'opérations --- */
+.lignes{list-style:none; margin:0; padding:0}
+.ligne{
+  display:flex; align-items:center; gap:var(--e3); padding:var(--e3) 0;
+  border-bottom:1px solid var(--trait);
+}
+.ligne .jour{font-family:var(--mono); font-size:.8rem; color:var(--encre-tenu); flex:none; width:3.2rem}
+.ligne .corps{flex:1; min-width:0}
+.ligne .libelle{font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ligne .meta{font-size:.78rem; color:var(--encre-tenu)}
+.ligne .montant{font-family:var(--mono); font-variant-numeric:tabular-nums; flex:none; text-align:right}
+.ligne .pointer{
+  flex:none; width:26px; height:26px; border-radius:50%; border:1px solid var(--trait-net);
+  background:none; cursor:pointer; color:var(--encre-tenu); line-height:1;
+}
+.ligne .pointer[aria-pressed=true]{background:var(--entree); border-color:var(--entree); color:#fff}
+.ligne.pointee .libelle{color:var(--encre-doux)}
+
+/* --- les enveloppes --- */
+.enveloppe-ligne{padding:var(--e3) 0; border-bottom:1px solid var(--trait)}
+.enveloppe-ligne .haut{display:flex; align-items:baseline; gap:var(--e2)}
+.enveloppe-ligne .haut b{flex:1; font-weight:500}
+.jauge{height:6px; background:var(--papier-creux); border-radius:3px; overflow:hidden; margin-top:var(--e2)}
+.jauge span{display:block; height:100%; background:var(--encre); border-radius:3px}
+.jauge.depasse span{background:var(--sortie)}
+
+/* --- les formulaires --- */
+form{margin:0}
+label{display:block; margin-bottom:var(--e3)}
+label>span{display:block; margin-bottom:.3rem; font-size:.82rem; font-weight:500; color:var(--encre-doux)}
+input,select,textarea{
+  width:100%; padding:.62rem .75rem; min-height:44px; font:inherit; color:var(--encre-fort);
+  background:var(--panneau); border:1px solid var(--trait-net); border-radius:8px;
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--encre); outline-offset:1px; border-color:var(--encre)}
+input[type=checkbox]{width:auto; min-height:auto}
+.rangee{display:flex; gap:var(--e2); flex-wrap:wrap}
+.rangee>*{flex:1; min-width:7rem}
+.bouton{
+  display:inline-flex; align-items:center; justify-content:center; gap:.4rem;
+  padding:.62rem 1.1rem; min-height:44px; font:inherit; font-weight:500;
+  background:var(--encre); color:#fff; border:1px solid var(--encre);
+  border-radius:8px; cursor:pointer; text-decoration:none;
+}
+.bouton:hover{background:var(--encre-fort)}
+.bouton.pale{background:transparent; color:var(--encre); border-color:var(--trait-net)}
+.bouton.pale:hover{background:var(--encre-lave)}
+.bouton.petit{padding:.35rem .7rem; min-height:34px; font-size:.85rem}
+.bouton[disabled]{opacity:.5; cursor:not-allowed}
+
+/* --- les messages --- */
+.avis{padding:var(--e3) var(--e4); border-radius:var(--rayon); margin-bottom:var(--e3); font-size:.9rem}
+.avis:empty{display:none}
+.avis.erreur{background:var(--sortie-lave); color:var(--sortie); border:1px solid #E6C4C4}
+.avis.bien{background:var(--entree-lave); color:var(--entree); border:1px solid #C4DCCE}
+.avis.note{background:var(--encre-lave); color:var(--encre-doux); border:1px solid var(--trait)}
+
+/* --- le bloc de confiance : il porte l'argument du produit --- */
+.coffre{
+  background:var(--encre-lave); border:1px solid #CBD4E4; border-radius:var(--rayon);
+  padding:var(--e4); margin-bottom:var(--e4);
+}
+.coffre h3{margin-bottom:var(--e2)}
+.coffre p{margin:0 0 var(--e2); font-size:.9rem; color:var(--encre-doux)}
+.coffre p:last-child{margin-bottom:0}
+
+/* --- l'échéancier --- */
+.tableau-cadre{overflow-x:auto; border:1px solid var(--trait); border-radius:var(--rayon); background:var(--panneau)}
+table{width:100%; border-collapse:collapse; font-size:.88rem}
+th{
+  text-align:left; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--encre-doux); padding:.6rem .8rem; border-bottom:1px solid var(--trait); white-space:nowrap;
+}
+td{padding:.55rem .8rem; border-bottom:1px solid var(--trait); white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums}
+
+/* --- l'accueil, avant connexion --- */
+.accroche{padding:var(--e6) 0; text-align:center}
+.accroche h1{margin-bottom:var(--e3)}
+.accroche p{max-width:34rem; margin:0 auto var(--e4); color:var(--encre-doux)}
+
+/* --- le pied --- */
+.pied{border-top:1px solid var(--trait); padding:var(--e4) 0; margin-top:var(--e6);
+      font-size:.82rem; color:var(--encre-tenu)}
+.pied a{color:var(--encre-doux)}
+
+@media (max-width:600px){
+  .synthese{padding:var(--e3)}
+  .ligne .jour{width:2.6rem}
+  .entete .livre{width:100%; margin-left:0}
+}

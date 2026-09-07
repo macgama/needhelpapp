@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2B3A55">
+<meta name="robots" content="noindex">
+<title>Les comptes du ménage — NeedHelpApp</title>
+<meta name="description" content="Ce qui entre, ce qui sort, et ce que coûte vraiment un emprunt. Montants et libellés chiffrés dans la base.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/public-sans.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Newsreader";src:url(/assets/fonts/newsreader.woff2) format("woff2");
+  font-weight:400 500;font-style:normal;font-display:swap}
+@font-face{font-family:"Public Sans";src:url(/assets/fonts/public-sans.woff2) format("woff2");
+  font-weight:400 600;font-style:normal;font-display:swap}
+</style>
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<nav class="barre" aria-label="Les applications">
+  <div class="enveloppe">
+    <a class="marque" href="https://needhelpapp.com/">Need<span>Help</span>App</a>
+    <a href="https://needhelpapp.com/#domaines">Applications</a>
+    <a href="https://needhelpapp.com/profil.php" id="lien-profil" hidden>Mon compte</a>
+    <a href="https://needhelpapp.com/connexion.php" id="lien-connexion" hidden>Se connecter</a>
+  </div>
+</nav>
+
+<header class="entete">
+  <div class="enveloppe">
+    <span class="titre">Les comptes du <em>ménage</em></span>
+    <span class="livre" id="livre-nom"></span>
+  </div>
+</header>
+
+<!-- ================= AVANT CONNEXION ================= -->
+<section id="accueil" class="enveloppe accroche">
+  <h1>Ce qui entre, ce qui sort,<br>et ce que coûte <em>vraiment</em> un emprunt.</h1>
+  <p>Vos comptes, votre budget du mois, vos hypothèques et vos emprunts avec
+     leur échéancier. Tenu en francs, pensé pour la Suisse.</p>
+  <p><a class="bouton" id="btn-connexion" href="https://needhelpapp.com/connexion.php">Se connecter</a>
+     <a class="bouton pale" id="btn-inscription" href="https://needhelpapp.com/inscription.php">Créer un compte</a></p>
+
+  <div class="coffre" style="text-align:left;max-width:38rem;margin:var(--e5) auto 0">
+    <h3>Ce que nous voyons de vos comptes</h3>
+    <p><b>Rien.</b> Les montants, les libellés, les noms de comptes et les
+       conditions de vos emprunts sont chiffrés avant d'atteindre la base, avec
+       une clé qui n'y figure pas. Une copie de la base volée ne dit ni ce que
+       vous gagnez, ni ce que vous devez.</p>
+    <p>Restent lisibles les dates et la structure — il en faut pour retrouver
+       une opération. Quelqu'un qui déroberait la base apprendrait qu'un ménage
+       a noté dix-sept dépenses en mars. Pas lesquelles, pas combien.</p>
+    <p>Et ce que cela ne protège pas : qui obtiendrait un accès complet au
+       serveur obtiendrait aussi la clé. Nous préférons l'écrire que promettre
+       une inviolabilité que ce chiffrement ne donne pas.</p>
+  </div>
+</section>
+
+<!-- ================= L'APPLICATION ================= -->
+<div id="application" hidden>
+  <nav class="onglets enveloppe" id="onglets" role="tablist" aria-label="Écrans">
+    <button role="tab" data-vue="tableau"   aria-selected="true">Tableau de bord</button>
+    <button role="tab" data-vue="operations" aria-selected="false">Opérations</button>
+    <button role="tab" data-vue="budget"    aria-selected="false">Budget</button>
+    <button role="tab" data-vue="emprunts"  aria-selected="false">Emprunts</button>
+    <button role="tab" data-vue="reglages"  aria-selected="false">Réglages</button>
+  </nav>
+
+  <main class="enveloppe">
+    <p class="avis" id="avis" role="status"></p>
+
+    <!-- ---------- Tableau de bord ---------- -->
+    <section class="panneau actif" id="vue-tableau">
+      <div class="synthese">
+        <div><div class="etiquette">Avoirs</div><div class="valeur somme" id="t-avoirs">—</div></div>
+        <div><div class="etiquette">Dettes</div><div class="valeur somme" id="t-dettes">—</div></div>
+        <div><div class="etiquette">Fortune nette</div><div class="valeur somme" id="t-net">—</div></div>
+        <div><div class="etiquette" id="t-mois-label">Ce mois</div><div class="valeur somme" id="t-mois">—</div></div>
+      </div>
+      <h2>Les comptes</h2>
+      <div class="cartes" id="t-comptes" style="margin-top:var(--e3)"></div>
+      <p class="discret" id="t-vide" hidden style="margin-top:var(--e3)">
+        Aucun compte pour l'instant. Ouvrez-en un dans <b>Réglages</b> — un compte
+        courant suffit pour commencer.</p>
+    </section>
+
+    <!-- ---------- Opérations ---------- -->
+    <section class="panneau" id="vue-operations">
+      <div class="rangee" style="margin-bottom:var(--e4)">
+        <label style="flex:0 0 10rem"><span>Mois</span>
+          <input type="month" id="op-mois"></label>
+      </div>
+
+      <form id="op-forme" class="carte" style="margin-bottom:var(--e4)">
+        <h3 style="margin-bottom:var(--e3)">Noter une opération</h3>
+        <input type="hidden" id="op-id">
+        <div class="rangee">
+          <label><span>Sens</span>
+            <select id="op-sens">
+              <option value="sortie">Dépense</option>
+              <option value="entree">Recette</option>
+              <option value="virement">Virement</option>
+            </select></label>
+          <label><span>Montant</span>
+            <input id="op-montant" type="text" inputmode="decimal" placeholder="49.90" required></label>
+          <label><span>Jour</span><input id="op-jour" type="date" required></label>
+        </div>
+        <div class="rangee">
+          <label><span>Compte</span><select id="op-compte"></select></label>
+          <label id="op-vers-bloc" hidden><span>Vers le compte</span><select id="op-vers"></select></label>
+          <label id="op-cat-bloc"><span>Catégorie</span><select id="op-categorie"></select></label>
+        </div>
+        <label><span>Libellé</span><input id="op-libelle" type="text" maxlength="120" placeholder="Coop, essence, prime maladie…"></label>
+        <div class="rangee" style="align-items:center">
+          <button class="bouton" type="submit" id="op-valider">Enregistrer</button>
+          <button class="bouton pale" type="button" id="op-annuler" hidden>Annuler</button>
+        </div>
+      </form>
+
+      <h2 id="op-titre">Le mois</h2>
+      <p class="discret" id="op-resume">—</p>
+      <ul class="lignes" id="op-liste"></ul>
+    </section>
+
+    <!-- ---------- Budget ---------- -->
+    <section class="panneau" id="vue-budget">
+      <p class="discret">Ce que vous vous accordez par catégorie, et ce qui reste.
+         Une enveloppe vide ou à zéro n'est pas suivie.</p>
+      <div id="b-liste" style="margin-top:var(--e4)"></div>
+    </section>
+
+    <!-- ---------- Emprunts ---------- -->
+    <section class="panneau" id="vue-emprunts">
+      <div id="e-liste"></div>
+      <details class="carte" style="margin-top:var(--e4)">
+        <summary style="cursor:pointer;font-weight:500">Ajouter un emprunt ou une hypothèque</summary>
+        <form id="e-forme" style="margin-top:var(--e3)">
+          <input type="hidden" id="e-id">
+          <div class="rangee">
+            <label><span>Nom</span><input id="e-nom" required maxlength="80" placeholder="Hypothèque 1re tranche"></label>
+            <label><span>Prêteur</span><input id="e-preteur" maxlength="80" placeholder="Banque cantonale"></label>
+          </div>
+          <div class="rangee">
+            <label><span>Genre</span>
+              <select id="e-genre">
+                <option value="hypotheque">Hypothèque</option>
+                <option value="pret">Prêt personnel</option>
+                <option value="leasing">Leasing</option>
+                <option value="credit">Crédit</option>
+                <option value="prive">Prêt privé</option>
+              </select></label>
+            <label><span>Amortissement</span>
+              <select id="e-mode">
+                <option value="indirect">Indirect (3e pilier nanti)</option>
+                <option value="direct">Direct</option>
+                <option value="annuites">Mensualité constante</option>
+                <option value="constant">Amortissement constant</option>
+                <option value="infine">In fine</option>
+              </select></label>
+          </div>
+          <p class="discret" id="e-mode-aide" style="margin:0 0 var(--e3)"></p>
+          <div class="rangee">
+            <label><span>Capital</span><input id="e-capital" type="text" inputmode="decimal" required placeholder="400000"></label>
+            <label><span>Taux annuel %</span><input id="e-taux" type="text" inputmode="decimal" required placeholder="1.5"></label>
+            <label><span>Amortissement par échéance</span><input id="e-amortissement" type="text" inputmode="decimal" placeholder="1750"></label>
+          </div>
+          <div class="rangee">
+            <label><span>Périodicité</span>
+              <select id="e-periodicite">
+                <option value="trimestriel">Trimestrielle</option>
+                <option value="mensuel">Mensuelle</option>
+                <option value="semestriel">Semestrielle</option>
+                <option value="annuel">Annuelle</option>
+              </select></label>
+            <label><span>Début</span><input id="e-debut" type="date" required></label>
+            <label><span>Durée en mois</span><input id="e-duree" type="number" min="1" max="1200" placeholder="120"></label>
+          </div>
+          <div class="rangee">
+            <label><span>Compte de dette</span><select id="e-compte"></select></label>
+            <label id="e-3a-bloc"><span>Compte du 3e pilier</span><select id="e-compte-3a"></select></label>
+          </div>
+          <button class="bouton" type="submit">Enregistrer et calculer l'échéancier</button>
+        </form>
+      </details>
+      <div id="e-echeancier" style="margin-top:var(--e5)"></div>
+    </section>
+
+    <!-- ---------- Réglages ---------- -->
+    <section class="panneau" id="vue-reglages">
+      <h2>Le livre</h2>
+      <form id="r-livre" class="carte" style="margin:var(--e3) 0 var(--e5)">
+        <label><span>Nom du livre</span><input id="r-nom" maxlength="80"></label>
+        <p class="discret">Code de partage : <b id="r-code" class="somme"></b> —
+           donnez-le à qui partage ce budget avec vous.</p>
+        <div class="rangee">
+          <button class="bouton" type="submit">Renommer</button>
+          <button class="bouton pale" type="button" id="r-nouveau-code">Changer le code</button>
+        </div>
+      </form>
+
+      <h2>Les comptes</h2>
+      <form id="r-compte" class="carte" style="margin:var(--e3) 0 var(--e5)">
+        <input type="hidden" id="rc-id">
+        <div class="rangee">
+          <label><span>Nom</span><input id="rc-nom" required maxlength="80" placeholder="Compte courant"></label>
+          <label><span>Type</span>
+            <select id="rc-type">
+              <option value="courant">Compte courant</option>
+              <option value="epargne">Épargne</option>
+              <option value="especes">Espèces</option>
+              <option value="carte">Carte de crédit</option>
+              <option value="placement">Placement</option>
+              <option value="prevoyance">Prévoyance (3e pilier)</option>
+              <option value="bien">Bien (immeuble, véhicule)</option>
+              <option value="dette">Dette</option>
+            </select></label>
+          <label><span>Solde de départ</span><input id="rc-initial" type="text" inputmode="decimal" placeholder="0"></label>
+        </div>
+        <div class="rangee">
+          <button class="bouton" type="submit">Enregistrer le compte</button>
+          <button class="bouton pale" type="button" id="rc-annuler" hidden>Annuler</button>
+        </div>
+      </form>
+      <ul class="lignes" id="r-comptes"></ul>
+
+      <h2 style="margin-top:var(--e5)">Les catégories</h2>
+      <ul class="lignes" id="r-categories"></ul>
+
+      <h2 style="margin-top:var(--e5)">Qui a touché à quoi</h2>
+      <p class="discret">Le journal ne consigne ni montants ni libellés : seulement
+         qui a modifié quoi, et quand.</p>
+      <ul class="lignes" id="r-journal"></ul>
+    </section>
+  </main>
+</div>
+
+<footer class="pied">
+  <div class="enveloppe">
+    <p>NeedHelpApp — hébergé en Suisse. Montants et libellés chiffrés dans la base.
+       <a href="https://needhelpapp.com/confidentialite.php">Confidentialité</a> ·
+       <a href="https://needhelpapp.com/conditions.php">Conditions</a> ·
+       <a href="https://needhelpapp.com/contact.php">Contact</a></p>
+  </div>
+</footer>
+
+<script src="/assets/budget.js" defer></script>
+</body>
+</html>

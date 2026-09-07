@@ -7,22 +7,36 @@ PHP 8.1+, MariaDB, aucune dépendance, aucun outil de build.
 
 ## Où en est ce dossier
 
-Ce qui est écrit et éprouvé :
-
 | Fichier | Ce qu'il fait |
 |---|---|
 | `sql/schema.sql` | Les douze tables, chargées sans erreur sur MariaDB 10.11 |
 | `api/coffre.php` | Le chiffrement des colonnes sensibles |
 | `api/amortissement.php` | Le calcul des échéanciers, cinq modes |
-| `api/calcul-test.php` | 73 contrôles sur les deux précédents |
+| `api/calcul-test.php` | 87 contrôles sur les deux précédents |
+| `api/db.php` | La plomberie, le livre, le journal |
+| `api/nha.php` | Le pont vers le portail, repris de familyshop |
+| `api/index.php` | L'API : comptes, opérations, catégories, emprunts, enveloppes |
+| `index.html` + `assets/` | L'interface, cinq écrans |
 | `api/config.example.php` | À copier en `config.php` |
 
-Ce qui reste à écrire : `api/db.php` (session et rattachement au
-portail), `api/index.php` (l'API), l'interface, et la page qui explique
-tout cela aux utilisateurs.
+Ce qui reste : l'import de relevés bancaires (écarté de la V1), les
+récurrences (la table existe, rien ne les produit encore) et le
+multidevises (la table `taux` attend).
 
 Lancez `php api/calcul-test.php` avant toute mise en ligne. Il ne touche
 ni à la base ni au réseau.
+
+## Un compte de dette suit un emprunt, et un seul
+
+Enregistrer un emprunt écrit le capital, en négatif, dans le solde de
+départ du compte de dette qui lui est rattaché. Sans cela, saisir une
+hypothèque de 400 000 laissait la fortune nette inchangée : l'emprunt
+vivait dans sa propre table sans jamais peser sur le patrimoine, et
+c'était le chiffre principal de l'application.
+
+Les remboursements s'enregistrent ensuite comme des virements vers ce
+compte, qui remonte vers zéro. Deux emprunts veulent donc deux comptes de
+dette : le second écraserait le solde de départ du premier.
 
 ## La sécurité, sans exagération
 
