@@ -802,8 +802,26 @@ h2.title{font-size:22px}
 .article .retirer{
   flex:none;background:none;border:0;color:var(--grey);font-size:19px;line-height:1;
   cursor:pointer;padding:0 3px;opacity:0;transition:opacity .12s;
+  /* La zone de clic doit rester atteignable au pouce, même quand le
+     signe est petit. */
+  min-width:38px;min-height:38px;
 }
 .article:hover .retirer,.article:focus-within .retirer{opacity:1}
+
+/* SUR UN ÉCRAN TACTILE, IL N'Y A PAS DE SURVOL.
+   Le bouton restait donc à opacity:0 pour toujours, et l'on ne pouvait
+   pas retirer un article — sur le seul appareil où cette application
+   s'utilise vraiment, une main sur le chariot. Toucher la ligne cochait
+   l'article au lieu de l'effacer, et rien n'indiquait qu'un autre geste
+   existait.
+
+   « pointer:coarse » vise le doigt plutôt que la largeur d'écran : une
+   tablette large mais tactile est concernée, un petit portable avec
+   souris ne l'est pas. */
+@media (hover:none),(pointer:coarse){
+  .article .retirer{opacity:.45}
+  .article .retirer:active{opacity:1;color:var(--red)}
+}
 .article .retirer:hover{color:var(--red)}
 .marque-libre{font-size:11px;color:var(--grey);border:1px solid var(--line);
   border-radius:5px;padding:1px 5px;margin-left:7px;vertical-align:1px}

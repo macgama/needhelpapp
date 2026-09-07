@@ -261,8 +261,17 @@ function cleIngredient(string $texte): string
     return mb_substr(implode(' ', $mots), 0, 80);
 }
 
+/* CETTE LISTE DOIT SUIVRE CELLE DE assets/ingredients.js, ET DANS LE
+   MÊME ORDRE — c'est l'ordre du magasin.
+
+   Deux listes qui doivent s'accorder finissent toujours par diverger :
+   'bebe' et 'animaux' ont été ajoutés au catalogue du navigateur sans
+   l'être ici, et rayonValide() reversait silencieusement chaque couche
+   et chaque croquette dans « Divers ». Le navigateur devinait juste, le
+   serveur écrasait — donc en fin de liste, à l'opposé du rayon. */
 const RAYONS = ['legumes', 'boucherie', 'poisson', 'cremerie', 'boulangerie', 'epicerie',
-                'sucre', 'surgeles', 'boissons', 'entretien', 'hygiene', 'divers'];
+                'sucre', 'surgeles', 'boissons', 'entretien', 'hygiene', 'bebe',
+                'animaux', 'divers'];
 
 function rayonValide(string $r): string
 {
@@ -270,7 +279,8 @@ function rayonValide(string $r): string
 }
 
 const UNITES = ['g', 'kg', 'ml', 'cl', 'dl', 'l', 'cs', 'cc', 'pièce', 'tranche', 'gousse',
-                'botte', 'boîte', 'paquet', 'sachet', 'pot', 'bouteille', 'cube', 'pincée', ''];
+                'botte', 'boîte', 'paquet', 'sachet', 'pot', 'bouteille', 'pack', 'cube',
+                'pincée', ''];
 
 function uniteValide(string $u): string
 {

@@ -153,6 +153,27 @@ jobs:
           fi
           echo "$vues pages et points d'entrée, aucune erreur fatale."
 
+      # Deux listes qui doivent s'accorder finissent par diverger. Celle
+      # des rayons vit dans le catalogue du navigateur ET dans le
+      # validateur du serveur : quand l'une avance seule, rayonValide()
+      # reverse silencieusement les produits dans « Divers », et rien ne
+      # le signale.
+      - name: Les rayons de familyshop concordent-ils ?
+        run: |
+          python3 - <<'PY'
+          import re, sys
+          js = re.findall(r"\{ code:'([a-z]+)'",
+                          open('familyshop/assets/ingredients.js', encoding='utf-8').read())
+          src = open('familyshop/api/db.php', encoding='utf-8').read()
+          bloc = src[src.index('const RAYONS ='):src.index('function rayonValide')]
+          php = re.findall(r"'([a-z]+)'", bloc)
+          if js == php:
+              print('  ok  %d rayons, même ordre des deux côtés' % len(js))
+          else:
+              print('::error::Les rayons divergent. Navigateur : %s — Serveur : %s' % (js, php))
+              sys.exit(1)
+          PY
+
       - name: Le coffre et les échéanciers de budget
         if: hashFiles('budget/api/calcul-test.php') != ''
         run: php budget/api/calcul-test.php

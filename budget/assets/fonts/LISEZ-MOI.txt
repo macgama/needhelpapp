@@ -1,0 +1,13 @@
+Déposez ici les fichiers de polices, au format WOFF2 :
+
+  newsreader.woff2          (Newsreader, romain, variable 400-500)
+  newsreader-italic.woff2   (Newsreader, italique 400)
+  public-sans.woff2         (Public Sans, variable 400-600)
+
+Les deux familles sont sous licence SIL Open Font, librement redistribuables.
+T�léchargez-les depuis Google Fonts, puis passez-les par un sous-ensemble
+latin étendu (outil : glyphhanger, ou fontsource) pour descendre sous 30 Ko.
+
+Ne PAS charger les polices depuis fonts.googleapis.com : cela transmet
+l'adresse IP de chaque visiteur à Google, ce qui exige un consentement
+préalable sous nLPD et RGPD.

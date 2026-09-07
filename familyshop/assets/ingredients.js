@@ -28,7 +28,9 @@ const RAYONS = [
   { code:'surgeles',   nom:'Surgelés' },
   { code:'boissons',   nom:'Boissons' },
   { code:'entretien',  nom:'Entretien et maison' },
-  { code:'hygiene',    nom:'Hygiène' },
+  { code:'hygiene',    nom:'Hygiène et beauté' },
+  { code:'bebe',       nom:'Bébé' },
+  { code:'animaux',    nom:'Animaux' },
   { code:'divers',     nom:'Divers' }
 ];
 
@@ -122,7 +124,64 @@ const CATALOGUE = {
   'film alimentaire':['entretien','pièce'], 'papier cuisson':['entretien','pièce'],
   'savon':['hygiene','pièce'], 'shampoing':['hygiene','pièce'],
   'dentifrice':['hygiene','pièce'], 'papier toilette':['hygiene','paquet'],
-  'mouchoir':['hygiene','paquet'], 'couche':['hygiene','paquet']
+  'mouchoir':['hygiene','paquet'], 'couche':['bebe','paquet'],
+
+  /* --- entretien, suite ---
+     Une liste de courses n'est pas une liste de recettes : on y met la
+     lessive et le dentifrice bien plus souvent qu'un ingrédient rare.
+     Les trois rayons non alimentaires ne comptaient que vingt-cinq
+     produits sur cent quatre-vingt-huit, et tout le reste tombait dans
+     « Divers » — donc en fin de liste, donc au mauvais endroit du
+     magasin. */
+  'adoucissant':['entretien','pièce'], 'détachant':['entretien','pièce'],
+  'produit vaisselle':['entretien','pièce'], 'pastille lave-vaisselle':['entretien','paquet'],
+  'sel régénérant':['entretien','paquet'], 'liquide de rinçage':['entretien','pièce'],
+  'nettoyant sol':['entretien','pièce'], 'nettoyant vitres':['entretien','pièce'],
+  'nettoyant salle de bain':['entretien','pièce'], 'nettoyant wc':['entretien','pièce'],
+  'javel':['entretien','pièce'], 'désinfectant':['entretien','pièce'],
+  'chiffon':['entretien','paquet'], 'serpillière':['entretien','pièce'],
+  'balai':['entretien','pièce'], 'gant de ménage':['entretien','paquet'],
+  'sac congélation':['entretien','paquet'], 'sac aspirateur':['entretien','paquet'],
+  'allumette':['entretien','paquet'], 'bougie':['entretien','pièce'],
+  'pile':['entretien','paquet'], 'ampoule':['entretien','pièce'],
+  'désodorisant':['entretien','pièce'],
+
+  // --- hygiène et beauté
+  'gel douche':['hygiene','pièce'], 'après-shampoing':['hygiene','pièce'],
+  'brosse à dents':['hygiene','pièce'], 'fil dentaire':['hygiene','pièce'],
+  'bain de bouche':['hygiene','pièce'], 'déodorant':['hygiene','pièce'],
+  'rasoir':['hygiene','paquet'], 'mousse à raser':['hygiene','pièce'],
+  'crème hydratante':['hygiene','pièce'], 'crème solaire':['hygiene','pièce'],
+  'coton-tige':['hygiene','paquet'], 'coton':['hygiene','paquet'],
+  'serviette hygiénique':['hygiene','paquet'], 'tampon':['hygiene','paquet'],
+  'protège-slip':['hygiene','paquet'], 'pansement':['hygiene','paquet'],
+  'désinfectant plaie':['hygiene','pièce'], 'paracétamol':['hygiene','paquet'],
+  'sparadrap':['hygiene','pièce'], 'thermomètre':['hygiene','pièce'],
+  'lime à ongles':['hygiene','pièce'], 'laque':['hygiene','pièce'],
+  'gel coiffant':['hygiene','pièce'], 'teinture':['hygiene','pièce'],
+  'lingette démaquillante':['hygiene','paquet'], 'mouchoir de poche':['hygiene','paquet'],
+
+  // --- bébé
+  'lingette bébé':['bebe','paquet'], 'lait infantile':['bebe','pièce'],
+  'petit pot':['bebe','pièce'], 'liniment':['bebe','pièce'],
+  'crème de change':['bebe','pièce'], 'biberon':['bebe','pièce'],
+  'tétine':['bebe','pièce'], 'compote bébé':['bebe','pièce'],
+
+  // --- animaux
+  'croquette chien':['animaux','kg'], 'croquette chat':['animaux','kg'],
+  'pâtée chien':['animaux','pièce'], 'pâtée chat':['animaux','pièce'],
+  'litière':['animaux','paquet'], 'friandise chien':['animaux','paquet'],
+  'friandise chat':['animaux','paquet'], 'sac à déjection':['animaux','paquet'],
+
+  // --- boissons, suite
+  'eau gazeuse':['boissons','pack'], 'eau plate':['boissons','pack'],
+  'sirop':['boissons','pièce'], 'jus de pomme':['boissons','pièce'],
+  'jus multivitaminé':['boissons','pièce'], 'thé glacé':['boissons','pack'],
+  'limonade':['boissons','pack'], 'tonic':['boissons','pack'],
+  'vin blanc':['boissons','pièce'], 'vin rouge':['boissons','pièce'],
+  'rosé':['boissons','pièce'], 'cidre':['boissons','pièce'],
+  'apéritif':['boissons','pièce'], 'café en grains':['boissons','paquet'],
+  'capsule café':['boissons','paquet'], 'infusion':['boissons','paquet']
 };
 
 /* On enlève accents, pluriels et articles pour reconnaître « les Oignons »

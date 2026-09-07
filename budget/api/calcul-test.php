@@ -174,6 +174,36 @@ verifie('l\'intérêt baisse avec la dette',
 verifie('la comparaison avec l\'indirect a du sens',
         $e['total_interets'] < 40 * 150000, 'l\'indirect coûte plus d\'intérêts, et c\'est le fait marquant');
 
+/* Le défaut que ce bloc ne voyait pas : la dernière échéance soldait
+   d'office le capital non amorti. Sur cet exemple, elle affichait un
+   remboursement de 331 750 CHF en un trimestre. Une tranche à taux fixe
+   ne se solde pas au terme : elle se renégocie. */
+egal('la DERNIÈRE échéance ne rembourse pas plus que les autres',
+     175000, $e['lignes'][39]['capital']);
+egal('40 trimestres à 1750 amortissent 70 000',
+     7000000, $e['total_capital']);
+egal('il reste donc 330 000 à refinancer au terme',
+     33000000, $e['reste_du_au_terme']);
+egal('et c\'est bien le solde de la dernière ligne',
+     33000000, $e['lignes'][39]['restant']);
+
+titre('Amortissement contractuel qui solde la dette avant le terme');
+$e = echeancier(['capital' => 1200000, 'taux' => 200, 'mode' => 'direct',
+                 'periodicite' => 'mensuel', 'debut' => '2026-01-01',
+                 'duree_mois' => 60, 'amortissement_periodique' => 200000]);
+egal('l\'échéancier s\'arrête dès que la dette est soldée', 6, $e['periodes']);
+egal('rien remboursé en trop', 1200000, $e['total_capital']);
+egal('plus rien au terme', 0, $e['reste_du_au_terme']);
+
+titre('Ce qui reste dû au terme, par mode');
+$base = ['capital' => 1000000, 'taux' => 300, 'periodicite' => 'mensuel',
+         'debut' => '2026-01-01', 'duree_mois' => 12];
+egal('annuités : soldé',  0, echeancier($base + ['mode' => 'annuites'])['reste_du_au_terme']);
+egal('constant : soldé',  0, echeancier($base + ['mode' => 'constant'])['reste_du_au_terme']);
+egal('in fine : soldé',   0, echeancier($base + ['mode' => 'infine'])['reste_du_au_terme']);
+egal('indirect : tout reste dû', 1000000,
+     echeancier($base + ['mode' => 'indirect'])['reste_du_au_terme']);
+
 titre('Remboursement in fine — 50 000 CHF à 3 %, 5 ans');
 $e = echeancier(['capital' => 5000000, 'taux' => 300, 'mode' => 'infine',
                  'periodicite' => 'annuel', 'debut' => '2026-01-01', 'duree_mois' => 60]);
