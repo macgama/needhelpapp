@@ -10,10 +10,10 @@
  */
 return [
     // ---- la base de l'application ----
-    'host'     => 'localhost',
+    'host'     => '6l3nq9.myd.infomaniak.com',
     'database' => '6l3nq9_budget',
-    'user'     => 'utilisateur_de_la_base',
-    'password' => 'mot_de_passe_de_la_base',
+    'user'     => '6l3nq9_macgama',
+    'password' => 'AurTimEli_78_',
 
     /* ================================================================
        LA CLÉ DE CHIFFREMENT
@@ -38,7 +38,7 @@ return [
        retirez jamais une clé tant qu'une seule ligne s'y réfère.
        ================================================================ */
     'coffre_cles' => [
-        1 => '',   // 32 octets en base64
+        1 => 'Yv47ocwTkL1CJnQQCmae1Z1GCgi09Tr7TRjG7is6+ko=',   // 32 octets en base64
     ],
     'coffre_cle_active' => 1,
 
