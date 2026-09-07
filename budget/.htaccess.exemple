@@ -1,0 +1,31 @@
+# ---- budget.needhelpapp.com : configuration Apache ----
+# À déposer sous le nom .htaccess à la racine du sous-domaine.
+
+RewriteEngine On
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^(.*)$ https://budget.needhelpapp.com/$1 [R=301,L]
+
+DirectoryIndex index.html index.php
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # Un budget n'a rien à faire dans le cache d'un navigateur partagé,
+  # ni dans celui d'un intermédiaire. C'est la seule application de
+  # NeedHelpApp où cela se justifie.
+  <FilesMatch "\.(php)$">
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, private"
+  </FilesMatch>
+
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://*.googleusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self' https://accounts.google.com/gsi/client; connect-src 'self' https://accounts.google.com; frame-src https://accounts.google.com; font-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+</IfModule>
+
+# ---- Fichiers jamais servis ----
+<FilesMatch "(^\.|\.(sql|md|log|ini)$)">
+  Require all denied
+</FilesMatch>
