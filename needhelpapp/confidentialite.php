@@ -162,14 +162,22 @@ nha_page_debut(
       <tr><td>Journal des évènements du compte</td><td>12 mois</td></tr>
       <tr><td>Messages de contact et idées</td><td>24 mois</td></tr>
       <tr><td>Pièces comptables et facturation</td><td>10 ans, comme l'exige le droit suisse</td></tr>
-      <tr><td>Compte supprimé</td><td>Neutralisé immédiatement, effacé définitivement au plus tard 30 jours après</td></tr>
+      <tr><td>Compte supprimé</td><td>Neutralisé immédiatement, effacé 30 jours après</td></tr>
+      <tr><td>Compte supprimé ayant été abonné</td><td>Réduit à une écriture comptable anonyme, conservée 10 ans</td></tr>
     </table>
     <p>La suppression d'un compte est immédiate dans ses effets&nbsp;:
       l'adresse est neutralisée, le prénom et le mot de passe effacés, les
-      sessions fermées, les liaisons Google rompues. Ne subsiste, pendant
-      trente jours au plus, qu'un enregistrement technique permettant de
-      traiter un litige de facturation ou un retour d'erreur. Passé ce délai,
-      il disparaît.</p>
+      sessions fermées, les liaisons Google rompues. Ne subsiste que le temps
+      de traiter un litige de facturation ou un retour d'erreur un
+      enregistrement technique qui ne vous désigne plus. Trente jours plus
+      tard, une tâche automatique l'efface, avec tout ce qui s'y
+      rattachait.</p>
+    <p>Une seule exception, et elle nous est imposée&nbsp;: si vous avez été
+      abonné, le droit suisse nous oblige à conserver dix ans les pièces
+      comptables. Ce qui subsiste alors n'est plus un compte — ni adresse, ni
+      prénom, ni mot de passe, ni historique — mais une écriture anonyme
+      portant les dates et le montant d'un abonnement. Elle ne permet pas de
+      remonter jusqu'à vous, et aucune application ne la lit.</p>
 
     <h2 id="enfants">Les enfants et l'application scolaire</h2>
     <p>L'application d'apprentissage fonctionne <strong>sans compte</strong>.

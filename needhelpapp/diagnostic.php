@@ -197,7 +197,8 @@ verif('Fichiers déposés', function () {
         'api/profil.php', 'api/sessions.php', 'api/moi.php', 'api/export.php',
         'api/supprimer.php', 'api/google.php', 'api/paiement.php', 'api/stripe.php',
         'includes/nha-core.php', 'includes/http.php', 'includes/stripe.php',
-        'includes/mailer.php', 'api/ping.php',
+        'includes/mailer.php', 'api/ping.php', 'tache-purge.php',
+        'mentions-legales.php', 'conditions.php', 'confidentialite.php',
         'partials/page.php', 'partials/google.php',
         'assets/nha.css', 'assets/nha.js', 'assets/google.js',
     ];
@@ -214,6 +215,32 @@ verif('Polices auto-hébergées', function () {
             $manquantes ? 'absentes : ' . implode(', ', $manquantes)
                         . ' — le site utilise les polices système en attendant'
                         : 'les trois fichiers sont là'];
+});
+
+/* Le piège classique : le script est bien déposé, mais la tâche
+   planifiée n'a jamais été créée. Rien ne le signale — le site marche —
+   et la politique de confidentialité promet pendant des mois un
+   effacement que personne n'exécute. La purge se journalise à chaque
+   passage : son absence se lit ici. */
+verif('La purge tourne', function () {
+    if (!is_file(__DIR__ . '/tache-purge.php')) {
+        return ['echec', 'tache-purge.php n\'est pas sur le serveur'];
+    }
+    $dernier = nha_db()->query(
+        'SELECT created_at FROM audit_log WHERE event = "purge" ORDER BY id DESC LIMIT 1'
+    )->fetchColumn();
+    if ($dernier === false) {
+        return ['echec', 'elle n\'a jamais tourné — la tâche planifiée n\'est pas créée. '
+            . 'Manager → Tâches planifiées, une fois par nuit : '
+            . 'php ' . __DIR__ . '/tache-purge.php'];
+    }
+    $jours = (int) ((time() - strtotime((string) $dernier)) / 86400);
+    if ($jours > 2) {
+        return ['attention', 'dernier passage il y a ' . $jours . ' jours ('
+            . date('d.m.Y H:i', strtotime((string) $dernier)) . ') — la tâche '
+            . 'planifiée ne tourne plus'];
+    }
+    return ['ok', 'dernier passage le ' . date('d.m.Y à H:i', strtotime((string) $dernier))];
 });
 
 verif('Journal des erreurs', function () {

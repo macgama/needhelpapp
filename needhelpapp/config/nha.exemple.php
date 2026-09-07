@@ -152,4 +152,20 @@ return [
        normal une fois la mise en ligne stabilisée.
        ============================================================= */
     'diagnostic_jeton' => '',
+
+    /* =============================================================
+       Le jeton de la purge
+       -------------------------------------------------------------
+       tache-purge.php efface ce qui a passé sa durée de conservation.
+       Lancé en ligne de commande par le planificateur, il n'a besoin
+       d'aucun jeton. Celui-ci ne sert qu'aux hébergements dont le
+       planificateur ne sait qu'ouvrir une adresse :
+       https://needhelpapp.com/tache-purge.php?jeton=…
+
+       Il est distinct de 'diagnostic_jeton' à dessein : celui-là doit
+       être vidé une fois la mise en ligne stabilisée, alors que la
+       purge, elle, tourne pour toujours.
+       Vide = seule la ligne de commande fonctionne. C'est le plus sûr.
+       ============================================================= */
+    'purge_jeton' => '',
 ];
