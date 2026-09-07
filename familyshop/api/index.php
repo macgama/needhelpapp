@@ -611,6 +611,42 @@ try {
         jsonOut(['ok' => true, 'liste' => listeDu((int) $f['id']), 'version' => toucher((int) $f['id'])]);
     }
 
+    /* ================= LES ILLUSTRATIONS =================
+       Réservées aux administrateurs de NeedHelpApp. Le rôle vient du
+       portail : nul ne se déclare administrateur ici.
+
+       Le téléversement arrive en multipart, pas en JSON : body() lit
+       php://input, qui est vide dans ce cas. On lit donc $_POST et
+       $_FILES directement. Le jeton CSRF voyage en en-tête, ce qui
+       fonctionne aussi bien avec un FormData. */
+    case 'illustration_poser': {
+        requirePost();
+        $u = requireUser();
+        require_once __DIR__ . '/illustrations.php';
+        $r = poserIllustration(
+            $u,
+            mb_substr(trim((string) ($_POST['libelle'] ?? '')), 0, 120),
+            $_FILES['image'] ?? [],
+            mb_substr(trim((string) ($_POST['prompt'] ?? '')), 0, 500)
+        );
+        jsonOut(['ok' => true] + $r + ['version' => toucher(foyerCourant($u)['id'])]);
+    }
+
+    case 'illustration_retirer': {
+        requirePost();
+        $u = requireUser();
+        require_once __DIR__ . '/illustrations.php';
+        retirerIllustration($u, champ('libelle', 120));
+        jsonOut(['ok' => true, 'version' => toucher(foyerCourant($u)['id'])]);
+    }
+
+    case 'illustrations': {
+        $u = requireUser();
+        require_once __DIR__ . '/illustrations.php';
+        exigerAdmin($u);
+        jsonOut(['illustrations' => toutesLesIllustrations()]);
+    }
+
     default:
         fail('action inconnue', 404);
     }

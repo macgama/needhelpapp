@@ -131,6 +131,39 @@ CREATE TABLE IF NOT EXISTS list_items (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Ce que le foyer achète souvent : les suggestions
+/* ---------------------------------------------------------------
+   Les illustrations de recettes.
+
+   Elles ne sont PAS rattachées à une recette, mais à un nom de plat
+   normalisé — la même clé que pour les ingrédients, qui reconnaît
+   « Les Boulettes de viande » et « boulette de viande » comme une
+   seule chose.
+
+   La raison est économique autant que technique : une recette
+   appartient à un foyer, et les mêmes plats reviennent d'un foyer à
+   l'autre. Attacher l'image à la recette ferait payer la même
+   photographie de lasagnes autant de fois qu'il y a de familles qui en
+   font. Attachée au plat, une seule génération les sert toutes.
+
+   Le fichier n'est jamais celui qu'on a téléversé : il est réencodé et
+   renommé (voir api/illustrations.php). On garde le prompt pour pouvoir
+   régénérer une image dans le même esprit plus tard.
+   --------------------------------------------------------------- */
+CREATE TABLE IF NOT EXISTS illustrations (
+    cle        VARCHAR(80)  NOT NULL,
+    fichier    VARCHAR(80)  NOT NULL,
+    libelle    VARCHAR(120) NOT NULL DEFAULT '',
+    prompt     VARCHAR(500) NOT NULL DEFAULT '',
+    source     VARCHAR(24)  NOT NULL DEFAULT 'televerse',
+    largeur    SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    hauteur    SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    octets     INT UNSIGNED NOT NULL DEFAULT 0,
+    cree_par   INT UNSIGNED NULL,
+    cree_le    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (cle),
+    KEY idx_illustrations_date (cree_le)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS habitudes (
     household_id INT UNSIGNED NOT NULL,
     cle          VARCHAR(80)  NOT NULL,

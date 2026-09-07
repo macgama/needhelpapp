@@ -27,9 +27,18 @@ function url(action, params){
 async function appel(action, body, params, isRetry){
   const opts = { method: body ? 'POST' : 'GET', credentials:'same-origin', headers:{} };
   if (body){
-    opts.headers['Content-Type'] = 'application/json';
     opts.headers['X-CSRF'] = net.csrf || '';
-    opts.body = JSON.stringify(body);
+    if (body instanceof FormData){
+      /* Le dépôt d'une image voyage en multipart. On ne pose surtout PAS
+         Content-Type : le navigateur doit l'écrire lui-même avec la
+         frontière qui sépare les parties, et l'imposer casse la lecture
+         côté serveur. Le jeton CSRF reste en en-tête, ce qui marche
+         aussi bien qu'avec du JSON. */
+      opts.body = body;
+    } else {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = JSON.stringify(body);
+    }
   }
   const r = await fetch(url(action, params), opts);
   const txt = await r.text();

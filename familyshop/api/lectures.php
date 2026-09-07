@@ -71,7 +71,16 @@ function recettesDu(int $foyerId): array
         ];
     }
 
-    return array_map(static function (array $r) use ($parRecette): array {
+    /* Les illustrations en une seule requête, comme les ingrédients.
+       Elles sont rattachées au nom de plat normalisé, pas à la recette :
+       une famille qui rebaptise ses lasagnes « lasagnes de mamie » perd
+       l'image, mais deux familles qui écrivent « Lasagnes » et
+       « les lasagne » partagent la même. Le compromis penche du bon
+       côté — les noms courants sont la règle. */
+    require_once __DIR__ . '/illustrations.php';
+    $images = illustrationsPour(array_column($recettes, 'name'));
+
+    return array_map(static function (array $r) use ($parRecette, $images): array {
         return [
             'id'          => (int) $r['id'],
             'nom'         => (string) $r['name'],
@@ -80,6 +89,7 @@ function recettesDu(int $foyerId): array
             'categorie'   => (string) $r['categorie'],
             'notes'       => (string) ($r['notes'] ?? ''),
             'favori'      => (bool) $r['favori'],
+            'image'       => $images[cleIngredient((string) $r['name'])] ?? null,
             'ingredients' => $parRecette[(int) $r['id']] ?? [],
         ];
     }, $recettes);

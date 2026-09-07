@@ -864,6 +864,27 @@ h2.title{font-size:22px}
 .carte-recette .apercu{font-size:13px;color:var(--slate);margin-top:8px;line-height:1.45}
 .carte-recette .etoile{float:right;font-size:16px;color:#D9A441;background:none;border:0;cursor:pointer;padding:0}
 
+/* La vignette. Elle est posée en premier dans la carte, avec un rapport
+   fixe : sans hauteur réservée, l'arrivée de l'image fait sauter toute
+   la grille sous les yeux de qui lisait. */
+.carte-recette .vignette{
+  display:block;width:calc(100% + 30px);margin:-14px -15px 12px;
+  aspect-ratio:16/10;object-fit:cover;
+  border-radius:13px 13px 0 0;background:var(--paper-deep);
+}
+
+/* Le bloc de l'administrateur, dans l'éditeur de recette. */
+.illustration{
+  border:1px dashed var(--line-firm);border-radius:12px;padding:14px;margin:16px 0;
+  background:var(--paper);
+}
+.illustration h4{margin:0 0 6px;font-size:14px}
+.illustration .apercu-image{
+  display:block;max-width:260px;width:100%;aspect-ratio:16/10;object-fit:cover;
+  border-radius:9px;margin:10px 0;background:var(--paper-deep);
+}
+.illustration .partagee{font-size:12.5px;color:var(--grey);margin:6px 0 0}
+
 .editeur{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px 22px;margin-top:20px}
 .ligne-champs{display:flex;gap:11px;flex-wrap:wrap;align-items:flex-end}
 .champ{display:flex;flex-direction:column;gap:5px;flex:0 0 auto}
