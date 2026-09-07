@@ -47,7 +47,15 @@ Complétez ensuite son libellé et son adresse.
    dans `stripe_webhook_secret`.
 8. **Autoriser vos origines** dans la console Google Cloud pour le client
    OAuth : `https://needhelpapp.com` et chaque sous-domaine.
-9. **Vérifier l'installation** : `https://needhelpapp.com/diagnostic.php?jeton=…`
+9. **Planifier la purge** : Manager → Tâches planifiées, une fois par nuit,
+   `php /chemin/du/site/tache-purge.php`. C'est elle qui efface pour de bon
+   les comptes supprimés trente jours plus tôt et tout ce qui a passé sa
+   durée de conservation. Sans elle, la politique de confidentialité
+   annonce une purge que rien n'exécute. Lancez-la d'abord avec
+   `--simulation` pour voir ce qu'elle toucherait. Si votre planificateur
+   ne sait qu'ouvrir une adresse, renseignez `purge_jeton` et appelez
+   `https://needhelpapp.com/tache-purge.php?jeton=…`.
+10. **Vérifier l'installation** : `https://needhelpapp.com/diagnostic.php?jeton=…`
    avec le jeton défini dans la configuration. Ajoutez `&tester_mail=1` pour
    envoyer un message d'essai. Supprimez ce fichier une fois tout au vert.
 

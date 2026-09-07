@@ -7,13 +7,35 @@ declare(strict_types=1);
  * Stripe refuse une demande pour une dizaine de raisons possibles, et son
  * message est précis. Cette page le lit à votre place et le traduit.
  *
- * Ouvrez : api/paiement-test.php
+ * Ouvrez : api/paiement-test.php?cle=…
+ * La clé est celle de 'maintenance_token' dans api/config.php.
  * Rien n'est modifié, rien n'est facturé : on ne fait que lire.
  */
 
 require __DIR__ . '/db.php';
 
 header('Content-Type: text/plain; charset=utf-8');
+
+/* ---------------------------------------------------------------
+   Qui a le droit d'ouvrir cette page
+
+   Elle ne montre aucune clé, mais elle dit lesquelles sont posées,
+   si le compte Stripe tourne en test ou en production, et quels
+   tarifs existent. C'est un état des lieux du paiement : il se
+   réserve.
+
+   Même clé que api/migrer.php et api/portail-test.php. Pas de clé
+   configurée = page fermée.
+   --------------------------------------------------------------- */
+$cle = (string) (config()['maintenance_token'] ?? '');
+if ($cle === '' || !hash_equals($cle, (string) ($_GET['cle'] ?? ''))) {
+    http_response_code(403);
+    echo "Diagnostic réservé à la maintenance.\n\n";
+    echo "Ajoutez dans api/config.php :\n";
+    echo "   'maintenance_token' => 'un-mot-de-passe-que-vous-choisissez',\n";
+    echo "puis ouvrez cette page avec ?cle=ce-mot-de-passe\n";
+    exit;
+}
 
 $c = config();
 $ligne = static function (string $etat, string $texte): void {

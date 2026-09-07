@@ -41,6 +41,15 @@ return [
     // envoyés. Pratique pour essayer en local, à laisser false en ligne.
     'mail_debug_log' => false,
 
+    // ---- maintenance et diagnostics ----
+    // Une seule clé ouvre les trois pages techniques : api/migrer.php
+    // (mise à jour de la base), api/portail-test.php (rattachement au
+    // portail) et api/paiement-test.php (état du paiement). Choisissez
+    // une chaîne longue et imprévisible : elle vaut un mot de passe.
+    // Laissée vide, ces pages restent fermées — c'est l'état normal une
+    // fois la mise en ligne stabilisée.
+    'maintenance_token' => '',
+
     // ---- connexion avec Google (facultatif) ----
     // Identifiant client OAuth créé dans la console Google Cloud, type
     // « Application Web ». Ajoutez-y vos origines autorisées, par exemple

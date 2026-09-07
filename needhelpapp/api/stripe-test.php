@@ -105,7 +105,20 @@ try {
 $pages = ['mentions-legales.php', 'conditions.php'];
 foreach ($pages as $p) {
     $chemin = __DIR__ . '/../' . $p;
-    $contenu = is_file($chemin) ? (string) file_get_contents($chemin) : '';
+
+    /* Un fichier absent donnait un contenu vide, donc zéro crochet, donc
+       « complète » : le contrôle passait au vert précisément dans le cas
+       le plus grave. L'absence se dit maintenant avant tout le reste. */
+    if (!is_file($chemin)) {
+        ligne('ÉCHEC', $p . ' : la page est absente du serveur');
+        aide('Elle est pourtant liée depuis le pied de page de chaque page '
+           . 'et depuis la case à cocher de l\'inscription : le visiteur '
+           . 'tombe sur une erreur 404 au moment où il accepte les '
+           . 'conditions. Déposez le fichier, puis rappelez cette page.');
+        continue;
+    }
+
+    $contenu  = (string) file_get_contents($chemin);
     $crochets = preg_match_all('/\[[^\]]{3,60}\]/', $contenu);
     ligne($crochets === 0 ? 'OK' : 'ÉCHEC', $p . ' : '
         . ($crochets === 0 ? 'complète' : $crochets . ' champ(s) encore entre crochets'));

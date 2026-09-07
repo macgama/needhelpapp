@@ -5,7 +5,9 @@
  * À ouvrir depuis un navigateur OÙ VOUS ÊTES DÉJÀ CONNECTÉ sur
  * needhelpapp.com :
  *
- *     https://teaching.needhelpapp.com/api/portail-test.php
+ *     https://teaching.needhelpapp.com/api/portail-test.php?cle=…
+ *
+ * La clé est celle de 'maintenance_token' dans api/config.php.
  *
  * Il suit la chaîne dans l'ordre où elle peut rompre, et s'arrête au
  * premier maillon cassé plutôt que d'enchaîner des erreurs sans rapport.
@@ -16,6 +18,37 @@
 
 declare(strict_types=1);
 header('Content-Type: text/plain; charset=utf-8');
+
+/* ---------------------------------------------------------------
+   Qui a le droit d'ouvrir cette page
+
+   Ce diagnostic décrit l'installation : présence des fichiers du
+   socle, état de la configuration, tables de la base centrale. Rien
+   de secret n'y est imprimé, mais l'ensemble dessine l'intérieur du
+   serveur, et il n'y a aucune raison de l'offrir à qui passe.
+
+   La clé est celle de 'maintenance_token' dans api/config.php, comme
+   pour api/migrer.php. Elle est lue directement du fichier, sans
+   passer par db.php : ce script doit rester capable de diagnostiquer
+   une installation où le socle du portail manque encore.
+
+   Pas de clé configurée = page fermée. C'est l'état normal une fois
+   la mise en ligne stabilisée, et la même règle que diagnostic.php
+   côté portail.
+
+   config.php est relu plus bas par db.php : il doit rester un simple
+   « return [...] », sans define() ni déclaration de fonction.
+   --------------------------------------------------------------- */
+$conf = is_file(__DIR__ . '/config.php') ? (array) require __DIR__ . '/config.php' : [];
+$cle  = (string) ($conf['maintenance_token'] ?? '');
+if ($cle === '' || !hash_equals($cle, (string) ($_GET['cle'] ?? ''))) {
+    http_response_code(403);
+    echo "Diagnostic réservé à la maintenance.\n\n";
+    echo "Ajoutez dans api/config.php :\n";
+    echo "   'maintenance_token' => 'un-mot-de-passe-que-vous-choisissez',\n";
+    echo "puis ouvrez cette page avec ?cle=ce-mot-de-passe\n";
+    exit;
+}
 
 $racine = dirname(__DIR__);
 $echecs = 0;
