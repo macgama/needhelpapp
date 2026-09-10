@@ -415,6 +415,9 @@ application Android se publie sur le Play Store, pas par rsync.
   du magasin : il faut une piste de test fermée et des comptes
   testeurs licence. C'est aussi là qu'on vérifiera l'acquittement, en
   laissant passer trois jours sur un achat de test.
+- **Le dossier Play.** Textes de la fiche, réponses au formulaire
+  « Sécurité des données », déclarations et script de la vidéo :
+  `PLAY-STORE.md`, prêt à copier.
 - **Signature et publication.** Aucune clé n'est dans le dépôt, et il ne
   faut pas en mettre. La position en arrière-plan demande une
   justification vidéo au dépôt sur le Play Store, et une revue humaine
