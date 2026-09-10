@@ -117,7 +117,10 @@ jobs:
             echo "::error::actionlint a refusé un flux de travail. Rien n'est déposé tant que ce n'est pas corrigé."
             exit "$resultat"
           fi
-          echo "$(ls .github/workflows/*.yml | wc -l) flux de travail, rien à signaler."
+          # `find` plutôt que `ls` : un nom de fichier inhabituel ne doit
+          # pas fausser le compte (SC2012).
+          nombre=$(find .github/workflows -maxdepth 1 -name '*.yml' | wc -l)
+          echo "$nombre flux de travail, rien à signaler."
 
       - name: La version de PHP
         run: |
