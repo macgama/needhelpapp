@@ -1,38 +1,31 @@
-<?php
-/**
- * Politique de confidentialité de l'application Android « Conduite ».
- *
- * Une page à part, et pas une section de confidentialite.php, pour deux
- * raisons. La première est réglementaire : le Play Store réclame une
- * adresse publique qui décrive CETTE application, et un document qui
- * parlerait surtout d'un portail web ferait mauvais effet à la revue.
- * La seconde est qu'elle n'a presque rien en commun avec l'autre — pas
- * de compte, pas de cookie, pas de serveur, pas de destinataire.
- *
- * ÉCRITE D'APRÈS LE CODE, ET VÉRIFIABLE CONTRE LUI. Chaque affirmation
- * de cette page correspond à une ligne de conduite/app/ :
- *
- *   « aucune permission réseau »   AndroidManifest.xml
- *   « la coordonnée est jetée »    detection/SourcePosition.kt
- *   « distance par intégration »   service/ServiceConduite.kt
- *   « exclue des sauvegardes »     res/xml/regles_sauvegarde.xml
- *
- * UN POINT À VÉRIFIER AVANT LA MISE EN LIGNE. La bibliothèque de
- * facturation de Google fusionne son propre manifeste dans celui de
- * l'application. Si elle y ajoute la permission INTERNET, la section
- * « Ce qu'elle envoie » de cette page devient FAUSSE et doit être
- * réécrite avant publication — pas après.
- *
- * Si l'une de ces lignes change, cette page doit suivre le même jour :
- * sans quoi elle devient un engagement que le code ne tient plus.
- */
-require __DIR__ . '/partials/page.php';
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2E2A5C">
+<meta name="description" content="Ce que l'application Conduite lit sur votre téléphone, ce qu'elle y garde, et pourquoi elle ne peut rien envoyer nulle part.">
+<title>Conduite — politique de confidentialité</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='11' fill='%232E2A5C'/><circle cx='12' cy='12' r='6.5' fill='none' stroke='%23F7F5F0' stroke-width='1.6'/><path d='M12 5.5v3M6 13.5l2.6-1M18 13.5l-2.6-1' stroke='%23F7F5F0' stroke-width='1.6' stroke-linecap='round'/></svg>">
+<link rel="stylesheet" href="assets/app.css?v=2026-09-10">
+</head>
+<body>
 
-nha_page_debut(
-  'Conduite — politique de confidentialité',
-  "Ce que l'application Conduite lit sur votre téléphone, ce qu'elle y garde, et pourquoi elle ne peut rien envoyer nulle part."
-);
-?>
+<header class="bandeau">
+  <div class="enveloppe">
+    <a class="marque" href="/">
+      <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="11" fill="#2E2A5C"/>
+        <circle cx="12" cy="12" r="6.5" fill="none" stroke="#F7F5F0" stroke-width="1.6"/>
+        <path d="M12 5.5v3M6 13.5l2.6-1M18 13.5l-2.6-1" stroke="#F7F5F0" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <b>Conduite</b> <span>by RoadSecurity</span>
+    </a>
+    <nav><a href="/">Retour à l'accueil</a></nav>
+  </div>
+</header>
+
+<main>
 <section class="doc">
   <div class="enveloppe lecture">
     <h1>Conduite, et <em>vos données</em>.</h1>
@@ -41,7 +34,7 @@ nha_page_debut(
     <p>Cette page ne concerne que l'application Android <strong>Conduite</strong>,
       qui bloque certaines applications de votre téléphone pendant que vous
       roulez. Les autres services de NeedHelpApp sont couverts par la
-      <a href="/confidentialite.php">politique générale</a>.</p>
+      <a href="https://needhelpapp.com/confidentialite.php">politique générale</a>.</p>
 
     <p>Le principe tient en une phrase&nbsp;: <strong>l'application ne
       transmet rien, à personne, nulle part</strong> — non pas parce que nous
@@ -54,6 +47,7 @@ nha_page_debut(
         <li><a href="#lit">Ce que l'application lit</a></li>
         <li><a href="#garde">Ce qu'elle garde, et où</a></li>
         <li><a href="#envoie">Ce qu'elle envoie</a></li>
+        <li><a href="#ce-site">Ce site</a></li>
         <li><a href="#autorisations">Les autorisations, une par une</a></li>
         <li><a href="#achat">L'achat</a></li>
         <li><a href="#droits">Vos droits</a></li>
@@ -140,6 +134,16 @@ nha_page_debut(
       autorisations est visible dans la fiche Play Store et dans les réglages
       de votre téléphone.</p>
 
+    <h2 id="ce-site">Ce site</h2>
+    <p>La page que vous lisez n'appelle aucun serveur tiers&nbsp;: pas de police
+      distante, pas de mesure d'audience, pas de bouton de réseau social, aucun
+      cookie. Il aurait été curieux de présenter une application qui n'envoie
+      rien depuis un site qui transmet votre adresse IP à trois prestataires.</p>
+    <p>Les journaux d'accès de l'hébergeur (Infomaniak, en Suisse) conservent
+      les adresses IP le temps nécessaire à la sécurité et au dépannage. C'est
+      le fonctionnement normal d'un serveur web, et nous n'en tirons aucune
+      statistique nominative.</p>
+
     <h2 id="autorisations">Les autorisations, une par une</h2>
     <p>Chacune est demandée pour une fonction précise, et l'application
       fonctionne — moins bien — sans la plupart d'entre elles.</p>
@@ -203,4 +207,17 @@ nha_page_debut(
       Store, cette page serait réécrite avant, et la fonction serait facultative.</p>
   </div>
 </section>
-<?php nha_page_fin(); ?>
+</main>
+
+<footer>
+  <div class="enveloppe">
+    <div>Conduite — une application <a href="https://needhelpapp.com">NeedHelpApp</a>.</div>
+    <nav>
+      <a href="https://needhelpapp.com/mentions-legales.php">Mentions légales</a>
+      <a href="mailto:donnees@needhelpapp.com">donnees@needhelpapp.com</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>

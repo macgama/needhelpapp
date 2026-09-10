@@ -34,8 +34,9 @@ nha_page_debut(
 
     <p>L'application Android <strong>Conduite</strong> fait exception, et dans
       le bon sens&nbsp;: elle ne déclare aucune permission réseau et ne nous
-      transmet donc rien du tout. Elle a sa
-      <a href="/conduite-confidentialite.php">propre page</a>.</p>
+      transmet donc rien du tout. Elle a son propre site et sa
+      <a href="https://roadsecurity.needhelpapp.com/confidentialite.html">propre
+      page</a>.</p>
 
     <div class="sommaire">
       <ul>

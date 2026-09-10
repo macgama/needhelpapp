@@ -20,7 +20,7 @@ on:
         description: Quelle application déposer
         type: choice
         default: toutes
-        options: [toutes, portail, teaching, familyshop, budget]
+        options: [toutes, portail, teaching, familyshop, budget, roadsecurity]
       simulation:
         description: "Simulation — montre ce qui serait fait, sans rien écrire"
         type: boolean
@@ -62,6 +62,7 @@ jobs:
           T: ${{ vars.CHEMIN_TEACHING }}
           F: ${{ vars.CHEMIN_FAMILYSHOP }}
           B: ${{ vars.CHEMIN_BUDGET }}
+          R: ${{ vars.CHEMIN_ROADSECURITY }}
         run: |
           manque=0
           dire() { echo "::error::$1"; manque=1; }
@@ -71,12 +72,12 @@ jobs:
           [ -n "$UTIL" ] || dire "Variable manquante : INFOMANIAK_UTILISATEUR, votre nom d'utilisateur SSH."
 
           declares=0
-          for v in "$P" "$T" "$F" "$B"; do [ -n "$v" ] && declares=$((declares+1)); done
+          for v in "$P" "$T" "$F" "$B" "$R"; do [ -n "$v" ] && declares=$((declares+1)); done
           if [ $declares -eq 0 ]; then
-            dire "Aucun chemin de destination déclaré. Renseignez au moins une variable parmi CHEMIN_PORTAIL, CHEMIN_TEACHING, CHEMIN_FAMILYSHOP et CHEMIN_BUDGET — sinon ce flux ne dépose rien tout en paraissant réussir."
+            dire "Aucun chemin de destination déclaré. Renseignez au moins une variable parmi CHEMIN_PORTAIL, CHEMIN_TEACHING, CHEMIN_FAMILYSHOP, CHEMIN_BUDGET et CHEMIN_ROADSECURITY — sinon ce flux ne dépose rien tout en paraissant réussir."
             echo "Pour trouver les chemins : connectez-vous en SSH, puis « pwd » et « ls sites/ »."
           else
-            echo "$declares application(s) déclarée(s) sur 4."
+            echo "$declares application(s) déclarée(s) sur 5."
           fi
 
           [ $manque -eq 0 ] || { echo; echo "Voir DEPLOIEMENT.md, section « Côté GitHub »."; exit 1; }
@@ -102,6 +103,12 @@ jobs:
           - app: budget
             source: budget
             variable: CHEMIN_BUDGET
+          # La vitrine de l'application Android. Du HTML statique : pas de
+          # socle PHP à recopier à la main, contrairement aux trois
+          # au-dessus.
+          - app: roadsecurity
+            source: roadsecurity
+            variable: CHEMIN_ROADSECURITY
 
     steps:
       - uses: actions/checkout@v5

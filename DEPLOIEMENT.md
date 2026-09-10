@@ -7,6 +7,10 @@ Deux fichiers dans `.github/workflows/` s'en chargent :
 | `controles.yml` | Vérifie le code à chaque envoi. Tourne tout seul. |
 | `deploiement.yml` | Dépose sur Infomaniak. Automatique sur `main`, ou à la main. |
 
+Cinq applications sont déclarées : le portail, teaching, familyshop, budget
+et roadsecurity. Une application dont le chemin n'est pas renseigné est
+ignorée sans bruit.
+
 Le réglage se fait une seule fois, et presque entièrement depuis le
 navigateur. Comptez vingt minutes.
 
@@ -69,6 +73,7 @@ Onglet **Variables**, bouton *New repository variable* :
 | `CHEMIN_TEACHING` | celui de teaching.needhelpapp.com |
 | `CHEMIN_FAMILYSHOP` | celui de familyshop.needhelpapp.com |
 | `CHEMIN_BUDGET` | **laissez-le vide tant que le sous-domaine n'existe pas** |
+| `CHEMIN_ROADSECURITY` | celui de roadsecurity.needhelpapp.com — la vitrine de l'application Conduite |
 
 Le mot de passe et la clé de chiffrement ne passent jamais par GitHub :
 ils vivent dans `config.php` sur le serveur, et le déploiement n'y touche

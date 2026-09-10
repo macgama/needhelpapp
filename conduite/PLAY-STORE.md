@@ -125,7 +125,7 @@ le dit clairement. Elle ne fait jamais semblant de veiller.
 > **À adapter avant dépôt** : si la bibliothèque de facturation ajoute la
 > permission `INTERNET` au manifeste, le paragraphe « Vos déplacements ne
 > nous regardent pas » devient faux et doit être réécrit — ici, dans le
-> `LISEZ-MOI` et dans `conduite-confidentialite.php`. Le rapport de
+> `LISEZ-MOI` et dans `roadsecurity/confidentialite.html`. Le rapport de
 > fusion du manifeste vous le dira au premier assemblage.
 
 ### Le reste de la fiche
@@ -133,7 +133,8 @@ le dit clairement. Elle ne fait jamais semblant de veiller.
 | Champ | Valeur |
 |---|---|
 | Catégorie | Auto et véhicules *(plutôt que Outils : le classement y est moins encombré et le public plus juste)* |
-| Adresse de la politique de confidentialité | `https://needhelpapp.com/conduite-confidentialite.php` |
+| Site de l'application | `https://roadsecurity.needhelpapp.com` |
+| Adresse de la politique de confidentialité | `https://roadsecurity.needhelpapp.com/confidentialite.html` |
 | Courriel de contact | `contact@needhelpapp.com` |
 | Public cible | 18 ans et plus |
 

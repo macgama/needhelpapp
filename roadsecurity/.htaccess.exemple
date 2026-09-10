@@ -1,0 +1,18 @@
+# RoadSecurity — à déposer à la racine du sous-domaine, renommé .htaccess
+
+# Pas de SetEnv NHA_APP ici, contrairement aux autres sous-domaines : ce
+# site est du HTML statique, il ne charge pas le socle PHP et n'a donc
+# aucun droit à faire lire.
+
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# PAS DE REDIRECTION DEPUIS L'ANCIENNE ADRESSE.
+#
+# La politique de confidentialité a d'abord vécu sur le portail, à
+# needhelpapp.com/conduite-confidentialite.php. Une redirection ici
+# n'aurait servi à rien : ce chemin n'a jamais existé sur CE
+# sous-domaine, et la page du portail n'a jamais été mise en ligne — le
+# déploiement n'était pas réglé. Personne n'a l'ancienne adresse, et
+# aucune fiche Play ne la porte.
