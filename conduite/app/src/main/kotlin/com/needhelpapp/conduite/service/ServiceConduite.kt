@@ -16,6 +16,7 @@ import com.needhelpapp.conduite.blocage.PaquetsSysteme
 import com.needhelpapp.conduite.detection.CanalSignaux
 import com.needhelpapp.conduite.detection.SourceActivite
 import com.needhelpapp.conduite.detection.SourcePositionSysteme
+import com.needhelpapp.conduite.detection.SourceVehicule
 import com.needhelpapp.conduite.donnees.ReglagesComplets
 import com.needhelpapp.conduite.moteur.MoteurDecision
 import com.needhelpapp.conduite.moteur.PolitiqueBlocage
@@ -60,6 +61,7 @@ class ServiceConduite : LifecycleService() {
 
     private lateinit var position: SourcePositionSysteme
     private lateinit var activite: SourceActivite
+    private lateinit var vehicule: SourceVehicule
     private lateinit var superposition: GestionnaireSuperposition
     private lateinit var nePasDeranger: NePasDeranger
     private lateinit var surveillant: SurveillantAvantPlan
@@ -100,6 +102,7 @@ class ServiceConduite : LifecycleService() {
 
         position = SourcePositionSysteme(this)
         activite = SourceActivite(this)
+        vehicule = SourceVehicule(this)
         superposition = GestionnaireSuperposition(this)
         nePasDeranger = NePasDeranger(this)
         surveillant = SurveillantAvantPlan(this)
@@ -131,6 +134,12 @@ class ServiceConduite : LifecycleService() {
                 // application. La politique est figée à l'ouverture de la
                 // surveillance : il faut donc la relancer, sans quoi le
                 // réglage ne prendrait effet qu'au trajet suivant.
+                // La liaison véhicule ne se surveille que si un véhicule
+                // est désigné : un receveur Bluetooth qui tourne pour
+                // personne coûte de la batterie sans rien apporter.
+                vehicule.adressesSurveillees = nouveaux.adressesVehicule
+                if (nouveaux.adressesVehicule.isEmpty()) vehicule.arreter() else vehicule.demarrer()
+
                 if (nouveaux.blocage != ancienBlocage && travailSurveillance != null) {
                     travailSurveillance?.cancel()
                     travailSurveillance = lancerLaSurveillance()
@@ -314,14 +323,8 @@ class ServiceConduite : LifecycleService() {
             paquetsIncompressibles = PaquetsSysteme.incompressibles(this),
         )
 
-        // L'état RÉEL du service d'accessibilité, pas la préférence :
-        // une case cochée dont le service a été coupé par Android
-        // donnerait un flux muet, donc un blocage qui ne bloque rien.
-        val viaAccessibilite = reglages.accessibilitePreferee &&
-            Permissions.accessibiliteActive(this)
-
         return lifecycleScope.launch {
-            surveillant.flux(viaAccessibilite).collect { paquet ->
+            surveillant.flux().collect { paquet ->
                 if (politique.doitBloquer(paquet)) {
                     if (!superposition.affichee) interceptions++
                     superposition.afficher()
@@ -405,6 +408,7 @@ class ServiceConduite : LifecycleService() {
         nePasDeranger.retablir()
         position.arreter()
         activite.arreter()
+        vehicule.arreter()
         EtatPublic.reinitialiser()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -416,6 +420,7 @@ class ServiceConduite : LifecycleService() {
         nePasDeranger.retablir()
         position.arreter()
         activite.arreter()
+        vehicule.arreter()
         signaux.close()
         EtatPublic.reinitialiser()
         // Le trajet éventuellement ouvert n'est PAS refermé ici : une

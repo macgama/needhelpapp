@@ -45,10 +45,11 @@ dossier ne traite que d'Android.
 
 Deux capteurs, et un automate qui les arbitre.
 
-| Capteur | Ce qu'il apporte | Ce qu'il coûte |
+| Signal | Ce qu'il apporte | Ce qu'il coûte |
 |---|---|---|
 | Vitesse GPS | Réactif, précis, disponible partout | Bruité en ville, muet en tunnel |
 | Reconnaissance d'activité | Distingue voiture, vélo et marche | Lente, et absente sans les services Google |
+| Bluetooth du véhicule | Sait de **quel** véhicule il s'agit | Facultatif, et il faut le désigner une fois |
 
 L'automate a **quatre états**, et le troisième est celui qui fait tout
 l'intérêt de l'ensemble :
@@ -79,6 +80,30 @@ l'intérêt de l'ensemble :
   indéfiniment non plus, sinon un GPS en panne confisquerait le téléphone
   de la soirée. Cinq minutes.
 
+### Le Bluetooth, ou le seul signal qui ne vienne pas d'un capteur
+
+Un GPS dit qu'on va à 50 km/h. Il ne sait pas si c'est en voiture, en
+bus, en tram ou en car postal — et c'est toute la difficulté. Un
+appairage, lui, sait de **quel** véhicule il s'agit : celui dont vous
+avez désigné l'autoradio, une fois, dans une liste.
+
+D'où deux usages, et seulement ces deux-là :
+
+- la confirmation passe de **vingt à huit secondes**, puisqu'il n'y a
+  plus ni bus, ni tram, ni vélo à écarter ;
+- **la coupure du contact termine le trajet sur-le-champ.** L'autoradio
+  s'éteint avec le moteur : c'est un signal de fin bien plus net que
+  n'importe quelle absence de mouvement, et il arrive à la seconde là où
+  l'attente de deux minutes tâtonne.
+
+Ce qu'il ne fait **pas** : déclencher un blocage à lui seul. Une voiture
+garée, contact mis, reste connectée — devant une école, dans un
+embouteillage, ou dans un garage.
+
+L'application ne cherche aucun appareil autour de vous, n'échange rien
+par Bluetooth, et ne lit la liste des appareils appairés qu'au moment où
+vous ouvrez l'écran de choix.
+
 Tout cela vit dans `moteur/`, en Kotlin pur, **sans une seule référence à
 Android**. C'est la décision qui compte le plus dans ce produit ; elle
 s'éprouve donc sur une machine de bureau, en quelques millisecondes, sans
@@ -89,10 +114,33 @@ cd conduite
 ./gradlew -p moteur test
 ```
 
-Vingt-trois scénarios, nommés comme on les raconterait : « le feu rouge
+Vingt-neuf scénarios, nommés comme on les raconterait : « le feu rouge
 ne débloque pas le téléphone », « une vitesse absente n'est pas une
-vitesse nulle », « la déclaration de passager ne vaut que pour le trajet
-en cours ». Ils tournent aussi à chaque envoi, dans `controles.yml`.
+vitesse nulle », « couper le contact termine le trajet sur-le-champ »,
+« la déclaration de passager ne vaut que pour le trajet en cours ». Ils
+tournent aussi à chaque envoi, dans `controles.yml`.
+
+## Le banc d'essai
+
+Le moteur s'éprouve sans Android. Tout ce qui l'entoure — la
+superposition qui recouvre vraiment une application, le Ne pas déranger
+qui coupe vraiment les notifications, le service qui survit vraiment à
+l'écran éteint, la surcouche du constructeur qui le tue quand même — ne
+se vérifie que sur l'appareil. Jusqu'ici, la seule façon de le faire
+était de prendre la voiture.
+
+La variante de développement porte donc un **banc d'essai** (Réglages →
+Développement) qui rejoue les mêmes scénarios sur le vrai service :
+départ, feu rouge, arrêt prolongé, tunnel, descente du véhicule, voiture
+reconnue, cycliste. Il injecte des signaux fabriqués dans le canal que le
+service écoute déjà — **aucune ligne du service n'a été modifiée pour
+lui**, et c'est cette propriété qui rend l'essai honnête : il ne voit pas
+la différence avec un vrai point GPS.
+
+Tout s'y joue en temps réel. On pourrait accélérer en fabriquant des
+instants dans le futur, mais le service émet ses propres battements à
+l'heure réelle, et deux horloges qui se contredisent donneraient des
+délais négatifs. Un feu rouge dure donc ses deux minutes et demie.
 
 ---
 
@@ -142,7 +190,7 @@ versions à verrouiller.
 |---|---|
 | Position | Tout. La vitesse vient de là. |
 | Affichage par-dessus les autres applications | La détection marche, mais rien ne se passe à l'écran. |
-| Accès aux données d'usage | On ne sait plus quelle application est affichée. Remplaçable par le service d'accessibilité. |
+| Accès aux données d'usage | On ne sait plus quelle application est affichée. |
 
 **Fortement recommandé :**
 
@@ -152,13 +200,17 @@ versions à verrouiller.
 | Reconnaissance d'activité | Le démarrage sans GPS (parking souterrain), et le démenti qui épargne le cycliste rapide — au-delà de 15 km/h, la seule vitesse le ferait bloquer à tort. |
 | Notifications | Android exige une notification permanente pour laisser le service tourner. |
 
-**Facultatif :** Ne pas déranger, et le service d'accessibilité.
+**Facultatif :** le Bluetooth (pour désigner votre voiture) et Ne pas
+déranger.
 
-> **Le service d'accessibilité est proposé, jamais imposé.** Il rend la
-> détection instantanée au lieu d'un sondage toutes les 700 ms. Sa
-> déclaration réclame le strict minimum : `canRetrieveWindowContent` est
-> à **false**, donc il ne *peut pas* lire ce qui s'affiche, même s'il le
-> voulait. C'est la différence entre un outil et un mouchard.
+> **Il n'y a PAS de service d'accessibilité**, et c'est un choix. Une
+> première version en proposait un, facultatif, pour connaître
+> instantanément l'application affichée au lieu de sonder toutes les
+> 700 ms. Il a été retiré : le Play Store traite comme suspecte toute
+> application qui réclame l'accessibilité hors de son objet, et c'est un
+> motif de refus classique pour ce genre d'outil. Sept cents
+> millisecondes sur un écran de blocage ne se voient pas ; un refus au
+> dépôt, si.
 
 > **La panne la plus fréquente ne vient pas du code.** Xiaomi, Huawei,
 > Oppo — et Samsung dans une moindre mesure — tuent les services
@@ -182,9 +234,14 @@ c'est une contrainte que le code s'impose à la source.
 - L'historique — durée, distance, vitesse maximale, nombre
   d'interceptions — vit dans une base locale, **exclue des sauvegardes
   automatiques** (`res/xml/regles_sauvegarde.xml`).
-- Le service d'accessibilité ne remonte **que le nom du paquet affiché**.
+- Pendant un trajet seulement, l'application lit le **nom du paquet**
+  affiché — jamais un titre de fenêtre, jamais le contenu d'un écran.
 - Aucune permission réseau n'est déclarée. L'application ne peut
-  matériellement rien envoyer.
+  matériellement rien envoyer. C'est vérifiable dans la fiche Play Store
+  comme dans les réglages du téléphone.
+- La politique de confidentialité qui dit tout cela au public est
+  `needhelpapp/conduite-confidentialite.php`, et chacune de ses
+  affirmations renvoie à une ligne de code précise.
 
 ---
 
@@ -199,7 +256,8 @@ conduite/
 │   └── PolitiqueBlocage.kt  qui a le droit de s'afficher
 └── app/             L'application Android.
     ├── detection/     lecture des capteurs, traduction en signaux
-    ├── surveillance/  quelle application est devant (deux chemins)
+    ├── surveillance/  quelle application est devant
+    ├── banc/          les scénarios du banc d'essai
     ├── blocage/       la superposition, le Ne pas déranger
     ├── service/       le service d'avant-plan qui orchestre
     ├── donnees/       réglages (DataStore) et trajets (Room)
@@ -248,16 +306,24 @@ application Android se publie sur le Play Store, pas par rsync.
 
 ## Ce qui reste à faire
 
+- **L'achat.** Le modèle est arrêté : gratuite à l'installation, puis un
+  achat unique via Play Billing. Aucun compte, aucun serveur — c'est le
+  seul montage qui laisse intacte la phrase « elle ne peut
+  matériellement rien envoyer ». Reste à écrire : la bibliothèque de
+  facturation, l'écran de déblocage et la période d'essai.
 - **Signature et publication.** Aucune clé n'est dans le dépôt, et il ne
   faut pas en mettre. La position en arrière-plan demande une
-  justification vidéo au dépôt sur le Play Store ; le service
-  d'accessibilité, une déclaration séparée — il est facultatif, ce qui
-  est précisément ce qui rend la déclaration acceptable.
+  justification vidéo au dépôt sur le Play Store, et une revue humaine
+  qui prend des semaines : c'est le vrai chemin critique. Les services
+  d'avant-plan demandent leur propre déclaration.
+- **Douze testeurs, quatorze jours.** Un compte développeur personnel
+  (par opposition à un compte d'organisation) doit faire tourner un test
+  fermé avant de pouvoir demander l'accès à la production. À lancer tôt :
+  cela ne s'achète pas, cela s'attend.
 - **Icône.** Le volant vectoriel est un substitut correct, pas un
   dessin.
-- **Compte NeedHelpApp.** Rien n'est branché sur le portail. Ce serait le
-  moment de se demander si l'on veut vraiment qu'une application qui sait
-  quand vous roulez ait aussi un compte en ligne.
 - **Mode surveillé.** Un parent qui règle le téléphone d'un conducteur
   débutant voudrait un mode qu'on ne peut pas éteindre sans code. C'est
-  un autre produit, avec d'autres questions.
+  le seul endroit où un compte NeedHelpApp — et un abonnement — auraient
+  vraiment un sens, puisqu'il faut relier deux téléphones. C'est un autre
+  produit, avec d'autres questions, et il coûterait la permission réseau.

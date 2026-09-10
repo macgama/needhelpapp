@@ -30,8 +30,14 @@ data class ReglagesComplets(
     val detection: ReglagesDetection = ReglagesDetection(),
     val blocage: ReglagesBlocage = ReglagesBlocage(),
     val nePasDeranger: Boolean = false,
-    /** Utiliser le service d'accessibilité plutôt que le sondage. */
-    val accessibilitePreferee: Boolean = false,
+    /**
+     * Les adresses Bluetooth des véhicules de l'utilisateur.
+     *
+     * Des adresses matérielles, pas des noms : un autoradio peut
+     * s'annoncer « BT-Audio » comme dix mille autres, mais son adresse
+     * est unique.
+     */
+    val adressesVehicule: Set<String> = emptySet(),
 )
 
 class DepotReglages(private val contexte: Context) {
@@ -60,7 +66,7 @@ class DepotReglages(private val contexte: Context) {
                 paquetsAutorises = p[AUTORISES] ?: emptySet(),
             ),
             nePasDeranger = p[NE_PAS_DERANGER] ?: false,
-            accessibilitePreferee = p[ACCESSIBILITE] ?: false,
+            adressesVehicule = p[VEHICULES] ?: emptySet(),
         )
     }
 
@@ -80,7 +86,10 @@ class DepotReglages(private val contexte: Context) {
 
     suspend fun definirNePasDeranger(actif: Boolean) = ecrire { it[NE_PAS_DERANGER] = actif }
 
-    suspend fun definirAccessibilite(preferee: Boolean) = ecrire { it[ACCESSIBILITE] = preferee }
+    suspend fun basculerVehicule(adresse: String) = ecrire { p ->
+        val liste = p[VEHICULES].orEmpty()
+        p[VEHICULES] = if (adresse in liste) liste - adresse else liste + adresse
+    }
 
     /**
      * Les seuils sont bornés à l'écriture, pas seulement à l'affichage.
@@ -110,7 +119,7 @@ class DepotReglages(private val contexte: Context) {
         val SURVEILLES = stringSetPreferencesKey("paquets_surveilles")
         val AUTORISES = stringSetPreferencesKey("paquets_autorises")
         val NE_PAS_DERANGER = booleanPreferencesKey("ne_pas_deranger")
-        val ACCESSIBILITE = booleanPreferencesKey("accessibilite_preferee")
+        val VEHICULES = stringSetPreferencesKey("adresses_vehicule")
         val SEUIL_ENTREE = floatPreferencesKey("seuil_entree_kmh")
         val SEUIL_SORTIE = floatPreferencesKey("seuil_sortie_kmh")
         val DELAI_FIN = longPreferencesKey("delai_fin_trajet_ms")

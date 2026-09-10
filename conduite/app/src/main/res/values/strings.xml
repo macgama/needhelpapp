@@ -25,7 +25,4 @@
     <string name="blocage_maintenir">Maintenez le doigt appuyé</string>
     <string name="vitesse_format">%1$d km/h</string>
 
-    <!-- Accessibilité -->
-    <string name="accessibilite_libelle">Conduite — détection de l\'application affichée</string>
-    <string name="accessibilite_description">Permet de savoir instantanément quelle application est à l\'écran pendant un trajet, sans sondage régulier. Seul le nom du paquet est lu : jamais le contenu de vos écrans. Ce service est facultatif ; sans lui, l\'application se rabat sur les statistiques d\'usage.</string>
 </resources>

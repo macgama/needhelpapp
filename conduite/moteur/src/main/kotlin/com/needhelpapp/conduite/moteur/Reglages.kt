@@ -47,6 +47,18 @@ data class ReglagesDetection(
      */
     val delaiFinTrajetMs: Long = 120_000,
 
+    /**
+     * Le même délai, quand la liaison Bluetooth du véhicule déclaré est
+     * établie.
+     *
+     * Beaucoup plus court, et c'est justifié : les vingt secondes ne
+     * servent qu'à écarter le bus, le tram, le vélo et le point GPS
+     * aberrant. Quand le téléphone est connecté à VOTRE autoradio, cette
+     * ambiguïté n'existe plus — il ne reste qu'à vérifier que le
+     * véhicule roule vraiment, ce qu'un ou deux points suffisent à dire.
+     */
+    val delaiConfirmationVehiculeMs: Long = 8_000,
+
     /** Au-delà, le point GPS est trop flou pour qu'on en tire une vitesse. */
     val precisionMaximaleM: Float = 50f,
 

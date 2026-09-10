@@ -32,6 +32,11 @@ nha_page_debut(
       est hébergé en Suisse, et vous pouvez repartir avec l'intégralité de
       vos données quand vous le voulez.</p>
 
+    <p>L'application Android <strong>Conduite</strong> fait exception, et dans
+      le bon sens&nbsp;: elle ne déclare aucune permission réseau et ne nous
+      transmet donc rien du tout. Elle a sa
+      <a href="/conduite-confidentialite.php">propre page</a>.</p>
+
     <div class="sommaire">
       <ul>
         <li><a href="#responsable">Qui est responsable</a></li>

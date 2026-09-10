@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
@@ -19,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.needhelpapp.conduite.BuildConfig
 import com.needhelpapp.conduite.donnees.ReglagesComplets
 import com.needhelpapp.conduite.moteur.ModeBlocage
 import com.needhelpapp.conduite.ui.Carte
@@ -32,7 +34,8 @@ fun EcranReglages(
     permissions: ModeleConduite.EtatPermissions,
     surMode: (ModeBlocage) -> Unit,
     surNePasDeranger: (Boolean) -> Unit,
-    surAccessibilite: (Boolean) -> Unit,
+    versVehicules: () -> Unit,
+    versBanc: () -> Unit,
     surSeuils: (Float, Float) -> Unit,
     surDelaiFin: (Int) -> Unit,
 ) {
@@ -80,22 +83,29 @@ fun EcranReglages(
                 surChangement = surNePasDeranger,
             )
 
-            Spacer(Modifier.height(16.dp))
+        }
 
-            Interrupteur(
-                titre = "Détection instantanée",
-                detail = if (permissions.accessibilite) {
-                    "Utilise le service d'accessibilité plutôt qu'un sondage " +
-                        "régulier. Il ne lit que le nom de l'application affichée."
-                } else {
-                    "Le service d'accessibilité n'est pas activé dans Android — " +
-                        "voir l'écran des autorisations. Sans lui, un sondage prend " +
-                        "le relais."
-                },
-                actif = reglages.accessibilitePreferee,
-                activable = permissions.accessibilite,
-                surChangement = surAccessibilite,
+        TitreSection("Votre véhicule")
+        Carte {
+            Text(
+                "Quand le téléphone est connecté à l'autoradio d'une voiture que " +
+                    "vous avez désignée, la détection sait qu'il ne s'agit ni d'un " +
+                    "bus, ni d'un tram, ni d'un vélo : elle se déclenche en huit " +
+                    "secondes au lieu de vingt, et la coupure du contact termine le " +
+                    "trajet sur-le-champ au lieu d'attendre deux minutes.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            Spacer(Modifier.height(12.dp))
+            OutlinedButton(onClick = versVehicules, modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    when (val n = reglages.adressesVehicule.size) {
+                        0 -> "Désigner un véhicule"
+                        1 -> "1 véhicule désigné"
+                        else -> "$n véhicules désignés"
+                    },
+                )
+            }
         }
 
         TitreSection("Seuils de détection")
@@ -143,6 +153,22 @@ fun EcranReglages(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+
+        if (BuildConfig.DEBUG) {
+            TitreSection("Développement")
+            Carte {
+                Text(
+                    "Rejoue un feu rouge, un tunnel ou une descente de véhicule sur " +
+                        "ce téléphone, à l'arrêt. Absent de la version publiée.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(12.dp))
+                OutlinedButton(onClick = versBanc, modifier = Modifier.fillMaxWidth()) {
+                    Text("Banc d'essai")
+                }
+            }
         }
 
         Spacer(Modifier.height(32.dp))

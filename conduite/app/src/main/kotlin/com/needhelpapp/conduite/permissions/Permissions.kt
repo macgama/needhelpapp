@@ -3,7 +3,6 @@ package com.needhelpapp.conduite.permissions
 import android.Manifest
 import android.app.AppOpsManager
 import android.app.NotificationManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,17 +11,16 @@ import android.os.Build
 import android.os.Process
 import android.provider.Settings
 import androidx.core.content.ContextCompat
-import com.needhelpapp.conduite.surveillance.ServiceAccessibilite
 
 /**
- * Les sept portes qu'il faut ouvrir, et comment savoir si elles le sont.
+ * Les six portes qu'il faut ouvrir, et comment savoir si elles le sont.
  *
  * C'EST LE VRAI OBSTACLE DU PRODUIT, pas la détection. Une application
  * qui surveille la position en arrière-plan et dessine par-dessus les
  * autres touche à peu près tout ce qu'Android a passé dix versions à
  * verrouiller. Aucune de ces autorisations ne s'obtient d'un seul
- * dialogue, trois d'entre elles n'ont même pas de dialogue et exigent un
- * détour par les réglages du système.
+ * dialogue, et trois d'entre elles n'ont même pas de dialogue : elles
+ * exigent un détour par les réglages du système.
  *
  * D'où ce fichier : un seul endroit qui sait, pour chaque porte, si elle
  * est ouverte et quel écran l'ouvre. L'assistant du premier lancement se
@@ -45,6 +43,9 @@ object Permissions {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            add(Manifest.permission.BLUETOOTH_CONNECT)
         }
     }
 
@@ -112,21 +113,17 @@ object Permissions {
             .isNotificationPolicyAccessGranted
 
     /**
-     * L'état RÉEL du service d'accessibilité, lu dans les réglages
-     * sécurisés — et non un booléen que nous aurions stocké de notre
-     * côté. L'utilisateur peut le désactiver depuis Android sans jamais
-     * rouvrir notre application, et certaines surcouches le coupent
-     * d'elles-mêmes après quelques jours. Croire notre propre mémoire
-     * ici, c'est croire un blocage qui ne bloque plus.
+     * Lire la liste des appareils Bluetooth appairés, pour y désigner sa
+     * voiture. Facultative : sans elle, la détection perd son signal le
+     * plus sûr mais continue de fonctionner sur la vitesse.
      */
-    fun accessibiliteActive(contexte: Context): Boolean {
-        val attendu = ComponentName(contexte, ServiceAccessibilite::class.java).flattenToString()
-        val actifs = Settings.Secure.getString(
-            contexte.contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-        ) ?: return false
-        return actifs.split(':').any { it.equals(attendu, ignoreCase = true) }
-    }
+    fun bluetoothAccorde(contexte: Context): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            accordee(contexte, Manifest.permission.BLUETOOTH_CONNECT)
+        } else {
+            true
+        }
+
 
     // ------------------------------------------------------------------
     // Les écrans qui ouvrent chaque porte
@@ -140,8 +137,6 @@ object Permissions {
     fun intentionStatistiques() = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
 
     fun intentionNePasDeranger() = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-
-    fun intentionAccessibilite() = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
 
     fun intentionReglagesApplication(contexte: Context) = Intent(
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,

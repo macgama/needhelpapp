@@ -41,6 +41,9 @@ class Scenario(reglages: ReglagesDetection = ReglagesDetection()) {
     fun activite(genre: GenreActivite, confiance: Int) =
         envoyer(Signal.Activite(t, genre, confiance))
 
+    /** La liaison Bluetooth du véhicule déclaré s'établit ou se rompt. */
+    fun vehicule(present: Boolean) = envoyer(Signal.Vehicule(t, present))
+
     fun declarerPassager() = envoyer(Signal.DeclarationPassager(t))
 
     fun annulerPassager() = envoyer(Signal.AnnulationPassager(t))

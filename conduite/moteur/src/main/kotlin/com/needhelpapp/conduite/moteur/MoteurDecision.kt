@@ -63,6 +63,7 @@ class MoteurDecision(
         VEHICULE_IMMOBILE,
         ARRET_PROLONGE,
         SORTI_DU_VEHICULE,
+        VEHICULE_QUITTE,
         PERTE_DE_SIGNAL,
         PASSAGER,
     }
@@ -91,6 +92,26 @@ class MoteurDecision(
     var passagerDeclare: Boolean = false
         private set
 
+    /**
+     * La liaison Bluetooth du véhicule déclaré est-elle établie ?
+     *
+     * Pas de péremption ici, contrairement aux capteurs : ce n'est pas
+     * une mesure mais un état, et il ne change que sur événement. C'est
+     * à l'appelant de publier l'état réel au démarrage, faute de quoi un
+     * « connecté » manqué resterait vrai indéfiniment.
+     */
+    private var vehiculePresent: Boolean = false
+
+    /**
+     * A-t-on été connecté au véhicule à un moment de CE trajet ?
+     *
+     * Sans cette mémoire, une déconnexion ne voudrait rien dire : un
+     * téléphone qui n'a jamais été connecté à quoi que ce soit publie
+     * lui aussi « non connecté », et terminerait tous les trajets à pied
+     * ou en bus dès le premier signal.
+     */
+    private var vehiculeVuDansLeTrajet: Boolean = false
+
     private var dernierePosition: Signal.Position? = null
     private var derniereActivite: Signal.Activite? = null
     private var debutSuspicion: Long = 0
@@ -109,6 +130,12 @@ class MoteurDecision(
         when (signal) {
             is Signal.Position -> memoriserPosition(signal)
             is Signal.Activite -> memoriserActivite(signal)
+            is Signal.Vehicule -> {
+                vehiculePresent = signal.present
+                // La liaison peut s'établir APRÈS le départ — on démarre
+                // souvent avant que l'autoradio ait fini de s'appairer.
+                if (signal.present && etat.enTrajet) vehiculeVuDansLeTrajet = true
+            }
             is Signal.Battement -> Unit
             is Signal.DeclarationPassager -> passagerDeclare = true
             is Signal.AnnulationPassager -> passagerDeclare = false
@@ -154,9 +181,10 @@ class MoteurDecision(
                     etat = Etat.ARRET
                     dernierMotif = Motif.AUCUN
                 }
-                instant - debutSuspicion >= reglages.delaiConfirmationMs -> {
+                instant - debutSuspicion >= delaiDeConfirmation() -> {
                     etat = Etat.CONDUITE
                     dernierSignalUtile = maxOf(dernierSignalUtile, instant)
+                    vehiculeVuDansLeTrajet = vehiculePresent
                     evenement = EvenementTrajet.DEBUT
                     dernierMotif = declencheur(instant) ?: Motif.VITESSE
                 }
@@ -164,6 +192,11 @@ class MoteurDecision(
             }
 
             Etat.CONDUITE -> when {
+                vehiculeQuitte() -> {
+                    etat = Etat.ARRET
+                    evenement = EvenementTrajet.FIN
+                    dernierMotif = Motif.VEHICULE_QUITTE
+                }
                 sortiDuVehicule(instant) -> {
                     etat = Etat.ARRET
                     evenement = EvenementTrajet.FIN
@@ -187,6 +220,11 @@ class MoteurDecision(
             }
 
             Etat.PAUSE -> when {
+                vehiculeQuitte() -> {
+                    etat = Etat.ARRET
+                    evenement = EvenementTrajet.FIN
+                    dernierMotif = Motif.VEHICULE_QUITTE
+                }
                 sortiDuVehicule(instant) -> {
                     etat = Etat.ARRET
                     evenement = EvenementTrajet.FIN
@@ -206,6 +244,8 @@ class MoteurDecision(
             }
         }
 
+        if (etat == Etat.ARRET) vehiculeVuDansLeTrajet = false
+
         // Une déclaration de passager ne vaut que pour le trajet en cours.
         // La reconduire d'un trajet à l'autre transformerait un aveu
         // ponctuel en désactivation permanente, ce que personne ne
@@ -215,6 +255,27 @@ class MoteurDecision(
         val motif = if (passagerDeclare && etat.enTrajet) Motif.PASSAGER else dernierMotif
         return Decision(etat, passagerDeclare, motif, evenement)
     }
+
+    /**
+     * Connecté à VOTRE autoradio, il n'y a plus de bus, plus de tram,
+     * plus de vélo et plus de piéton à écarter : la longue confirmation
+     * n'a plus d'objet. Il reste à vérifier que le véhicule roule, ce
+     * qu'un ou deux points de vitesse suffisent à dire.
+     */
+    private fun delaiDeConfirmation(): Long =
+        if (vehiculePresent) reglages.delaiConfirmationVehiculeMs
+        else reglages.delaiConfirmationMs
+
+    /**
+     * La liaison s'est rompue APRÈS avoir existé pendant ce trajet.
+     *
+     * L'autoradio s'éteint avec le contact : c'est le signal de fin de
+     * trajet le plus sûr dont on dispose, et il arrive à la seconde,
+     * là où l'attente de deux minutes tâtonne. Il ne vaut évidemment que
+     * pour un trajet où la liaison a réellement existé — d'où la
+     * mémoire, et non le simple `!vehiculePresent`.
+     */
+    private fun vehiculeQuitte(): Boolean = vehiculeVuDansLeTrajet && !vehiculePresent
 
     /** Le signal franc qui ouvre une suspicion, et lequel c'était. */
     private fun declencheur(instant: Long): Motif? {

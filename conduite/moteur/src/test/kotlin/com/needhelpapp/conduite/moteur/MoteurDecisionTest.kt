@@ -248,6 +248,95 @@ class MoteurDecisionTest {
     }
 
     // ------------------------------------------------------------------
+    // La liaison Bluetooth du véhicule
+    // ------------------------------------------------------------------
+
+    @Test
+    fun `connecte a sa propre voiture, la confirmation est plus courte`() {
+        // Vingt secondes ne servent qu'à écarter le bus, le tram, le vélo
+        // et le point aberrant. Connecté à SON autoradio, cette ambiguïté
+        // n'existe plus : il ne reste qu'à vérifier qu'on roule.
+        val s = Scenario()
+        s.vehicule(present = true)
+        s.position(50f)
+
+        s.attendre(5_000, positionKmh = 50f)
+        assertFalse(s.bloque)
+
+        s.attendre(5_000, positionKmh = 50f)
+        assertTrue(s.bloque, "la liaison véhicule n'a pas raccourci la confirmation")
+    }
+
+    @Test
+    fun `une voiture garee et connectee ne bloque rien`() {
+        // L'autoradio reste connecté contact mis, moteur tournant, à
+        // l'arrêt devant une école. La liaison lève un doute ; elle ne
+        // déclenche jamais rien à elle seule.
+        val s = Scenario()
+        s.vehicule(present = true)
+        s.attendre(300_000, positionKmh = 0f)
+        assertFalse(s.blocageObserve)
+    }
+
+    @Test
+    fun `couper le contact termine le trajet sur-le-champ`() {
+        // L'autoradio s'éteint avec le contact. C'est le signal de fin le
+        // plus sûr dont on dispose, et il arrive à la seconde — là où
+        // l'attente de deux minutes tâtonne.
+        val s = Scenario()
+        s.vehicule(present = true)
+        s.demarrerUnTrajet()
+        assertTrue(s.bloque)
+
+        s.vehicule(present = false)
+        assertFalse(s.bloque)
+        assertEquals(MoteurDecision.Motif.VEHICULE_QUITTE, s.motif)
+        assertEquals(
+            listOf(MoteurDecision.EvenementTrajet.DEBUT, MoteurDecision.EvenementTrajet.FIN),
+            s.evenements,
+        )
+    }
+
+    @Test
+    fun `sans liaison etablie, une deconnexion ne termine rien`() {
+        // Un téléphone qui n'a jamais été connecté publie lui aussi
+        // « non connecté ». Sans la mémoire du trajet, ce signal
+        // terminerait tous les trajets en bus dès la première seconde.
+        val s = Scenario()
+        s.demarrerUnTrajet()
+        s.vehicule(present = false)
+        assertTrue(s.bloque)
+    }
+
+    @Test
+    fun `une liaison etablie en cours de route sert quand meme a la fin`() {
+        // On démarre souvent avant que l'autoradio ait fini de s'appairer.
+        val s = Scenario()
+        s.demarrerUnTrajet()
+        s.vehicule(present = true)
+        assertTrue(s.bloque)
+
+        s.vehicule(present = false)
+        assertFalse(s.bloque)
+        assertEquals(MoteurDecision.Motif.VEHICULE_QUITTE, s.motif)
+    }
+
+    @Test
+    fun `la liaison ne survit pas au trajet`() {
+        val s = Scenario()
+        s.vehicule(present = true)
+        s.demarrerUnTrajet()
+        s.vehicule(present = false)
+        assertEquals(MoteurDecision.Etat.ARRET, s.etat)
+
+        // Le trajet suivant se fait sans liaison : il doit retrouver la
+        // confirmation longue, et ne pas se terminer tout seul.
+        s.position(50f)
+        s.attendre(10_000, positionKmh = 50f)
+        assertFalse(s.bloque, "la confirmation courte a survécu au trajet précédent")
+    }
+
+    // ------------------------------------------------------------------
     // Les réglages eux-mêmes
     // ------------------------------------------------------------------
 

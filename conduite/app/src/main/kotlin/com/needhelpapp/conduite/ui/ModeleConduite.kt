@@ -5,6 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.needhelpapp.conduite.AppConduite
 import com.needhelpapp.conduite.donnees.ApplicationInstallee
+import com.needhelpapp.conduite.banc.BancEssai
+import com.needhelpapp.conduite.detection.AppareilAppaire
+import com.needhelpapp.conduite.detection.SourceVehicule
 import com.needhelpapp.conduite.donnees.ApplicationsInstallees
 import com.needhelpapp.conduite.donnees.ReglagesComplets
 import com.needhelpapp.conduite.donnees.base.Trajet
@@ -12,11 +15,14 @@ import com.needhelpapp.conduite.moteur.ModeBlocage
 import com.needhelpapp.conduite.permissions.Permissions
 import com.needhelpapp.conduite.service.EtatPublic
 import com.needhelpapp.conduite.service.ServiceConduite
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Ce que l'écran voit, et ce qu'il peut demander.
@@ -42,14 +48,14 @@ class ModeleConduite(application: Application) : AndroidViewModel(application) {
         val superposition: Boolean = false,
         val statistiques: Boolean = false,
         val nePasDeranger: Boolean = false,
-        val accessibilite: Boolean = false,
+        val bluetooth: Boolean = false,
     ) {
         /**
          * Le minimum sans lequel l'application ne peut RIEN faire :
          * savoir qu'on roule, et dessiner par-dessus. Le reste améliore.
          */
         val suffisantPourFonctionner: Boolean
-            get() = position && superposition && (statistiques || accessibilite)
+            get() = position && superposition && statistiques
 
         val toutesLesRecommandees: Boolean
             get() = suffisantPourFonctionner && positionArrierePlan && activite && notifications
@@ -78,8 +84,17 @@ class ModeleConduite(application: Application) : AndroidViewModel(application) {
             superposition = Permissions.superpositionAccordee(app),
             statistiques = Permissions.statistiquesAccordees(app),
             nePasDeranger = Permissions.nePasDerangerAccorde(app),
-            accessibilite = Permissions.accessibiliteActive(app),
+            bluetooth = Permissions.bluetoothAccorde(app),
         )
+    }
+
+    private val _appareils = MutableStateFlow<List<AppareilAppaire>>(emptyList())
+    val appareils: StateFlow<List<AppareilAppaire>> = _appareils
+
+    fun chargerAppareils() {
+        viewModelScope.launch {
+            _appareils.value = withContext(Dispatchers.IO) { SourceVehicule(app).appairés() }
+        }
     }
 
     fun chargerApplications() {
@@ -120,8 +135,8 @@ class ModeleConduite(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { app.reglages.definirNePasDeranger(actif) }
     }
 
-    fun definirAccessibilite(preferee: Boolean) {
-        viewModelScope.launch { app.reglages.definirAccessibilite(preferee) }
+    fun basculerVehicule(adresse: String) {
+        viewModelScope.launch { app.reglages.basculerVehicule(adresse) }
     }
 
     fun definirSeuils(entreeKmh: Float, sortieKmh: Float) {
@@ -134,5 +149,34 @@ class ModeleConduite(application: Application) : AndroidViewModel(application) {
 
     fun effacerHistorique() {
         viewModelScope.launch { app.trajets.toutEffacer() }
+    }
+
+    // ------------------------------------------------------------------
+    // Le banc d'essai — variante de développement seulement
+    // ------------------------------------------------------------------
+
+    private val _scenarioEnCours = MutableStateFlow<String?>(null)
+    val scenarioEnCours: StateFlow<String?> = _scenarioEnCours
+
+    private val _etapeEnCours = MutableStateFlow<String?>(null)
+    val etapeEnCours: StateFlow<String?> = _etapeEnCours
+
+    private var travailBanc: Job? = null
+
+    fun jouerScenario(scenario: BancEssai.Scenario) {
+        travailBanc?.cancel()
+        _scenarioEnCours.value = scenario.nom
+        travailBanc = viewModelScope.launch {
+            try {
+                BancEssai.jouer(scenario) { _etapeEnCours.value = it }
+            } finally {
+                _scenarioEnCours.value = null
+                _etapeEnCours.value = null
+            }
+        }
+    }
+
+    fun arreterScenario() {
+        travailBanc?.cancel()
     }
 }

@@ -30,9 +30,11 @@ import androidx.navigation.compose.rememberNavController
 import com.needhelpapp.conduite.ui.ModeleConduite
 import com.needhelpapp.conduite.ui.ecrans.EcranAccueil
 import com.needhelpapp.conduite.ui.ecrans.EcranApplications
+import com.needhelpapp.conduite.ui.ecrans.EcranBanc
 import com.needhelpapp.conduite.ui.ecrans.EcranHistorique
 import com.needhelpapp.conduite.ui.ecrans.EcranPermissions
 import com.needhelpapp.conduite.ui.ecrans.EcranReglages
+import com.needhelpapp.conduite.ui.ecrans.EcranVehicules
 import com.needhelpapp.conduite.ui.theme.ThemeConduite
 
 /**
@@ -62,6 +64,8 @@ private object Destinations {
     const val APPLICATIONS = "applications"
     const val REGLAGES = "reglages"
     const val HISTORIQUE = "historique"
+    const val VEHICULES = "vehicules"
+    const val BANC = "banc"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,6 +77,9 @@ private fun Application(modele: ModeleConduite = viewModel()) {
     val permissions by modele.permissions.collectAsStateWithLifecycle()
     val applications by modele.applications.collectAsStateWithLifecycle()
     val trajets by modele.trajets.collectAsStateWithLifecycle()
+    val appareils by modele.appareils.collectAsStateWithLifecycle()
+    val scenarioEnCours by modele.scenarioEnCours.collectAsStateWithLifecycle()
+    val etapeEnCours by modele.etapeEnCours.collectAsStateWithLifecycle()
 
     // Android ne publie aucun flux sur l'état des permissions. Le seul
     // moment où il a pu changer est un aller-retour dans les réglages du
@@ -157,9 +164,33 @@ private fun Application(modele: ModeleConduite = viewModel()) {
                     permissions = permissions,
                     surMode = modele::definirMode,
                     surNePasDeranger = modele::definirNePasDeranger,
-                    surAccessibilite = modele::definirAccessibilite,
+                    versVehicules = {
+                        modele.chargerAppareils()
+                        navigation.aller(Destinations.VEHICULES)
+                    },
+                    versBanc = { navigation.aller(Destinations.BANC) },
                     surSeuils = modele::definirSeuils,
                     surDelaiFin = modele::definirDelaiFinTrajet,
+                )
+            }
+
+            composable(Destinations.VEHICULES) {
+                EcranVehicules(
+                    appareils = appareils,
+                    designes = reglages.adressesVehicule,
+                    bluetoothAccorde = permissions.bluetooth,
+                    surBascule = modele::basculerVehicule,
+                )
+            }
+
+            composable(Destinations.BANC) {
+                EcranBanc(
+                    etat = etat,
+                    surveillanceActive = reglages.surveillanceActive,
+                    scenarioEnCours = scenarioEnCours,
+                    etapeEnCours = etapeEnCours,
+                    surJouer = modele::jouerScenario,
+                    surArreter = modele::arreterScenario,
                 )
             }
 
@@ -181,5 +212,7 @@ private fun titreDe(destination: String): String = when (destination) {
     Destinations.APPLICATIONS -> "Applications"
     Destinations.REGLAGES -> "Réglages"
     Destinations.HISTORIQUE -> "Trajets"
+    Destinations.VEHICULES -> "Votre véhicule"
+    Destinations.BANC -> "Banc d'essai"
     else -> "Conduite"
 }

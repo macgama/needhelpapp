@@ -66,6 +66,24 @@ sealed interface Signal {
      */
     data class Battement(override val instant: Long) : Signal
 
+    /**
+     * La liaison Bluetooth avec le véhicule déclaré s'est établie ou
+     * rompue.
+     *
+     * C'est le signal le plus sûr de tous, et le seul qui sache de QUEL
+     * véhicule il s'agit : ni un bus, ni un tram, ni la voiture d'un
+     * autre — la vôtre, celle dont vous avez appairé l'autoradio. Un
+     * capteur ne peut pas déduire cela, un appairage si.
+     *
+     * Il ne dit pas pour autant qu'on roule : une voiture à l'arrêt,
+     * contact mis, reste connectée. Le moteur s'en sert donc pour lever
+     * un doute, jamais pour bloquer à lui seul.
+     */
+    data class Vehicule(
+        override val instant: Long,
+        val present: Boolean,
+    ) : Signal
+
     /** « Je suis passager. » */
     data class DeclarationPassager(override val instant: Long) : Signal
 

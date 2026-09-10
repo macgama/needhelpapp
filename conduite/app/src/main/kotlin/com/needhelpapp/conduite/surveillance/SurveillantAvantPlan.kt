@@ -6,49 +6,37 @@ import android.content.Context
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 
 /**
- * « Quelle application est devant ? », par les deux chemins possibles.
+ * « Quelle application est devant ? », par les statistiques d'usage.
  *
- * DEUX CHEMINS, ET C'EST DÉLIBÉRÉ
+ * UN SEUL CHEMIN, ET C'EST UN CHOIX
  *
- * Le service d'accessibilité répond en quelques millisecondes mais
- * demande un réglage manuel que beaucoup refuseront, à juste titre. Les
- * statistiques d'usage demandent une autorisation elle aussi spéciale,
- * mais mieux comprise, et coûtent un sondage régulier.
+ * Une première version proposait aussi un service d'accessibilité :
+ * instantané là où le sondage attend jusqu'à 700 ms. Il a été retiré, et
+ * pas pour des raisons techniques — le Play Store traite comme suspecte
+ * toute application qui réclame l'accessibilité hors de son objet, et
+ * c'est un motif de refus classique pour ce genre d'outil. Sept cents
+ * millisecondes sur un écran de blocage ne se voient pas ; un refus au
+ * dépôt, si.
  *
- * Les deux existent parce qu'aucun ne suffit : imposer l'accessibilité
- * ferait refuser l'application au dépôt, n'offrir que le sondage ferait
- * clignoter l'écran de blocage d'une demi-seconde à chaque ouverture.
- * L'utilisateur choisit ; le service qui décide ne voit qu'un flux de
- * noms de paquets.
+ * L'autorisation d'accès aux données d'usage reste, elle, une
+ * autorisation spéciale — mais bien mieux comprise, et qui ne donne
+ * accès à rien d'autre qu'à des noms de paquets.
  */
-class SurveillantAvantPlan(private val contexte: Context) {
+class SurveillantAvantPlan(contexte: Context) {
 
     private val statistiques =
         contexte.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
 
-    /**
-     * Le flux des applications qui passent devant.
-     *
-     * [viaAccessibilite] doit refléter l'état réel du service, pas le
-     * souhait de l'utilisateur : un réglage coché mais un service
-     * désactivé dans Android donnerait un flux définitivement muet, donc
-     * un blocage qui ne bloque rien.
-     */
-    fun flux(viaAccessibilite: Boolean): Flow<String> =
-        if (viaAccessibilite) {
-            AvantPlan.paquet.filterNotNull().distinctUntilChanged()
-        } else {
-            flow {
-                while (true) {
-                    paquetParStatistiques()?.let { emit(it) }
-                    delay(PERIODE_SONDAGE_MS)
-                }
-            }.distinctUntilChanged()
+    /** Le flux des applications qui passent devant. */
+    fun flux(): Flow<String> = flow {
+        while (true) {
+            paquetParStatistiques()?.let { emit(it) }
+            delay(PERIODE_SONDAGE_MS)
         }
+    }.distinctUntilChanged()
 
     /**
      * Le dernier passage au premier plan dans la minute écoulée.

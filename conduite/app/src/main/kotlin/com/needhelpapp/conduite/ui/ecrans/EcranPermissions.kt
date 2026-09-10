@@ -94,7 +94,7 @@ fun EcranPermissions(
             titre = "Accès aux données d'usage",
             explication = "Pour savoir quelle application est affichée. Cet écran est " +
                 "caché dans les réglages d'Android — le bouton vous y emmène " +
-                "directement. Le service d'accessibilité, plus bas, peut le remplacer.",
+                "directement.",
             accordee = permissions.statistiques,
             action = { ouvrirReglage.lance(contexte, Permissions.intentionStatistiques()) },
         )
@@ -135,22 +135,23 @@ fun EcranPermissions(
         TitreSection("Facultatif")
 
         Ligne(
+            titre = "Bluetooth",
+            explication = "Uniquement pour vous laisser désigner l'autoradio de votre " +
+                "voiture dans une liste. C'est le signal le plus sûr de la " +
+                "détection : le seul qui sache de quel véhicule il s'agit. " +
+                "L'application ne cherche aucun appareil autour de vous et " +
+                "n'échange aucune donnée par Bluetooth.",
+            accordee = permissions.bluetooth,
+            action = { demandeStandard.launch(Permissions.demandesStandard().toTypedArray()) },
+        )
+
+        Ligne(
             titre = "Ne pas déranger",
             explication = "Pour faire taire les notifications pendant le trajet. " +
                 "Recouvrir une application n'empêche pas une vibration, et une " +
                 "vibration suffit à faire tourner la tête.",
             accordee = permissions.nePasDeranger,
             action = { ouvrirReglage.lance(contexte, Permissions.intentionNePasDeranger()) },
-        )
-
-        Ligne(
-            titre = "Service d'accessibilité",
-            explication = "Remplace le sondage des données d'usage par une détection " +
-                "instantanée. Notre service ne peut PAS lire le contenu de vos " +
-                "écrans : il ne demande que le nom de l'application affichée. " +
-                "Vous pouvez très bien vous en passer.",
-            accordee = permissions.accessibilite,
-            action = { ouvrirReglage.lance(contexte, Permissions.intentionAccessibilite()) },
         )
 
         Spacer(Modifier.height(24.dp))
