@@ -22,6 +22,36 @@ import com.needhelpapp.conduite.moteur.MoteurDecision
 object Notifications {
 
     const val ID_SURVEILLANCE = 1
+    const val ID_ESSAI = 2
+
+    /**
+     * L'essai est fini et la protection s'arrête.
+     *
+     * Elle est bruyante à dessein. Une application de sécurité qui cesse
+     * de protéger sans le dire est pire que pas d'application du tout :
+     * l'utilisateur, lui, continue de se croire couvert. C'est la seule
+     * notification de tout le produit qui a le droit d'être insistante.
+     */
+    fun essaiTermine(contexte: Context): Notification {
+        val ouvrir = PendingIntent.getActivity(
+            contexte,
+            2,
+            Intent(contexte, ActivitePrincipale::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        return NotificationCompat.Builder(contexte, AppConduite.CANAL_TRAJET)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(contexte.getString(R.string.essai_termine_titre))
+            .setContentText(contexte.getString(R.string.essai_termine_texte))
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(contexte.getString(R.string.essai_termine_texte)),
+            )
+            .setContentIntent(ouvrir)
+            .setAutoCancel(true)
+            .setCategory(NotificationCompat.CATEGORY_STATUS)
+            .build()
+    }
 
     fun surveillance(
         contexte: Context,

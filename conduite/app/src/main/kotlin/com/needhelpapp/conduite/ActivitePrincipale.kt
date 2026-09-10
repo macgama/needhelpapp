@@ -1,5 +1,8 @@
 package com.needhelpapp.conduite
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -29,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.needhelpapp.conduite.ui.ModeleConduite
 import com.needhelpapp.conduite.ui.ecrans.EcranAccueil
+import com.needhelpapp.conduite.ui.ecrans.EcranAchat
 import com.needhelpapp.conduite.ui.ecrans.EcranApplications
 import com.needhelpapp.conduite.ui.ecrans.EcranBanc
 import com.needhelpapp.conduite.ui.ecrans.EcranHistorique
@@ -66,6 +71,7 @@ private object Destinations {
     const val HISTORIQUE = "historique"
     const val VEHICULES = "vehicules"
     const val BANC = "banc"
+    const val ACHAT = "achat"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,6 +86,9 @@ private fun Application(modele: ModeleConduite = viewModel()) {
     val appareils by modele.appareils.collectAsStateWithLifecycle()
     val scenarioEnCours by modele.scenarioEnCours.collectAsStateWithLifecycle()
     val etapeEnCours by modele.etapeEnCours.collectAsStateWithLifecycle()
+    val licence by modele.licence.collectAsStateWithLifecycle()
+    val prix by modele.prix.collectAsStateWithLifecycle()
+    val magasinJoignable by modele.magasinJoignable.collectAsStateWithLifecycle()
 
     // Android ne publie aucun flux sur l'état des permissions. Le seul
     // moment où il a pu changer est un aller-retour dans les réglages du
@@ -124,7 +133,9 @@ private fun Application(modele: ModeleConduite = viewModel()) {
                     etat = etat,
                     reglages = reglages,
                     permissions = permissions,
+                    licence = licence,
                     surBascule = modele::basculerSurveillance,
+                    versAchat = { navigation.aller(Destinations.ACHAT) },
                     versPermissions = { navigation.aller(Destinations.PERMISSIONS) },
                     versApplications = {
                         modele.chargerApplications()
@@ -183,6 +194,20 @@ private fun Application(modele: ModeleConduite = viewModel()) {
                 )
             }
 
+            composable(Destinations.ACHAT) {
+                val contexte = LocalContext.current
+                EcranAchat(
+                    licence = licence,
+                    prix = prix,
+                    magasinJoignable = magasinJoignable,
+                    // Google exige que l'achat parte d'un écran que
+                    // l'utilisateur regarde : il faut donc l'Activity, et
+                    // non un Context quelconque.
+                    surAcheter = { contexte.activiteHote()?.let(modele::acheter) },
+                    surRestaurer = modele::restaurerAchats,
+                )
+            }
+
             composable(Destinations.BANC) {
                 EcranBanc(
                     etat = etat,
@@ -201,6 +226,23 @@ private fun Application(modele: ModeleConduite = viewModel()) {
     }
 }
 
+/**
+ * Remonte la chaîne des Context jusqu'à l'Activity.
+ *
+ * `LocalContext.current` sous Compose n'est PAS forcément une Activity —
+ * c'est souvent un ContextWrapper de thème. Lui faire un `as Activity`
+ * fonctionne jusqu'au jour où ça plante, et ce jour-là c'est au moment de
+ * l'achat.
+ */
+private fun Context.activiteHote(): Activity? {
+    var courant: Context = this
+    while (courant is ContextWrapper) {
+        if (courant is Activity) return courant
+        courant = courant.baseContext
+    }
+    return null
+}
+
 private fun NavHostController.aller(route: String) {
     // launchSingleTop : un double appui sur un bouton ne doit pas
     // empiler deux fois le même écran.
@@ -214,5 +256,6 @@ private fun titreDe(destination: String): String = when (destination) {
     Destinations.HISTORIQUE -> "Trajets"
     Destinations.VEHICULES -> "Votre véhicule"
     Destinations.BANC -> "Banc d'essai"
+    Destinations.ACHAT -> "Débloquer"
     else -> "Conduite"
 }

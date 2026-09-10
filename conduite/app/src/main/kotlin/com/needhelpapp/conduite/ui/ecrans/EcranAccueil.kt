@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.needhelpapp.conduite.donnees.ReglagesComplets
+import com.needhelpapp.conduite.moteur.Acces
+import com.needhelpapp.conduite.moteur.EtatLicence
 import com.needhelpapp.conduite.moteur.MoteurDecision
 import com.needhelpapp.conduite.service.EtatPublic
 import com.needhelpapp.conduite.ui.Carte
@@ -34,7 +36,9 @@ fun EcranAccueil(
     etat: EtatPublic.Vue,
     reglages: ReglagesComplets,
     permissions: ModeleConduite.EtatPermissions,
+    licence: EtatLicence,
     surBascule: (Boolean) -> Unit,
+    versAchat: () -> Unit,
     versPermissions: () -> Unit,
     versApplications: () -> Unit,
     versReglages: () -> Unit,
@@ -78,7 +82,8 @@ fun EcranAccueil(
                 Switch(
                     checked = reglages.surveillanceActive,
                     onCheckedChange = surBascule,
-                    enabled = permissions.suffisantPourFonctionner || reglages.surveillanceActive,
+                    enabled = licence.protectionActive &&
+                        (permissions.suffisantPourFonctionner || reglages.surveillanceActive),
                 )
             }
 
@@ -89,6 +94,44 @@ fun EcranAccueil(
                     "${vitesse.roundToInt()} km/h",
                     style = MaterialTheme.typography.headlineMedium,
                 )
+            }
+        }
+
+        // L'ESSAI PASSE AVANT LES AUTORISATIONS. Quand la protection est
+        // arrêtée faute de licence, régler des autorisations ne servirait
+        // à rien : c'est l'information la plus utile de l'écran.
+        if (licence.acces == Acces.ESSAI_TERMINE) {
+            Spacer(Modifier.height(12.dp))
+            Carte {
+                Pastille(Color(0xFF8E2A2A), "Période d'essai terminée")
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "Le blocage est à l'arrêt. Nous préférons vous le dire " +
+                        "franchement plutôt que de laisser tourner une application " +
+                        "qui ne protège plus rien.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(12.dp))
+                Button(onClick = versAchat) { Text("Débloquer Conduite") }
+            }
+        } else if (licence.acces == Acces.ESSAI) {
+            Spacer(Modifier.height(12.dp))
+            Carte {
+                Text(
+                    "Essai — encore ${licence.joursRestants} jour(s) " +
+                        "et ${licence.trajetsRestants} trajet(s).",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "Tout fonctionne pendant ce temps. L'essai continue tant qu'il " +
+                        "reste l'un ou l'autre.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(12.dp))
+                OutlinedButton(onClick = versAchat) { Text("Débloquer maintenant") }
             }
         }
 

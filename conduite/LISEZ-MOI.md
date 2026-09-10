@@ -158,7 +158,7 @@ cd conduite
 ./gradlew -p moteur test
 ```
 
-Trente-six scénarios, nommés comme on les raconterait : « le feu rouge
+Quarante-quatre scénarios, nommés comme on les raconterait : « le feu rouge
 ne débloque pas le téléphone », « une vitesse absente n'est pas une
 vitesse nulle », « couper le contact termine le trajet sur-le-champ »,
 « le même vélo est bloqué dès que le profil vélo est actif »,
@@ -205,6 +205,59 @@ d'un trajet à l'autre transformerait un aveu ponctuel en désactivation
 permanente, ce que personne ne choisirait consciemment.
 
 ---
+
+## L'achat
+
+Gratuite à l'installation, débloquée par un **achat unique**. Pas
+d'abonnement : un outil qu'on installe et qu'on oublie se prête mal à une
+reconduction mensuelle, et la reconduction est ce qui fait désinstaller.
+
+**L'essai dure quinze jours ET au moins dix trajets.** Les deux
+conditions, parce qu'une seule punit toujours quelqu'un : en jours seuls,
+celui qui ne prend pas la voiture de la semaine paierait sans avoir rien
+vu ; en trajets seuls, le livreur aurait épuisé son essai le premier
+après-midi. Il faut avoir eu le temps **et** l'occasion.
+
+Cette règle est du calcul pur, dans `moteur/Licence.kt` — donc éprouvée
+en une milliseconde plutôt qu'en quinze jours.
+
+### Ce qui se passe à l'expiration
+
+La protection s'arrête, et l'application le dit **fort** : notification,
+carte rouge sur l'écran d'accueil, interrupteur de surveillance éteint et
+verrouillé. Le service refuse de démarrer plutôt que de tourner à vide.
+
+C'est délibéré et ce n'est pas négociable : une application de sécurité
+qui affiche « en veille » pendant que rien ne tourne est pire que pas
+d'application du tout, parce que l'utilisateur, lui, continue de se
+croire couvert.
+
+### Trois règles qui valent de l'argent
+
+1. **Acquitter sous trois jours.** Un achat non acquitté est
+   automatiquement remboursé par Google au bout de soixante-douze heures.
+   L'utilisateur a payé, l'application est débloquée, et l'argent repart
+   tout seul — cela ne se voit qu'au relevé du mois suivant.
+2. **Ne jamais révoquer sur un silence.** Réseau coupé, Play Store en
+   mise à jour, mode avion, tunnel : le magasin ne répond pas. En
+   conclure que l'achat n'existe pas couperait la protection d'un client
+   qui a payé, au moment précis où il roule. On n'écrit « non acheté »
+   que sur une réponse explicite.
+3. **Ne jamais écrire le prix dans le code.** Il vient de Play, déjà
+   formaté dans la monnaie de l'acheteur.
+
+La vérification est purement locale : pas de serveur, donc pas de
+validation du jeton d'achat côté serveur, et un téléphone déverrouillé
+peut la contourner. C'est un choix assumé — l'alternative demanderait un
+serveur, un compte et la permission réseau, c'est-à-dire de renoncer à
+tout ce qui fait la valeur de cette application.
+
+> **Un point à vérifier au premier assemblage.** La bibliothèque de
+> facturation fusionne son propre manifeste dans le nôtre. Si elle y
+> ajoute `INTERNET`, la phrase « elle ne peut matériellement rien
+> envoyer » devient fausse, et doit être réécrite ici **et** dans
+> `conduite-confidentialite.php`. On ne laisse pas une promesse survivre
+> à ce qui la rendait vraie.
 
 ## Ce qui n'est jamais bloqué
 
@@ -298,12 +351,14 @@ conduite/
 │   ├── Signaux.kt           ce qui entre : position, activité, battement
 │   ├── Reglages.kt          les seuils dérivés des profils
 │   ├── ProfilVehicule.kt    voiture, moto, vélo — et leurs pièges
+│   ├── Licence.kt           essai et achat, en calcul pur
 │   ├── MoteurDecision.kt    l'automate à quatre états
 │   └── PolitiqueBlocage.kt  qui a le droit de s'afficher
 └── app/             L'application Android.
     ├── detection/     lecture des capteurs, traduction en signaux
     ├── surveillance/  quelle application est devant
     ├── banc/          les scénarios du banc d'essai
+    ├── facturation/  l'achat unique, par Play et par lui seul
     ├── blocage/       la superposition, le Ne pas déranger
     ├── service/       le service d'avant-plan qui orchestre
     ├── donnees/       réglages (DataStore) et trajets (Room)
@@ -352,11 +407,14 @@ application Android se publie sur le Play Store, pas par rsync.
 
 ## Ce qui reste à faire
 
-- **L'achat.** Le modèle est arrêté : gratuite à l'installation, puis un
-  achat unique via Play Billing. Aucun compte, aucun serveur — c'est le
-  seul montage qui laisse intacte la phrase « elle ne peut
-  matériellement rien envoyer ». Reste à écrire : la bibliothèque de
-  facturation, l'écran de déblocage et la période d'essai.
+- **Le produit dans la Play Console.** Le code attend un achat unique
+  d'identifiant `conduite_complet` (Produits → Produits intégrés à
+  l'application). Sans lui, l'écran de déblocage affiche « le magasin ne
+  répond pas » — ce qui est exact, mais peu utile.
+- **Éprouver la facturation.** Elle ne se teste ni en émulateur ni hors
+  du magasin : il faut une piste de test fermée et des comptes
+  testeurs licence. C'est aussi là qu'on vérifiera l'acquittement, en
+  laissant passer trois jours sur un achat de test.
 - **Signature et publication.** Aucune clé n'est dans le dépôt, et il ne
   faut pas en mettre. La position en arrière-plan demande une
   justification vidéo au dépôt sur le Play Store, et une revue humaine

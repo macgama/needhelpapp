@@ -3,7 +3,13 @@ package com.needhelpapp.conduite
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import com.needhelpapp.conduite.donnees.DepotLicence
 import com.needhelpapp.conduite.donnees.DepotReglages
+import com.needhelpapp.conduite.facturation.Facturation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import com.needhelpapp.conduite.donnees.base.BaseConduite
 import com.needhelpapp.conduite.donnees.DepotTrajets
 
@@ -16,12 +22,36 @@ import com.needhelpapp.conduite.donnees.DepotTrajets
  */
 class AppConduite : Application() {
 
+    /**
+     * Une portée qui vit aussi longtemps que le processus.
+     *
+     * Elle sert à la facturation, dont les réponses arrivent par rappel
+     * bien après que l'écran qui a lancé l'achat a disparu. Les rattacher
+     * à un ViewModel perdrait l'acquittement d'un achat fait juste avant
+     * que l'utilisateur ne ferme l'application — et Google rembourserait
+     * au bout de trois jours.
+     */
+    val portee = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     val reglages: DepotReglages by lazy { DepotReglages(this) }
+    val licence: DepotLicence by lazy { DepotLicence(this) }
+    val facturation: Facturation by lazy { Facturation(this, licence, portee) }
     val trajets: DepotTrajets by lazy { DepotTrajets(BaseConduite.obtenir(this).trajets()) }
 
     override fun onCreate() {
         super.onCreate()
         creerLesCanaux()
+
+        portee.launch {
+            // La date qui fait courir l'essai. Écrite une seule fois, au
+            // tout premier démarrage.
+            licence.noterPremierLancement()
+        }
+
+        // Le magasin est interrogé au lancement, et pas seulement quand
+        // l'utilisateur ouvre l'écran d'achat : c'est ainsi qu'un achat
+        // fait sur un autre téléphone est déjà restauré quand il arrive.
+        facturation.demarrer()
     }
 
     /**

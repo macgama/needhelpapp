@@ -1,5 +1,6 @@
 package com.needhelpapp.conduite.ui
 
+import android.app.Activity
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,9 @@ import com.needhelpapp.conduite.detection.SourceVehicule
 import com.needhelpapp.conduite.donnees.ApplicationsInstallees
 import com.needhelpapp.conduite.donnees.ReglagesComplets
 import com.needhelpapp.conduite.donnees.base.Trajet
+import com.needhelpapp.conduite.moteur.Acces
+import com.needhelpapp.conduite.moteur.ConditionsEssai
+import com.needhelpapp.conduite.moteur.EtatLicence
 import com.needhelpapp.conduite.moteur.ModeBlocage
 import com.needhelpapp.conduite.moteur.ProfilVehicule
 import com.needhelpapp.conduite.permissions.Permissions
@@ -70,6 +74,29 @@ class ModeleConduite(application: Application) : AndroidViewModel(application) {
 
     val etat: StateFlow<EtatPublic.Vue> = EtatPublic.vue
 
+    val licence: StateFlow<EtatLicence> = app.licence.flux.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        // Avant la première lecture, on suppose l'essai entier plutôt
+        // qu'un essai fini : une seconde d'affichage « payez » à
+        // quelqu'un qui vient d'installer serait une seconde de trop.
+        EtatLicence(Acces.ESSAI, ConditionsEssai().dureeJours, ConditionsEssai().trajetsMinimum),
+    )
+
+    /** Le prix vient de Play, formaté dans la monnaie de l'acheteur. */
+    val prix: StateFlow<String?> = app.facturation.prix
+
+    val magasinJoignable: StateFlow<Boolean> = app.facturation.magasinJoignable
+
+    fun acheter(activite: Activity) = app.facturation.acheter(activite)
+
+    /**
+     * « Restaurer mes achats ». Sur un nouveau téléphone, l'achat est
+     * rattaché au compte Google et revient de lui-même — ce bouton ne
+     * fait que redemander tout de suite au lieu d'attendre.
+     */
+    fun restaurerAchats() = app.facturation.rafraichir()
+
     private val _permissions = MutableStateFlow(EtatPermissions())
     val permissions: StateFlow<EtatPermissions> = _permissions
 
@@ -115,6 +142,10 @@ class ModeleConduite(application: Application) : AndroidViewModel(application) {
      */
     fun basculerSurveillance(active: Boolean) {
         viewModelScope.launch {
+            // Sans licence valable, allumer l'interrupteur ne protégerait
+            // de rien : mieux vaut qu'il refuse de bouger que de mentir.
+            if (active && !app.licence.etatActuel().protectionActive) return@launch
+
             app.reglages.definirSurveillance(active)
             if (active) ServiceConduite.demarrer(app) else ServiceConduite.arreter(app)
         }

@@ -25,4 +25,8 @@
     <string name="blocage_maintenir">Maintenez le doigt appuyé</string>
     <string name="vitesse_format">%1$d km/h</string>
 
+    <!-- Essai et achat -->
+    <string name="essai_termine_titre">Période d\'essai terminée</string>
+    <string name="essai_termine_texte">Le blocage est arrêté. Ouvrez Conduite pour le débloquer.</string>
+
 </resources>

@@ -17,6 +17,12 @@
  *   « distance par intégration »   service/ServiceConduite.kt
  *   « exclue des sauvegardes »     res/xml/regles_sauvegarde.xml
  *
+ * UN POINT À VÉRIFIER AVANT LA MISE EN LIGNE. La bibliothèque de
+ * facturation de Google fusionne son propre manifeste dans celui de
+ * l'application. Si elle y ajoute la permission INTERNET, la section
+ * « Ce qu'elle envoie » de cette page devient FAUSSE et doit être
+ * réécrite avant publication — pas après.
+ *
  * Si l'une de ces lignes change, cette page doit suivre le même jour :
  * sans quoi elle devient un engagement que le code ne tient plus.
  */

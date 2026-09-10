@@ -111,6 +111,27 @@ class ServiceConduite : LifecycleService() {
             signaux.trySend(Signal.DeclarationPassager(SystemClock.elapsedRealtime()))
         }
 
+        // LA PROTECTION NE TOURNE PAS À VIDE.
+        //
+        // Quand l'essai s'achève sans achat, le service s'arrête pour de
+        // bon — et le dit. Le laisser tourner en affichant « en veille »
+        // serait le pire des deux mondes : aucun blocage, et un
+        // utilisateur qui se croit couvert. On éteint aussi l'interrupteur
+        // de surveillance, sans quoi le prochain redémarrage du téléphone
+        // relancerait un service qui s'arrêterait aussitôt.
+        lifecycleScope.launch {
+            appli.licence.flux.collect { licence ->
+                if (!licence.protectionActive) {
+                    runCatching {
+                        NotificationManagerCompat.from(this@ServiceConduite)
+                            .notify(Notifications.ID_ESSAI, Notifications.essaiTermine(this@ServiceConduite))
+                    }
+                    appli.reglages.definirSurveillance(false)
+                    arreterProprement()
+                }
+            }
+        }
+
         lifecycleScope.launch {
             // Un trajet laissé ouvert par un service tué en route. On le
             // referme au démarrage plutôt que de le laisser béant.
@@ -297,6 +318,11 @@ class ServiceConduite : LifecycleService() {
                 passagerDeclare = passagerDuTrajet,
             )
         }
+
+        // Le trajet compte pour la période d'essai — mais seulement une
+        // fois terminé : un trajet commencé et abandonné n'a rien montré
+        // à personne.
+        appli.licence.incrementerTrajets()
 
         position.cadence(SourcePositionSysteme.CADENCE_VEILLE_MS)
         nePasDeranger.retablir()

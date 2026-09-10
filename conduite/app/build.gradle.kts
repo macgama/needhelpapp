@@ -83,4 +83,14 @@ dependencies {
     // bascule sur une implémentation vide quand les services Play sont
     // absents (Huawei, /e/OS, appareils dégooglisés).
     implementation(libs.play.services.location)
+
+    // La facturation. Elle dialogue avec l'application Play Store par
+    // liaison inter-processus, pas par le réseau — mais elle fusionne son
+    // propre manifeste dans le nôtre, et il faudra VÉRIFIER au premier
+    // assemblage ce qu'elle y ajoute. Si elle y glisse la permission
+    // INTERNET, la phrase « elle ne peut matériellement rien envoyer »
+    // devra être réécrite dans le LISEZ-MOI et dans la politique de
+    // confidentialité. On ne laisse pas une promesse survivre à ce qui la
+    // rendait vraie.
+    implementation(libs.billing.ktx)
 }
