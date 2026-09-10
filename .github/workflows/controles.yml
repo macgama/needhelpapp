@@ -77,12 +77,10 @@ jobs:
       # lequel. Sans cette vérification, une publication compromise
       # ferait ce qu'elle veut sur la machine d'exécution.
       #
-      # shellcheck est désactivé à dessein. Il signale quatre points de
-      # style sur des scripts qui existaient avant lui — trois ici, un
-      # dans deploiement.yml — et un contrôle qui naît rouge se fait
-      # désactiver dans la semaine. La syntaxe des scripts reste couverte
-      # par l'étape précédente. À rallumer le jour où ces quatre points
-      # seront traités, dans un envoi qui ne fera que cela.
+      # actionlint fait aussi tourner shellcheck sur les blocs `run:`.
+      # Il est resté éteint le temps que les quatre points hérités soient
+      # traités — un contrôle qui naît rouge se fait désactiver dans la
+      # semaine. Ils le sont, et il est rallumé.
       - name: Les flux de travail passent-ils actionlint ?
         run: |
           # GitHub exécute ce bloc sous `bash -e` : une commande qui échoue
@@ -103,13 +101,37 @@ jobs:
 
           tar -xzf "$archive" actionlint
 
+          # SANS SHELLCHECK, ACTIONLINT LE SAUTE EN SILENCE.
+          #
+          # Il ne se plaint pas de son absence : il rend simplement « rien
+          # à signaler », et l'on croit contrôler ce qu'on ne contrôle
+          # plus. C'est la panne exacte contre laquelle ce fichier a été
+          # écrit — une coche verte qui ne veut rien dire est pire que pas
+          # de coche du tout. Les images Ubuntu de GitHub le fournissent ;
+          # le jour où cela change, on veut l'apprendre par un échec.
+          if ! command -v shellcheck >/dev/null; then
+            echo "::error::shellcheck est absent de cet exécuteur. actionlint le sauterait sans rien dire."
+            exit 1
+          fi
+
           # Sortie par défaut, volontairement. Un gabarit `-format` qui
           # produirait des annotations en ligne sur la revue ne survit pas
           # au passage YAML → shell : les échappements du modèle Go s'y
           # perdent. La sortie normale nomme fichier, ligne, colonne et
           # recopie l'extrait fautif ; elle suffit.
+          #
+          # Le contrôle shellcheck est MAINTENANT ACTIF — noter qu'il faut
+          # écrire cette phrase ainsi : un commentaire qui COMMENCE par
+          # « # shellcheck » est lu comme une directive, et shellcheck a
+          # refusé ce fichier la première fois pour cette raison.
+          #
+          # Il était éteint le temps que les quatre points hérités soient
+          # traités : trois ici, un dans deploiement.yml. Ils le sont.
+          # pyflakes reste éteint, lui : il n'est pas installé sur les
+          # exécuteurs GitHub, et l'activer ne ferait que donner
+          # l'illusion d'un contrôle qui ne tourne pas.
           resultat=0
-          ./actionlint -shellcheck= -pyflakes= || resultat=$?
+          ./actionlint -pyflakes= || resultat=$?
 
           rm -f "$archive" actionlint
 
@@ -173,6 +195,13 @@ jobs:
           # base injoignable ferait tomber les quarante-six pages d'un
           # coup et le rapport accuserait le code d'une panne du banc
           # d'essai. On veut un message, pas quarante-six.
+          #
+          # Les apostrophes simples autour du code PHP sont indispensables,
+          # et c'est précisément ce que SC2016 signale : le $e qu'elles
+          # contiennent est une variable PHP, que le shell ne doit surtout
+          # pas essayer de remplacer. Passer aux guillemets doubles, ce
+          # que suggère l'avertissement, viderait la variable.
+          # shellcheck disable=SC2016
           php -r '
             require "needhelpapp/includes/nha-core.php";
             try { nha_db()->query("SELECT 1"); echo "base d\x27essai joignable\n"; }
@@ -183,7 +212,10 @@ jobs:
             }'
 
           php -S 127.0.0.1:8099 -t needhelpapp > /tmp/serveur.log 2>&1 &
-          for i in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:8099/ && break; sleep 0.3; done
+          # `_` plutôt que `i` : on ne compte que les tours, on ne s'en
+          # sert jamais. Nommer une variable qu'on n'utilise pas fait
+          # chercher son usage à la relecture suivante.
+          for _ in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:8099/ && break; sleep 0.3; done
 
           fatales=0; vues=0
           verifier() {
@@ -193,8 +225,14 @@ jobs:
             [ "$code" = "500" ] && { echo "::error::$1 répond 500"; fatales=$((fatales+1)); }
             return 0
           }
-          for f in $(cd needhelpapp && ls *.php); do verifier "$f"; done
-          for f in $(cd needhelpapp && ls admin/*.php api/*.php); do verifier "$f"; done
+          # Énumération par motif plutôt que par `ls` : on ne découpe plus
+          # une sortie de commande en mots, et un nom de fichier inhabituel
+          # ne peut plus être pris pour une option. Le préfixe est retiré
+          # pour garder les chemins tels que le serveur les attend.
+          for chemin in needhelpapp/*.php; do verifier "${chemin#needhelpapp/}"; done
+          for chemin in needhelpapp/admin/*.php needhelpapp/api/*.php; do
+            verifier "${chemin#needhelpapp/}"
+          done
 
           rm -f needhelpapp/config/nha.php
           if [ $fatales -gt 0 ]; then
