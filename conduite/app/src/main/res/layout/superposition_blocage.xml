@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  L'écran de blocage, en XML et non en Compose.
+
+  Ce n'est pas de la nostalgie : cette vue est ajoutée à WindowManager
+  depuis un service, hors de toute Activity. Y faire vivre Compose oblige
+  à greffer à la main un cycle de vie, un registre d'état sauvegardé et
+  un magasin de ViewModel sur une vue détachée — trois pièces mobiles de
+  plus sur le seul écran qui n'a PAS le droit de tomber en panne. Le
+  reste de l'application est en Compose ; celui-ci reste simple.
+
+  Il est volontairement sobre : pas d'animation, pas de couleur vive,
+  rien qui retienne le regard. Un écran de blocage spectaculaire est un
+  écran qu'on regarde, ce qui est exactement le contraire du but.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/racine"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blocage_fond"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp">
+
+        <TextView
+            android:id="@+id/titre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/blocage_titre"
+            android:textColor="@color/papier"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="@string/blocage_message"
+            android:textColor="@color/encre_tenu"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/vitesse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:textColor="@color/papier"
+            android:textSize="46sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/bouton_accueil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/blocage_bouton_accueil" />
+
+        <!--
+          Le bouton « je ne conduis pas » demande un appui maintenu de
+          trois secondes. La friction est le mécanisme : un conducteur au
+          volant ne tient pas trois secondes sur un bouton sans quitter
+          la route des yeux, et il le sent. Un passager, si.
+        -->
+        <Button
+            android:id="@+id/bouton_passager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:text="@string/blocage_bouton_passager"
+            android:textColor="@color/encre_tenu" />
+
+        <ProgressBar
+            android:id="@+id/progression_appui"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:max="1000"
+            android:progress="0"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/indice_appui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/blocage_maintenir"
+            android:textColor="@color/encre_doux"
+            android:textSize="13sp"
+            android:visibility="invisible" />
+    </LinearLayout>
+</FrameLayout>

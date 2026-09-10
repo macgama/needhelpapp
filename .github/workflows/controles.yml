@@ -192,3 +192,42 @@ jobs:
           fi
           [ $trouve -eq 0 ] && echo "Rien de suspect."
           exit $trouve
+
+  # LE MOTEUR DE CONDUITE S'ÉPROUVE SANS ANDROID, ET C'EST TOUT L'INTÉRÊT.
+  #
+  # Décider si l'on conduit est le morceau où une erreur coûte le plus
+  # cher, dans les deux sens : ne pas bloquer un conducteur rate la
+  # raison d'être de l'application, bloquer un piéton la fait
+  # désinstaller. Ce morceau a donc été écrit sans la moindre référence
+  # à Android — ni SDK, ni émulateur, ni téléphone — pour qu'il se
+  # rejoue ici, en quelques secondes, à chaque envoi.
+  #
+  # L'application Android, elle, n'est pas compilée par ce flux : cela
+  # demanderait de télécharger le SDK à chaque exécution. C'est un choix
+  # assumé — on éprouve la logique, pas l'assemblage.
+  moteur-conduite:
+    name: Le moteur de détection de conduite
+    runs-on: ubuntu-latest
+    if: hashFiles('conduite/moteur/build.gradle.kts') != ''
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Les scénarios de conduite
+        working-directory: conduite
+        run: ./gradlew -p moteur test --console=plain
+
+      - name: Le rapport, en cas d'échec
+        if: failure()
+        working-directory: conduite/moteur
+        run: |
+          for f in build/reports/tests/test/classes/*.html; do
+            [ -f "$f" ] && echo "--- $f" && sed -e 's/<[^>]*>//g' "$f" | grep -v '^\s*$' | head -60
+          done

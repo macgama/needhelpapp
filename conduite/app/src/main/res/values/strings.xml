@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nom_application">Conduite</string>
+
+    <!-- Service et notifications -->
+    <string name="canal_surveillance">Surveillance</string>
+    <string name="canal_surveillance_description">La notification permanente qui permet à la détection de tourner. Android l\'exige ; vous pouvez la réduire, pas la supprimer.</string>
+    <string name="canal_trajet">Trajets</string>
+    <string name="canal_trajet_description">Un résumé à la fin de chaque trajet.</string>
+    <string name="notification_veille_titre">En veille</string>
+    <string name="notification_veille_texte">Le blocage s\'activera de lui-même dès que vous roulerez.</string>
+    <string name="notification_suspicion_titre">Vérification en cours</string>
+    <string name="notification_suspicion_texte">Un mouvement de véhicule a été détecté.</string>
+    <string name="notification_conduite_titre">Trajet en cours</string>
+    <string name="notification_conduite_texte">Les applications choisies sont bloquées.</string>
+    <string name="notification_passager_titre">Passager</string>
+    <string name="notification_passager_texte">Le blocage est levé pour ce trajet.</string>
+    <string name="notification_action_passager">Je suis passager</string>
+
+    <!-- Écran de blocage -->
+    <string name="blocage_titre">Vous conduisez</string>
+    <string name="blocage_message">Cette application attendra. La route, non.</string>
+    <string name="blocage_bouton_passager">Je ne conduis pas</string>
+    <string name="blocage_bouton_accueil">Revenir à l\'accueil</string>
+    <string name="blocage_maintenir">Maintenez le doigt appuyé</string>
+    <string name="vitesse_format">%1$d km/h</string>
+
+    <!-- Accessibilité -->
+    <string name="accessibilite_libelle">Conduite — détection de l\'application affichée</string>
+    <string name="accessibilite_description">Permet de savoir instantanément quelle application est à l\'écran pendant un trajet, sans sondage régulier. Seul le nom du paquet est lu : jamais le contenu de vos écrans. Ce service est facultatif ; sans lui, l\'application se rabat sur les statistiques d\'usage.</string>
+</resources>

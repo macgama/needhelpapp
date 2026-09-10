@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFFFF">
+    <!-- Un volant : lisible à 24 dp, ce qui n'est pas le cas d'une voiture. -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,4c3.35,0 6.16,2.36 6.81,5.5H16.5c-0.55,-1.75 -2.32,-3 -4.5,-3s-3.95,1.25 -4.5,3H5.19C5.84,6.36 8.65,4 12,4zM4.07,11.5h3.43c0.5,1.1 1.5,1.93 2.7,2.28l-1.2,5.4C6.4,18.1 4.4,15.05 4.07,11.5zM12,20c-0.5,0 -0.99,-0.05 -1.46,-0.14l1.2,-5.4c0.17,0.02 0.34,0.04 0.51,0.04s0.34,-0.02 0.51,-0.04l1.2,5.4C13.49,19.95 12.5,20 12,20zM15,19.18l-1.2,-5.4c1.2,-0.35 2.2,-1.18 2.7,-2.28h3.43C19.6,15.05 17.6,18.1 15,19.18z" />
+</vector>

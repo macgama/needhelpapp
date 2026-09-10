@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  La palette est celle du portail needhelpapp.com, reprise telle quelle
+  depuis sa feuille de style. Une application de la famille qui se
+  choisit ses propres couleurs cesse d'en faire partie.
+-->
+<resources>
+    <color name="encre">#FF1C1A24</color>
+    <color name="encre_doux">#FF5C5668</color>
+    <color name="encre_tenu">#FF8C8798</color>
+    <color name="papier">#FFF7F5F0</color>
+    <color name="papier_creux">#FFEFEBE3</color>
+    <color name="panneau">#FFFFFEFC</color>
+    <color name="trait">#FFE2DCD1</color>
+    <color name="indigo">#FF2E2A5C</color>
+    <color name="indigo_fonce">#FF22203F</color>
+    <color name="indigo_clair">#FFE8E5F2</color>
+    <color name="rouge">#FF8E2A2A</color>
+    <color name="vert">#FF1B6547</color>
+
+    <!-- Le fond de l'écran de blocage : sombre, mat, non lumineux. -->
+    <color name="blocage_fond">#F21C1A24</color>
+</resources>
