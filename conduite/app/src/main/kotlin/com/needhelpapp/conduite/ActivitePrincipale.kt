@@ -169,7 +169,7 @@ private fun Application(modele: ModeleConduite = viewModel()) {
                         navigation.aller(Destinations.VEHICULES)
                     },
                     versBanc = { navigation.aller(Destinations.BANC) },
-                    surSeuils = modele::definirSeuils,
+                    surProfil = modele::basculerProfil,
                     surDelaiFin = modele::definirDelaiFinTrajet,
                 )
             }

@@ -55,13 +55,16 @@ L'automate a **quatre états**, et le troisième est celui qui fait tout
 l'intérêt de l'ensemble :
 
 ```
-   ARRET ──vitesse ou activité──▶ SUSPICION ──20 s──▶ CONDUITE ◀──┐
-     ▲                                │                   │       │
-     │                            démenti               < 5 km/h  │ ≥ 15 km/h
-     │                                ▼                   ▼       │
-     └────── 2 min à l'arrêt ────────────────────────── PAUSE ─────┘
+   ARRET ──vitesse ou activité──▶ SUSPICION ──20 à 30 s──▶ CONDUITE ◀──┐
+     ▲                                │                       │        │
+     │                            démenti              sous le seuil   │ au-dessus
+     │                                ▼                       ▼        │
+     └────── 2 min à l'arrêt ──────────────────────────────  PAUSE ─────┘
                  ou « à pied »
 ```
+
+Les seuils et le délai de confirmation ne sont pas des constantes : ils
+viennent du **profil de véhicule** (voir plus bas).
 
 - **SUSPICION** absorbe les points GPS aberrants — ils sont fréquents en
   ville, entre deux immeubles, et durent une seconde ou deux. Vingt
@@ -79,6 +82,47 @@ l'intérêt de l'ensemble :
   toujours. On ne débloque donc pas faute de signal — mais pas
   indéfiniment non plus, sinon un GPS en panne confisquerait le téléphone
   de la soirée. Cinq minutes.
+
+### Les profils de véhicule
+
+C'est le réglage le plus lourd de conséquences de l'application, parce
+qu'un seul jeu de seuils ne peut pas couvrir une voiture et une
+trottinette.
+
+| Profil | Se déclenche au-delà de | Confirmation | Ce qui lève le blocage |
+|---|---|---|---|
+| Voiture, camionnette | 15 km/h | 20 s | à pied, **à vélo** |
+| Moto, scooter, vélomoteur | 15 km/h | 20 s | à pied |
+| Vélo, trottinette, monoroue | **10 km/h** | **30 s** | à pied |
+
+Deux choses méritent l'attention.
+
+**« À vélo » ne peut pas rester un démenti universel.** La première
+version l'utilisait pour annuler un blocage — un cycliste ne tient pas de
+volant. Pour qui veut justement protéger les cyclistes, c'est le signal
+exactement à l'envers. Le profil moto ne l'accepte pas davantage : en
+ville, la reconnaissance d'activité confond volontiers un scooter avec un
+vélo, même allure, mêmes accélérations.
+
+**Les profils s'additionnent, ils ne s'excluent pas.** La même personne
+prend sa voiture en semaine et son vélo le samedi. Le moteur retient donc
+le seuil d'entrée **le plus bas** — il suffit qu'un profil s'applique
+pour qu'il y ait un danger — et **l'intersection** des démentis : une
+activité ne disculpe que si elle disculpe pour tous les profils actifs à
+la fois. C'est ce second point qui règle la contradiction : « voiture »
+et « vélo » cochés ensemble, et « à vélo » cesse de lever le blocage.
+
+Le délai de confirmation, lui, dépend de la **vitesse** et non des cases
+cochées. À 12 km/h on ne distingue pas une trottinette d'un coureur, et
+les trente secondes laissent au système le temps de dire « à pied ». À
+60 km/h la question ne se pose plus, et vingt secondes suffisent —
+au-delà, ce ne serait que de la route non couverte.
+
+> **Le coureur reste le cas limite assumé.** Un jogging soutenu tient
+> 12 à 15 km/h sans peine. Avec le profil léger actif, il peut être
+> bloqué quelques dizaines de secondes, le temps que la reconnaissance
+> d'activité le disculpe. Le bouton « je ne conduis pas » est là pour les
+> fois où elle se tait.
 
 ### Le Bluetooth, ou le seul signal qui ne vienne pas d'un capteur
 
@@ -114,9 +158,10 @@ cd conduite
 ./gradlew -p moteur test
 ```
 
-Vingt-neuf scénarios, nommés comme on les raconterait : « le feu rouge
+Trente-six scénarios, nommés comme on les raconterait : « le feu rouge
 ne débloque pas le téléphone », « une vitesse absente n'est pas une
 vitesse nulle », « couper le contact termine le trajet sur-le-champ »,
+« le même vélo est bloqué dès que le profil vélo est actif »,
 « la déclaration de passager ne vaut que pour le trajet en cours ». Ils
 tournent aussi à chaque envoi, dans `controles.yml`.
 
@@ -251,7 +296,8 @@ c'est une contrainte que le code s'impose à la source.
 conduite/
 ├── moteur/          Kotlin pur, sans Android. La décision, et ses tests.
 │   ├── Signaux.kt           ce qui entre : position, activité, battement
-│   ├── Reglages.kt          les seuils, et la raison de chaque valeur
+│   ├── Reglages.kt          les seuils dérivés des profils
+│   ├── ProfilVehicule.kt    voiture, moto, vélo — et leurs pièges
 │   ├── MoteurDecision.kt    l'automate à quatre états
 │   └── PolitiqueBlocage.kt  qui a le droit de s'afficher
 └── app/             L'application Android.

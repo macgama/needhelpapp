@@ -5,13 +5,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.needhelpapp.conduite.moteur.ModeBlocage
 import com.needhelpapp.conduite.moteur.ReglagesBlocage
+import com.needhelpapp.conduite.moteur.ProfilVehicule
 import com.needhelpapp.conduite.moteur.ReglagesDetection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -43,20 +43,10 @@ data class ReglagesComplets(
 class DepotReglages(private val contexte: Context) {
 
     val flux: Flow<ReglagesComplets> = contexte.stockage.data.map { p ->
-        // Les seuils sont bornés À LA LECTURE aussi, pas seulement à
-        // l'écriture. `ReglagesDetection` refuse de se construire avec un
-        // seuil de sortie au-dessus du seuil d'entrée : une préférence
-        // écrite par une version future, ou simplement abîmée, ferait
-        // alors échouer ce flux — c'est-à-dire planter l'application au
-        // lancement, sans aucun moyen de revenir en arrière.
-        val entree = (p[SEUIL_ENTREE] ?: 15f).coerceIn(8f, 40f)
-        val sortie = (p[SEUIL_SORTIE] ?: 5f).coerceIn(1f, entree - 1f)
-
         ReglagesComplets(
             surveillanceActive = p[SURVEILLANCE] ?: false,
             detection = ReglagesDetection(
-                seuilEntreeKmh = entree,
-                seuilSortieKmh = sortie,
+                profils = profilsDepuis(p),
                 delaiFinTrajetMs = p[DELAI_FIN] ?: 120_000L,
             ),
             blocage = ReglagesBlocage(
@@ -92,20 +82,35 @@ class DepotReglages(private val contexte: Context) {
     }
 
     /**
-     * Les seuils sont bornés à l'écriture, pas seulement à l'affichage.
-     * Un curseur d'interface se remplace ; une préférence corrompue par
-     * une version future, non — et le moteur refuse de se construire avec
-     * un seuil de sortie au-dessus du seuil d'entrée.
+     * DÉCOCHER LE DERNIER PROFIL EST REFUSÉ, en silence.
+     *
+     * Sans profil il n'y a plus de seuil, donc plus de détection du tout
+     * — et une application qui se tait sans le dire est pire qu'une
+     * application éteinte. Le moteur refuse d'ailleurs de se construire
+     * dans cet état : laisser passer l'écriture ferait planter le
+     * démarrage suivant, sans moyen de revenir en arrière.
      */
-    suspend fun definirSeuils(entreeKmh: Float, sortieKmh: Float) = ecrire { p ->
-        val entree = entreeKmh.coerceIn(8f, 40f)
-        p[SEUIL_ENTREE] = entree
-        p[SEUIL_SORTIE] = sortieKmh.coerceIn(1f, entree - 2f)
+    suspend fun basculerProfil(profil: ProfilVehicule) = ecrire { p ->
+        val actuels = profilsDepuis(p)
+        val nouveaux = if (profil in actuels) actuels - profil else actuels + profil
+        if (nouveaux.isNotEmpty()) p[PROFILS] = nouveaux.map { it.name }.toSet()
     }
 
     suspend fun definirDelaiFinTrajet(secondes: Int) = ecrire {
         it[DELAI_FIN] = secondes.coerceIn(30, 600) * 1000L
     }
+
+    /**
+     * Un profil inconnu — préférence écrite par une version future, ou
+     * simplement abîmée — est ignoré plutôt que de faire échouer la
+     * lecture. Un `valueOf` qui lève dans un flux, c'est l'application
+     * qui ne démarre plus.
+     */
+    private fun profilsDepuis(p: Preferences): Set<ProfilVehicule> =
+        p[PROFILS].orEmpty()
+            .mapNotNull { nom -> runCatching { ProfilVehicule.valueOf(nom) }.getOrNull() }
+            .toSet()
+            .ifEmpty { setOf(ProfilVehicule.VOITURE) }
 
     private suspend fun ecrire(
         bloc: suspend (androidx.datastore.preferences.core.MutablePreferences) -> Unit,
@@ -120,8 +125,7 @@ class DepotReglages(private val contexte: Context) {
         val AUTORISES = stringSetPreferencesKey("paquets_autorises")
         val NE_PAS_DERANGER = booleanPreferencesKey("ne_pas_deranger")
         val VEHICULES = stringSetPreferencesKey("adresses_vehicule")
-        val SEUIL_ENTREE = floatPreferencesKey("seuil_entree_kmh")
-        val SEUIL_SORTIE = floatPreferencesKey("seuil_sortie_kmh")
+        val PROFILS = stringSetPreferencesKey("profils_vehicule")
         val DELAI_FIN = longPreferencesKey("delai_fin_trajet_ms")
     }
 }

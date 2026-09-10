@@ -33,11 +33,12 @@ fun EcranVehicules(
             Spacer(Modifier.height(20.dp))
             Text("Votre véhicule", style = MaterialTheme.typography.headlineMedium)
             Text(
-                "Désignez l'autoradio de votre voiture. C'est le seul signal de " +
-                    "toute la détection qui sache de quel véhicule il s'agit : ni un " +
-                    "bus, ni un tram, ni la voiture d'un autre. La confirmation passe " +
-                    "alors de vingt à huit secondes, et la coupure du contact termine " +
-                    "le trajet sur-le-champ.",
+                "Désignez l'appareil Bluetooth de votre véhicule : l'autoradio " +
+                    "d'une voiture, l'intercom d'un casque, l'électronique d'un vélo " +
+                    "électrique. C'est le seul signal de toute la détection qui sache " +
+                    "de quel véhicule il s'agit — ni un bus, ni un tram, ni celui d'un " +
+                    "autre. La confirmation tombe alors à huit secondes, et la " +
+                    "déconnexion termine le trajet sur-le-champ.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

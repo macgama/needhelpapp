@@ -69,7 +69,7 @@ class MoteurDecisionTest {
 
     @Test
     fun `une acceleration soutenue bloque, mais pas avant le delai de confirmation`() {
-        val s = Scenario(ReglagesDetection(delaiConfirmationMs = 20_000))
+        val s = Scenario()
         s.position(50f)
         s.attendre(15_000, positionKmh = 50f)
         assertFalse(s.bloque, "bloqué avant la fin de la confirmation")
@@ -337,14 +337,110 @@ class MoteurDecisionTest {
     }
 
     // ------------------------------------------------------------------
+    // Les profils de véhicule
+    // ------------------------------------------------------------------
+
+    @Test
+    fun `un velo a 12 km-h passe inapercu quand seule la voiture est surveillee`() {
+        // Le seuil de 15 km/h a justement été choisi pour être au-dessus
+        // d'un vélo de ville. C'est le comportement voulu — tant que
+        // l'utilisateur n'a pas dit qu'il faisait du vélo.
+        val s = Scenario(ReglagesDetection(profils = setOf(ProfilVehicule.VOITURE)))
+        s.attendre(300_000, positionKmh = 12f)
+        assertFalse(s.blocageObserve)
+    }
+
+    @Test
+    fun `le meme velo est bloque des que le profil velo est actif`() {
+        val s = Scenario(ReglagesDetection(profils = setOf(ProfilVehicule.VELO)))
+        s.position(12f)
+
+        s.attendre(25_000, positionKmh = 12f)
+        assertFalse(s.bloque, "bloqué avant les trente secondes du profil léger")
+
+        s.attendre(10_000, positionKmh = 12f)
+        assertTrue(s.bloque)
+    }
+
+    @Test
+    fun `avec voiture et velo ensemble, la reconnaissance a velo ne dement plus rien`() {
+        // C'est la contradiction que les profils règlent : « à vélo »
+        // disculpe quand seule la voiture est surveillée, et cesse de
+        // disculper dès que le vélo l'est aussi.
+        val s = Scenario(
+            ReglagesDetection(profils = setOf(ProfilVehicule.VOITURE, ProfilVehicule.VELO)),
+        )
+        s.activite(GenreActivite.A_VELO, confiance = 90)
+        s.position(20f)
+        s.attendre(25_000, positionKmh = 20f)
+        assertTrue(s.bloque)
+    }
+
+    @Test
+    fun `a pied dement quel que soit le profil`() {
+        val s = Scenario(ReglagesDetection(profils = setOf(ProfilVehicule.VELO)))
+        s.position(20f)
+        s.attendre(35_000, positionKmh = 20f)
+        assertTrue(s.bloque)
+
+        s.activite(GenreActivite.A_PIED, confiance = 92)
+        assertFalse(s.bloque)
+        assertEquals(MoteurDecision.Motif.SORTI_DU_VEHICULE, s.motif)
+    }
+
+    @Test
+    fun `dans la zone ambigue, la confirmation est la plus patiente`() {
+        // À 12 km/h on ne distingue pas une trottinette d'un coureur :
+        // seul le profil léger explique cette vitesse, donc ses trente
+        // secondes s'appliquent — le temps que le système dise « à pied ».
+        val s = Scenario(
+            ReglagesDetection(profils = setOf(ProfilVehicule.VOITURE, ProfilVehicule.VELO)),
+        )
+        s.position(12f)
+        s.attendre(25_000, positionKmh = 12f)
+        assertFalse(s.bloque)
+
+        s.attendre(10_000, positionKmh = 12f)
+        assertTrue(s.bloque)
+    }
+
+    @Test
+    fun `au-dessus de 15 km-h la confirmation reste courte malgre le profil leger`() {
+        // À 50 km/h la question du coureur ne se pose plus : la patience
+        // supplémentaire n'aurait plus d'objet, elle ne ferait que laisser
+        // vingt secondes de route non couvertes.
+        val s = Scenario(
+            ReglagesDetection(profils = setOf(ProfilVehicule.VOITURE, ProfilVehicule.VELO)),
+        )
+        s.position(50f)
+        s.attendre(15_000, positionKmh = 50f)
+        assertFalse(s.bloque)
+
+        s.attendre(10_000, positionKmh = 50f)
+        assertTrue(s.bloque)
+    }
+
+    @Test
+    fun `le profil moto ne se laisse pas dementir par un vélo`() {
+        // La reconnaissance d'activité confond volontiers un scooter en
+        // ville avec un vélo : même allure, mêmes accélérations. Garder
+        // ce démenti ouvrirait un trou béant dans le profil.
+        val s = Scenario(ReglagesDetection(profils = setOf(ProfilVehicule.MOTO)))
+        s.activite(GenreActivite.A_VELO, confiance = 90)
+        s.position(40f)
+        s.attendre(25_000, positionKmh = 40f)
+        assertTrue(s.bloque)
+    }
+
+    // ------------------------------------------------------------------
     // Les réglages eux-mêmes
     // ------------------------------------------------------------------
 
     @Test
-    fun `un seuil de sortie au-dessus du seuil d'entree est refuse`() {
-        // Sans écart entre les deux, le blocage clignoterait au rythme du
-        // bruit de mesure. Autant l'interdire à la construction.
-        val erreur = runCatching { ReglagesDetection(seuilEntreeKmh = 10f, seuilSortieKmh = 20f) }
+    fun `un profil de vehicule au moins est exige`() {
+        // Sans profil, il n'y a plus de seuil du tout, donc plus de
+        // détection : mieux vaut refuser que se taire.
+        val erreur = runCatching { ReglagesDetection(profils = emptySet()) }
         assertTrue(erreur.isFailure)
     }
 }

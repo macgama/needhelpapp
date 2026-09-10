@@ -1,5 +1,6 @@
 package com.needhelpapp.conduite.ui.ecrans
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.needhelpapp.conduite.BuildConfig
 import com.needhelpapp.conduite.donnees.ReglagesComplets
 import com.needhelpapp.conduite.moteur.ModeBlocage
+import com.needhelpapp.conduite.moteur.ProfilVehicule
 import com.needhelpapp.conduite.ui.Carte
 import com.needhelpapp.conduite.ui.ModeleConduite
 import com.needhelpapp.conduite.ui.TitreSection
@@ -36,7 +39,7 @@ fun EcranReglages(
     surNePasDeranger: (Boolean) -> Unit,
     versVehicules: () -> Unit,
     versBanc: () -> Unit,
-    surSeuils: (Float, Float) -> Unit,
+    surProfil: (ProfilVehicule) -> Unit,
     surDelaiFin: (Int) -> Unit,
 ) {
     Column(
@@ -46,6 +49,54 @@ fun EcranReglages(
             .padding(20.dp),
     ) {
         Text("Réglages", style = MaterialTheme.typography.headlineMedium)
+
+        TitreSection("Ce que vous conduisez")
+        Carte {
+            Text(
+                "Chaque véhicule a ses vitesses, et surtout ses pièges. Cochez " +
+                    "tout ce qui vous arrive de conduire : les profils " +
+                    "s'additionnent, ils ne s'excluent pas.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(16.dp))
+
+            ChoixProfil(
+                titre = "Voiture",
+                detail = "Voiture, camionnette, camping-car. Se déclenche au-delà de " +
+                    "15 km/h, et la reconnaissance « à vélo » suffit à lever le " +
+                    "blocage — personne ne pédale au volant.",
+                coche = ProfilVehicule.VOITURE in reglages.detection.profils,
+                surChangement = { surProfil(ProfilVehicule.VOITURE) },
+            )
+            ChoixProfil(
+                titre = "Moto, scooter, vélomoteur",
+                detail = "Mêmes vitesses qu'une voiture. Mais « à vélo » ne lève plus " +
+                    "le blocage : en ville, le système confond volontiers un scooter " +
+                    "avec un vélo.",
+                coche = ProfilVehicule.MOTO in reglages.detection.profils,
+                surChangement = { surProfil(ProfilVehicule.MOTO) },
+            )
+            ChoixProfil(
+                titre = "Vélo, trottinette, monoroue",
+                detail = "Se déclenche dès 10 km/h, avec trente secondes de " +
+                    "confirmation : c'est le temps qu'il faut au système pour " +
+                    "distinguer un deux-roues d'un coureur. Un jogging soutenu peut " +
+                    "donc être bloqué quelques dizaines de secondes.",
+                coche = ProfilVehicule.VELO in reglages.detection.profils,
+                surChangement = { surProfil(ProfilVehicule.VELO) },
+            )
+
+            Spacer(Modifier.height(12.dp))
+            Text(
+                "Avec « voiture » et « vélo » cochés ensemble, la détection retient " +
+                    "le seuil le plus bas des deux — et « à vélo » cesse de lever le " +
+                    "blocage, puisque le vélo est justement l'un des véhicules " +
+                    "surveillés.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
 
         TitreSection("Ce qui est bloqué")
         Carte {
@@ -108,36 +159,17 @@ fun EcranReglages(
             }
         }
 
-        TitreSection("Seuils de détection")
+        TitreSection("Fin de trajet")
         Carte {
             Text(
-                "À ne toucher qu'en connaissance de cause. Les valeurs par défaut " +
-                    "sont le résultat d'un compromis : assez lentes pour ne pas " +
-                    "bloquer un piéton, assez patientes pour ne pas rendre la main " +
-                    "au feu rouge.",
+                "Combien de temps à l'arrêt avant de rendre la main. C'est le seul " +
+                    "seuil qui ne dépende pas du véhicule — et le plus important : " +
+                    "un feu rouge dure jusqu'à quatre-vingt-dix secondes.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             Spacer(Modifier.height(16.dp))
-
-            val entree = reglages.detection.seuilEntreeKmh
-            Text("Se déclenche au-dessus de ${entree.roundToInt()} km/h")
-            Slider(
-                value = entree,
-                onValueChange = { surSeuils(it, reglages.detection.seuilSortieKmh) },
-                valueRange = 8f..40f,
-                steps = 31,
-            )
-
-            val sortie = reglages.detection.seuilSortieKmh
-            Text("Considère le véhicule arrêté sous ${sortie.roundToInt()} km/h")
-            Slider(
-                value = sortie,
-                onValueChange = { surSeuils(reglages.detection.seuilEntreeKmh, it) },
-                valueRange = 1f..20f,
-                steps = 18,
-            )
 
             val delaiS = (reglages.detection.delaiFinTrajetMs / 1000).toInt()
             Text("Fin du trajet après ${delaiS} s à l'arrêt")
@@ -184,6 +216,31 @@ private fun ChoixMode(
 ) {
     Row(Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
         RadioButton(selected = choisi, onClick = surChoix)
+        Column(Modifier.padding(start = 8.dp)) {
+            Text(titre, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                detail,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ChoixProfil(
+    titre: String,
+    detail: String,
+    coche: Boolean,
+    surChangement: () -> Unit,
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clickable { surChangement() }
+            .padding(vertical = 6.dp),
+    ) {
+        Checkbox(checked = coche, onCheckedChange = { surChangement() })
         Column(Modifier.padding(start = 8.dp)) {
             Text(titre, style = MaterialTheme.typography.bodyLarge)
             Text(

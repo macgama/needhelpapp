@@ -10,30 +10,13 @@ package com.needhelpapp.conduite.moteur
  */
 data class ReglagesDetection(
     /**
-     * Au-dessus, on considère qu'un véhicule roule. 15 km/h est
-     * au-dessus d'un pas de course soutenu et d'un vélo de ville
-     * tranquille, en dessous de la vitesse d'un véhicule en circulation.
-     */
-    val seuilEntreeKmh: Float = 15f,
-
-    /**
-     * En dessous, le véhicule est à l'arrêt — feu rouge compris. C'est
-     * volontairement bas : passer sous 5 km/h n'ouvre pas le téléphone,
-     * cela ouvre seulement un compte à rebours (voir [delaiFinTrajetMs]).
-     */
-    val seuilSortieKmh: Float = 5f,
-
-    /**
-     * Combien de temps la condition doit tenir avant de bloquer.
+     * Les véhicules que l'utilisateur conduit.
      *
-     * C'est le prix de la tranquillité : sans lui, un seul point GPS
-     * aberrant — ils existent, en ville, entre deux immeubles — bloque
-     * le téléphone d'un piéton. Vingt secondes coûtent quelques centaines
-     * de mètres de route non couverts au début du trajet, ce qui est
-     * acceptable, alors qu'un blocage intempestif fait désinstaller
-     * l'application.
+     * Plusieurs à la fois : la même personne prend sa voiture en semaine
+     * et son vélo le samedi. Ils s'additionnent au lieu de s'exclure —
+     * voir [ProfilVehicule] pour ce que le moteur en tire.
      */
-    val delaiConfirmationMs: Long = 20_000,
+    val profils: Set<ProfilVehicule> = setOf(ProfilVehicule.VOITURE),
 
     /**
      * Combien de temps à l'arrêt avant de déclarer le trajet fini.
@@ -93,16 +76,54 @@ data class ReglagesDetection(
      */
     val delaiPerteSignalMs: Long = 300_000,
 ) {
-    val seuilEntreeMs: Float get() = seuilEntreeKmh / 3.6f
-    val seuilSortieMs: Float get() = seuilSortieKmh / 3.6f
+    /**
+     * LE SEUIL LE PLUS BAS DE TOUS LES PROFILS ACTIFS. Il suffit qu'un
+     * seul profil s'applique pour qu'il y ait un danger : prendre le
+     * seuil le plus haut laisserait passer précisément le véhicule le
+     * plus lent, c'est-à-dire celui qu'on venait d'ajouter.
+     */
+    val seuilEntreeMs: Float get() = profils.minOf { it.seuilEntreeMs }
+
+    val seuilSortieMs: Float get() = profils.minOf { it.seuilSortieMs }
+
+    /**
+     * L'INTERSECTION des démentis, et non leur réunion.
+     *
+     * Une activité ne disculpe que si elle disculpe pour TOUS les profils
+     * actifs à la fois. C'est ce qui règle la contradiction du départ :
+     * avec « voiture » et « vélo » cochés ensemble, « à vélo » cesse de
+     * démentir quoi que ce soit — puisque le vélo est justement l'un des
+     * véhicules surveillés.
+     */
+    val activitesDementies: Set<GenreActivite>
+        get() = profils.map { it.activitesDementies }.reduce { a, b -> a intersect b }
+
+    /**
+     * Le délai de confirmation dépend de la VITESSE, pas seulement des
+     * profils cochés.
+     *
+     * Le risque de faux positif vient d'en bas : à 12 km/h on ne
+     * distingue pas une trottinette d'un coureur, à 60 km/h la question
+     * ne se pose plus. On prend donc le délai le plus court parmi les
+     * profils que cette vitesse peut expliquer — ce qui donne trente
+     * secondes de patience dans la zone ambiguë, et vingt seulement
+     * au-dessus.
+     */
+    fun delaiConfirmationPour(vitesseMs: Float?): Long {
+        val compatibles = profils.filter { vitesseMs != null && vitesseMs >= it.seuilEntreeMs }
+        // Aucune vitesse fraîche : le déclencheur était la reconnaissance
+        // d'activité « en véhicule », qui n'a rien d'ambigu.
+        if (compatibles.isEmpty()) return profils.minOf { it.delaiConfirmationMs }
+        return compatibles.minOf { it.delaiConfirmationMs }
+    }
 
     init {
-        require(seuilSortieKmh < seuilEntreeKmh) {
-            // Sans cet écart, la moindre oscillation de vitesse autour du
-            // seuil unique ferait clignoter le blocage.
-            "Le seuil de sortie doit être strictement sous le seuil d'entrée"
+        require(profils.isNotEmpty()) {
+            // Sans profil, il n'y a plus de seuil du tout, donc plus de
+            // détection : mieux vaut refuser que se taire.
+            "Au moins un profil de véhicule est nécessaire"
         }
-        require(delaiConfirmationMs >= 0 && delaiFinTrajetMs >= 0)
+        require(delaiFinTrajetMs >= 0)
         require(confianceActiviteMinimale in 0..100)
     }
 }

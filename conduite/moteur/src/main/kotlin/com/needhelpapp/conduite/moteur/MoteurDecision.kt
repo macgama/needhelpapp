@@ -181,7 +181,7 @@ class MoteurDecision(
                     etat = Etat.ARRET
                     dernierMotif = Motif.AUCUN
                 }
-                instant - debutSuspicion >= delaiDeConfirmation() -> {
+                instant - debutSuspicion >= delaiDeConfirmation(instant) -> {
                     etat = Etat.CONDUITE
                     dernierSignalUtile = maxOf(dernierSignalUtile, instant)
                     vehiculeVuDansLeTrajet = vehiculePresent
@@ -262,9 +262,10 @@ class MoteurDecision(
      * n'a plus d'objet. Il reste à vérifier que le véhicule roule, ce
      * qu'un ou deux points de vitesse suffisent à dire.
      */
-    private fun delaiDeConfirmation(): Long =
-        if (vehiculePresent) reglages.delaiConfirmationVehiculeMs
-        else reglages.delaiConfirmationMs
+    private fun delaiDeConfirmation(instant: Long): Long {
+        if (vehiculePresent) return reglages.delaiConfirmationVehiculeMs
+        return reglages.delaiConfirmationPour(positionFraiche(instant)?.vitesseMs)
+    }
 
     /**
      * La liaison s'est rompue APRÈS avoir existé pendant ce trajet.
@@ -315,14 +316,19 @@ class MoteurDecision(
     }
 
     /**
-     * À pied ou à vélo, avec une bonne confiance : quoi qu'en dise le
-     * GPS, on ne tient pas un volant. C'est aussi la porte de sortie du
-     * cycliste rapide, que la seule vitesse ferait bloquer à tort.
+     * Une activité qui prouve, avec une bonne confiance, qu'on n'est sur
+     * AUCUN des véhicules surveillés.
+     *
+     * La liste vient des profils actifs, et non du code : « à vélo »
+     * disculpe quand seule la voiture est surveillée, et ne disculpe plus
+     * dès que le vélo l'est aussi. C'est la même fonction qui, selon les
+     * profils, épargne le cycliste ou le bloque — et c'est exactement ce
+     * qu'on veut.
      */
     private fun sortiDuVehicule(instant: Long): Boolean {
         val activite = activiteFraiche(instant) ?: return false
-        val aPied = activite.genre == GenreActivite.A_PIED || activite.genre == GenreActivite.A_VELO
-        return aPied && activite.confiance >= reglages.confianceActiviteMinimale
+        return activite.genre in reglages.activitesDementies &&
+            activite.confiance >= reglages.confianceActiviteMinimale
     }
 
     private fun positionFraiche(instant: Long): Signal.Position? =

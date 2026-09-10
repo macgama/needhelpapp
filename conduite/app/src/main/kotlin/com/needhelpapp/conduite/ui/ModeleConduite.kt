@@ -12,6 +12,7 @@ import com.needhelpapp.conduite.donnees.ApplicationsInstallees
 import com.needhelpapp.conduite.donnees.ReglagesComplets
 import com.needhelpapp.conduite.donnees.base.Trajet
 import com.needhelpapp.conduite.moteur.ModeBlocage
+import com.needhelpapp.conduite.moteur.ProfilVehicule
 import com.needhelpapp.conduite.permissions.Permissions
 import com.needhelpapp.conduite.service.EtatPublic
 import com.needhelpapp.conduite.service.ServiceConduite
@@ -139,8 +140,8 @@ class ModeleConduite(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { app.reglages.basculerVehicule(adresse) }
     }
 
-    fun definirSeuils(entreeKmh: Float, sortieKmh: Float) {
-        viewModelScope.launch { app.reglages.definirSeuils(entreeKmh, sortieKmh) }
+    fun basculerProfil(profil: ProfilVehicule) {
+        viewModelScope.launch { app.reglages.basculerProfil(profil) }
     }
 
     fun definirDelaiFinTrajet(secondes: Int) {

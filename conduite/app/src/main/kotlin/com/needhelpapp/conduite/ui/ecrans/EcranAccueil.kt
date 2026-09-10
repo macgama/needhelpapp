@@ -131,7 +131,7 @@ fun EcranAccueil(
                 Text(resumeApplications(reglages))
             }
             OutlinedButton(onClick = versReglages, modifier = Modifier.fillMaxWidth()) {
-                Text("Mode, seuils, silence")
+                Text("Véhicules, mode, silence")
             }
             OutlinedButton(onClick = versHistorique, modifier = Modifier.fillMaxWidth()) {
                 Text("Historique des trajets")
