@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      CHAQUE PERMISSION EST ICI PARCE QU'UNE FONCTION PRÉCISE S'ARRÊTE
+      SANS ELLE. Une application qui confisque l'écran doit pouvoir
+      justifier chaque ligne de cette liste, devant l'utilisateur comme
+      devant le Play Store.
+    -->
+
+    <!-- La vitesse. Sans elle, aucune détection : c'est le cœur. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!--
+      La position en arrière-plan. Indispensable : un conducteur n'a pas
+      l'application à l'écran, c'est tout l'objet du produit. Elle exige
+      une justification vidéo au dépôt sur le Play Store.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- La reconnaissance d'activité : « en véhicule », « à pied », « à vélo ». -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+
+    <!-- Le service qui survit à l'écran éteint. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- La superposition qui masque l'application interdite. -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- La notification permanente du service, obligatoire depuis Android 13. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Le mode Ne pas déranger pendant le trajet. Facultatif. -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
+    <!-- Relancer la surveillance après un redémarrage du téléphone. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Savoir quelle application est à l'écran. -->
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- La vibration de l'écran de blocage. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!--
+      La liaison Bluetooth du véhicule. Facultative, et c'est pourtant le
+      signal le plus sûr dont dispose la détection : il est le seul à
+      savoir de QUEL véhicule il s'agit. Sur Android 12 et au-delà, lire
+      les appareils appairés demande une autorisation à l'exécution ; en
+      dessous, BLUETOOTH suffit et ne demande rien.
+    -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!--
+      PAS DE QUERY_ALL_PACKAGES. Cette permission est traitée comme
+      sensible par le Play Store et demande sa propre justification. Pour
+      dresser la liste des applications à surveiller, il suffit de voir
+      celles qui ont une icône de lancement : c'est exactement ce que
+      déclare le filtre ci-dessous, et c'est tout ce dont nous avons
+      besoin.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
+    <!--
+      Le GPS n'est pas « requis » au sens du Play Store : un appareil sans
+      GPS peut encore utiliser la reconnaissance d'activité. On préfère
+      une application dégradée à une application invisible au catalogue.
+    -->
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+
+    <application
+        android:name=".AppConduite"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/regles_extraction"
+        android:fullBackupContent="@xml/regles_sauvegarde"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/nom_application"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Conduite">
+
+        <activity
+            android:name=".ActivitePrincipale"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          Type « location » : c'est la position qui justifie que le
+          service tourne en continu. Android 14 refuse le démarrage d'un
+          service de ce type si la permission de position n'est pas
+          accordée — d'où l'assistant de permissions au premier
+          lancement, qui n'est pas une politesse mais une nécessité
+          technique.
+        -->
+        <service
+            android:name=".service.ServiceConduite"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+        <receiver
+            android:name=".detection.RecepteurActivite"
+            android:exported="false" />
+
+        <receiver
+            android:name=".service.RecepteurDemarrage"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

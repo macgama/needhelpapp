@@ -61,6 +61,89 @@ jobs:
           sys.exit(1 if mauvais else 0)
           PY
 
+      # `bash -n`, ci-dessus, ne voit que la syntaxe des scripts. Il ne
+      # sait rien des contextes de GitHub — et c'est exactement par là que
+      # ce fichier est tombé : un `if: hashFiles(...)` posé sur un TRAVAIL
+      # au lieu d'une ÉTAPE fait refuser le flux entier à la validation,
+      # en zéro seconde, sans journal, et sans qu'aucun contrôle ne
+      # tourne. Quatre envois de suite y sont passés, et les contrôles PHP
+      # sont tombés avec.
+      #
+      # actionlint connaît la table des contextes, les expressions et les
+      # actions référencées. C'est la seule chose qui trouve cela.
+      #
+      # BINAIRE ÉPINGLÉ, EMPREINTE VÉRIFIÉE. On télécharge un exécutable
+      # depuis l'extérieur pour le lancer sur ce dépôt : autant savoir
+      # lequel. Sans cette vérification, une publication compromise
+      # ferait ce qu'elle veut sur la machine d'exécution.
+      #
+      # actionlint fait aussi tourner shellcheck sur les blocs `run:`.
+      # Il est resté éteint le temps que les quatre points hérités soient
+      # traités — un contrôle qui naît rouge se fait désactiver dans la
+      # semaine. Ils le sont, et il est rallumé.
+      - name: Les flux de travail passent-ils actionlint ?
+        run: |
+          # GitHub exécute ce bloc sous `bash -e` : une commande qui échoue
+          # interrompt tout sur place. D'où le `|| resultat=$?`, qui laisse
+          # le ménage se faire avant de rendre le verdict — un `;` ou un
+          # `&&` à cet endroit ne s'exécuterait jamais.
+          version=1.7.12
+          empreinte=8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+          archive="actionlint_${version}_linux_amd64.tar.gz"
+
+          curl -fsSL --retry 3 -o "$archive" \
+            "https://github.com/rhysd/actionlint/releases/download/v${version}/${archive}"
+
+          if ! echo "${empreinte}  ${archive}" | sha256sum -c - >/dev/null; then
+            echo "::error::L'empreinte d'actionlint ne correspond pas à celle attendue. Rien n'a été exécuté."
+            exit 1
+          fi
+
+          tar -xzf "$archive" actionlint
+
+          # SANS SHELLCHECK, ACTIONLINT LE SAUTE EN SILENCE.
+          #
+          # Il ne se plaint pas de son absence : il rend simplement « rien
+          # à signaler », et l'on croit contrôler ce qu'on ne contrôle
+          # plus. C'est la panne exacte contre laquelle ce fichier a été
+          # écrit — une coche verte qui ne veut rien dire est pire que pas
+          # de coche du tout. Les images Ubuntu de GitHub le fournissent ;
+          # le jour où cela change, on veut l'apprendre par un échec.
+          if ! command -v shellcheck >/dev/null; then
+            echo "::error::shellcheck est absent de cet exécuteur. actionlint le sauterait sans rien dire."
+            exit 1
+          fi
+
+          # Sortie par défaut, volontairement. Un gabarit `-format` qui
+          # produirait des annotations en ligne sur la revue ne survit pas
+          # au passage YAML → shell : les échappements du modèle Go s'y
+          # perdent. La sortie normale nomme fichier, ligne, colonne et
+          # recopie l'extrait fautif ; elle suffit.
+          #
+          # Le contrôle shellcheck est MAINTENANT ACTIF — noter qu'il faut
+          # écrire cette phrase ainsi : un commentaire qui COMMENCE par
+          # « # shellcheck » est lu comme une directive, et shellcheck a
+          # refusé ce fichier la première fois pour cette raison.
+          #
+          # Il était éteint le temps que les quatre points hérités soient
+          # traités : trois ici, un dans deploiement.yml. Ils le sont.
+          # pyflakes reste éteint, lui : il n'est pas installé sur les
+          # exécuteurs GitHub, et l'activer ne ferait que donner
+          # l'illusion d'un contrôle qui ne tourne pas.
+          resultat=0
+          ./actionlint -pyflakes= || resultat=$?
+
+          rm -f "$archive" actionlint
+
+          if [ "$resultat" -ne 0 ]; then
+            echo "::error::actionlint a refusé un flux de travail. Rien n'est déposé tant que ce n'est pas corrigé."
+            exit "$resultat"
+          fi
+          # `find` plutôt que `ls` : un nom de fichier inhabituel ne doit
+          # pas fausser le compte (SC2012).
+          nombre=$(find .github/workflows -maxdepth 1 -name '*.yml' | wc -l)
+          echo "$nombre flux de travail, rien à signaler."
+
       - name: La version de PHP
         run: |
           php -v | head -1
@@ -112,6 +195,13 @@ jobs:
           # base injoignable ferait tomber les quarante-six pages d'un
           # coup et le rapport accuserait le code d'une panne du banc
           # d'essai. On veut un message, pas quarante-six.
+          #
+          # Les apostrophes simples autour du code PHP sont indispensables,
+          # et c'est précisément ce que SC2016 signale : le $e qu'elles
+          # contiennent est une variable PHP, que le shell ne doit surtout
+          # pas essayer de remplacer. Passer aux guillemets doubles, ce
+          # que suggère l'avertissement, viderait la variable.
+          # shellcheck disable=SC2016
           php -r '
             require "needhelpapp/includes/nha-core.php";
             try { nha_db()->query("SELECT 1"); echo "base d\x27essai joignable\n"; }
@@ -122,7 +212,10 @@ jobs:
             }'
 
           php -S 127.0.0.1:8099 -t needhelpapp > /tmp/serveur.log 2>&1 &
-          for i in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:8099/ && break; sleep 0.3; done
+          # `_` plutôt que `i` : on ne compte que les tours, on ne s'en
+          # sert jamais. Nommer une variable qu'on n'utilise pas fait
+          # chercher son usage à la relecture suivante.
+          for _ in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:8099/ && break; sleep 0.3; done
 
           fatales=0; vues=0
           verifier() {
@@ -132,8 +225,14 @@ jobs:
             [ "$code" = "500" ] && { echo "::error::$1 répond 500"; fatales=$((fatales+1)); }
             return 0
           }
-          for f in $(cd needhelpapp && ls *.php); do verifier "$f"; done
-          for f in $(cd needhelpapp && ls admin/*.php api/*.php); do verifier "$f"; done
+          # Énumération par motif plutôt que par `ls` : on ne découpe plus
+          # une sortie de commande en mots, et un nom de fichier inhabituel
+          # ne peut plus être pris pour une option. Le préfixe est retiré
+          # pour garder les chemins tels que le serveur les attend.
+          for chemin in needhelpapp/*.php; do verifier "${chemin#needhelpapp/}"; done
+          for chemin in needhelpapp/admin/*.php needhelpapp/api/*.php; do
+            verifier "${chemin#needhelpapp/}"
+          done
 
           rm -f needhelpapp/config/nha.php
           if [ $fatales -gt 0 ]; then
@@ -192,3 +291,53 @@ jobs:
           fi
           [ $trouve -eq 0 ] && echo "Rien de suspect."
           exit $trouve
+
+  # LE MOTEUR DE CONDUITE S'ÉPROUVE SANS ANDROID, ET C'EST TOUT L'INTÉRÊT.
+  #
+  # Décider si l'on conduit est le morceau où une erreur coûte le plus
+  # cher, dans les deux sens : ne pas bloquer un conducteur rate la
+  # raison d'être de l'application, bloquer un piéton la fait
+  # désinstaller. Ce morceau a donc été écrit sans la moindre référence
+  # à Android — ni SDK, ni émulateur, ni téléphone — pour qu'il se
+  # rejoue ici, en quelques secondes, à chaque envoi.
+  #
+  # L'application Android, elle, n'est pas compilée par ce flux : cela
+  # demanderait de télécharger le SDK à chaque exécution. C'est un choix
+  # assumé — on éprouve la logique, pas l'assemblage.
+  # PAS DE `if:` SUR CE TRAVAIL, et c'est une leçon payée cher.
+  #
+  # Il portait `if: hashFiles('conduite/moteur/build.gradle.kts') != ''`,
+  # par prudence. Or `hashFiles` n'est utilisable que dans un `if:`
+  # d'ÉTAPE, jamais d'un travail — GitHub refuse alors le fichier entier
+  # à la validation, avant d'exécuter quoi que ce soit. Résultat : quatre
+  # envois de suite marqués en échec en zéro seconde, sans le moindre
+  # journal, ET les contrôles PHP qui ne tournaient plus non plus.
+  #
+  # Le garde-fou était de toute façon inutile : le dossier est dans le
+  # dépôt. `bash -n` sur les blocs `run:` ne voit pas ce genre d'erreur ;
+  # seul `actionlint` la trouve.
+  moteur-conduite:
+    name: Le moteur de détection de conduite
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Les scénarios de conduite
+        working-directory: conduite
+        run: ./gradlew -p moteur test --console=plain
+
+      - name: Le rapport, en cas d'échec
+        if: failure()
+        working-directory: conduite/moteur
+        run: |
+          for f in build/reports/tests/test/classes/*.html; do
+            [ -f "$f" ] && echo "--- $f" && sed -e 's/<[^>]*>//g' "$f" | grep -v '^\s*$' | head -60
+          done

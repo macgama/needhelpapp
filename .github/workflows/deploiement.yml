@@ -194,23 +194,41 @@ jobs:
           PORT: ${{ vars.INFOMANIAK_PORT || '22' }}
           CIBLE: ${{ vars[matrix.variable] }}
         run: |
-          OPTIONS="-rltvz --chmod=D755,F644 --human-readable"
+          # UN TABLEAU, ET PAS UNE CHAÎNE. La forme précédente,
+          # OPTIONS="..." puis `rsync $OPTIONS`, marchait — mais seulement
+          # tant qu'aucune option ne contient d'espace. Le jour où l'on
+          # ajoute par exemple --rsync-path=sudo rsync, le découpage en
+          # mots en fait DEUX arguments, et rsync prend le second pour un
+          # chemin source. Sur le script qui dépose en production, ce
+          # genre de surprise ne se découvre pas au bon moment.
+          #
+          # À noter : mettre des guillemets autour de $OPTIONS, ce que
+          # suggère machinalement shellcheck, serait bien pire — les cinq
+          # options partiraient comme UN seul argument et rsync
+          # refuserait. Le tableau est la seule forme correcte.
+          #
+          # La virgule de --chmod=D755,F644 appartient à l'option rsync :
+          # ce n'est pas un séparateur d'éléments du tableau. shellcheck
+          # n'a aucun moyen de le savoir, d'où la mise en sourdine — la
+          # seule du fichier, et elle est justifiée ligne à ligne.
+          # shellcheck disable=SC2054
+          OPTIONS=(-rltvz --chmod=D755,F644 --human-readable)
 
           # La simulation n'est le défaut QUE pour un lancement à la main.
           # Un envoi sur main dépose pour de bon, sinon rien n'arriverait
           # jamais sur le serveur.
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] \
              && [ "${{ inputs.simulation }}" = "true" ]; then
-            OPTIONS="$OPTIONS --dry-run"
+            OPTIONS+=(--dry-run)
             echo "::warning::SIMULATION — rien ne sera écrit sur le serveur."
           fi
 
           if [ "${{ inputs.supprimer }}" = "true" ]; then
-            OPTIONS="$OPTIONS --delete"
+            OPTIONS+=(--delete)
             echo "::warning::Les fichiers absents du dépôt seront EFFACÉS sur le serveur."
           fi
 
-          rsync $OPTIONS \
+          rsync "${OPTIONS[@]}" \
             -e "ssh -i ~/.ssh/id_deploiement -p $PORT -o BatchMode=yes" \
             --exclude='.git*' \
             --exclude='*.md' \

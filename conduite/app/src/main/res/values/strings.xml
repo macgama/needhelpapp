@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nom_application">Conduite</string>
+
+    <!-- Service et notifications -->
+    <string name="canal_surveillance">Surveillance</string>
+    <string name="canal_surveillance_description">La notification permanente qui permet à la détection de tourner. Android l\'exige ; vous pouvez la réduire, pas la supprimer.</string>
+    <string name="canal_trajet">Trajets</string>
+    <string name="canal_trajet_description">Un résumé à la fin de chaque trajet.</string>
+    <string name="notification_veille_titre">En veille</string>
+    <string name="notification_veille_texte">Le blocage s\'activera de lui-même dès que vous roulerez.</string>
+    <string name="notification_suspicion_titre">Vérification en cours</string>
+    <string name="notification_suspicion_texte">Un mouvement de véhicule a été détecté.</string>
+    <string name="notification_conduite_titre">Trajet en cours</string>
+    <string name="notification_conduite_texte">Les applications choisies sont bloquées.</string>
+    <string name="notification_passager_titre">Passager</string>
+    <string name="notification_passager_texte">Le blocage est levé pour ce trajet.</string>
+    <string name="notification_action_passager">Je suis passager</string>
+
+    <!-- Écran de blocage -->
+    <string name="blocage_titre">Vous conduisez</string>
+    <string name="blocage_message">Cette application attendra. La route, non.</string>
+    <string name="blocage_bouton_passager">Je ne conduis pas</string>
+    <string name="blocage_bouton_accueil">Revenir à l\'accueil</string>
+    <string name="blocage_maintenir">Maintenez le doigt appuyé</string>
+    <string name="vitesse_format">%1$d km/h</string>
+
+    <!-- Essai et achat -->
+    <string name="essai_termine_titre">Période d\'essai terminée</string>
+    <string name="essai_termine_texte">Le blocage est arrêté. Ouvrez Conduite pour le débloquer.</string>
+
+</resources>
