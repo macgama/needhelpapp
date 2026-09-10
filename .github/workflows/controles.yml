@@ -205,10 +205,21 @@ jobs:
   # L'application Android, elle, n'est pas compilée par ce flux : cela
   # demanderait de télécharger le SDK à chaque exécution. C'est un choix
   # assumé — on éprouve la logique, pas l'assemblage.
+  # PAS DE `if:` SUR CE TRAVAIL, et c'est une leçon payée cher.
+  #
+  # Il portait `if: hashFiles('conduite/moteur/build.gradle.kts') != ''`,
+  # par prudence. Or `hashFiles` n'est utilisable que dans un `if:`
+  # d'ÉTAPE, jamais d'un travail — GitHub refuse alors le fichier entier
+  # à la validation, avant d'exécuter quoi que ce soit. Résultat : quatre
+  # envois de suite marqués en échec en zéro seconde, sans le moindre
+  # journal, ET les contrôles PHP qui ne tournaient plus non plus.
+  #
+  # Le garde-fou était de toute façon inutile : le dossier est dans le
+  # dépôt. `bash -n` sur les blocs `run:` ne voit pas ce genre d'erreur ;
+  # seul `actionlint` la trouve.
   moteur-conduite:
     name: Le moteur de détection de conduite
     runs-on: ubuntu-latest
-    if: hashFiles('conduite/moteur/build.gradle.kts') != ''
 
     steps:
       - uses: actions/checkout@v5
