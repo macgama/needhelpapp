@@ -61,6 +61,64 @@ jobs:
           sys.exit(1 if mauvais else 0)
           PY
 
+      # `bash -n`, ci-dessus, ne voit que la syntaxe des scripts. Il ne
+      # sait rien des contextes de GitHub — et c'est exactement par là que
+      # ce fichier est tombé : un `if: hashFiles(...)` posé sur un TRAVAIL
+      # au lieu d'une ÉTAPE fait refuser le flux entier à la validation,
+      # en zéro seconde, sans journal, et sans qu'aucun contrôle ne
+      # tourne. Quatre envois de suite y sont passés, et les contrôles PHP
+      # sont tombés avec.
+      #
+      # actionlint connaît la table des contextes, les expressions et les
+      # actions référencées. C'est la seule chose qui trouve cela.
+      #
+      # BINAIRE ÉPINGLÉ, EMPREINTE VÉRIFIÉE. On télécharge un exécutable
+      # depuis l'extérieur pour le lancer sur ce dépôt : autant savoir
+      # lequel. Sans cette vérification, une publication compromise
+      # ferait ce qu'elle veut sur la machine d'exécution.
+      #
+      # shellcheck est désactivé à dessein. Il signale quatre points de
+      # style sur des scripts qui existaient avant lui — trois ici, un
+      # dans deploiement.yml — et un contrôle qui naît rouge se fait
+      # désactiver dans la semaine. La syntaxe des scripts reste couverte
+      # par l'étape précédente. À rallumer le jour où ces quatre points
+      # seront traités, dans un envoi qui ne fera que cela.
+      - name: Les flux de travail passent-ils actionlint ?
+        run: |
+          # GitHub exécute ce bloc sous `bash -e` : une commande qui échoue
+          # interrompt tout sur place. D'où le `|| resultat=$?`, qui laisse
+          # le ménage se faire avant de rendre le verdict — un `;` ou un
+          # `&&` à cet endroit ne s'exécuterait jamais.
+          version=1.7.12
+          empreinte=8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+          archive="actionlint_${version}_linux_amd64.tar.gz"
+
+          curl -fsSL --retry 3 -o "$archive" \
+            "https://github.com/rhysd/actionlint/releases/download/v${version}/${archive}"
+
+          if ! echo "${empreinte}  ${archive}" | sha256sum -c - >/dev/null; then
+            echo "::error::L'empreinte d'actionlint ne correspond pas à celle attendue. Rien n'a été exécuté."
+            exit 1
+          fi
+
+          tar -xzf "$archive" actionlint
+
+          # Sortie par défaut, volontairement. Un gabarit `-format` qui
+          # produirait des annotations en ligne sur la revue ne survit pas
+          # au passage YAML → shell : les échappements du modèle Go s'y
+          # perdent. La sortie normale nomme fichier, ligne, colonne et
+          # recopie l'extrait fautif ; elle suffit.
+          resultat=0
+          ./actionlint -shellcheck= -pyflakes= || resultat=$?
+
+          rm -f "$archive" actionlint
+
+          if [ "$resultat" -ne 0 ]; then
+            echo "::error::actionlint a refusé un flux de travail. Rien n'est déposé tant que ce n'est pas corrigé."
+            exit "$resultat"
+          fi
+          echo "$(ls .github/workflows/*.yml | wc -l) flux de travail, rien à signaler."
+
       - name: La version de PHP
         run: |
           php -v | head -1
