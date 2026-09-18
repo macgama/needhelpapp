@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quitte — Machines</title>
+<meta name="description" content="Descendre le puits palier par palier et décider quand remonter. Un effondrement emporte toute la série.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../css/arcade.css">
+<link rel="stylesheet" href="quitte.css">
+</head>
+<body>
+<main class="cabinet">
+
+  <nav class="topbar"><a class="back" href="../../index.html">‹ Toutes les machines</a></nav>
+
+  <header class="head">
+    <h1 class="mark">Quitte</h1>
+    <p class="tag">Descendre, ou encaisser</p>
+  </header>
+
+  <section class="readout" aria-label="Tableau de bord">
+    <div class="stat">
+      <span class="lab">Encaissé</span>
+      <b class="val" id="score" aria-live="polite">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Record</span>
+      <b class="val" id="best">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Descente</span>
+      <b class="val" id="descente">1 / 5</b>
+    </div>
+  </section>
+
+  <div class="meter meter--risque" id="meter">
+    <div class="meter-head">
+      <span class="lab">Risque au palier suivant</span>
+      <span class="lab meter-left" id="risque">0 %</span>
+    </div>
+    <div class="meter-track"><i id="jauge" style="width:0%"></i></div>
+  </div>
+
+  <div class="stage">
+    <div class="rail" aria-hidden="true"></div>
+    <div class="screen screen--quitte" id="screen">
+
+      <div class="dangers" id="dangers" aria-label="Dangers déjà rencontrés"></div>
+      <div class="puits" id="puits"></div>
+
+      <div class="sacoche">
+        <div>
+          <span class="lab">Sacoche</span>
+          <b id="sacoche">0</b>
+        </div>
+        <span class="reste" id="reste">27 cartes · 0 mortelle</span>
+      </div>
+
+      <div class="pret" id="pret">
+        <p class="pret-titre">Cinq descentes, une seule chute</p>
+        <p>Chaque palier tire une carte : un <span class="or">filon</span> grossit la sacoche,
+          un <span class="rouge">grondement</span> arme son danger. Le <b>deuxième</b> grondement
+          du même danger fait tout s'effondrer — et <b>met fin à la série entière</b>.</p>
+        <p>Remonter met la sacoche à l'abri et ouvre la descente suivante. Le risque affiché
+          est exact : il se calcule sur ce qui reste dans le puits.</p>
+        <p class="lab pulse">Touchez l'écran pour descendre</p>
+      </div>
+
+      <div class="over" id="over" hidden>
+        <p class="over-kicker" id="overKicker">Effondrement</p>
+        <p class="over-score" id="overScore">0</p>
+        <p class="over-note" id="overNote">encaissé</p>
+        <button class="btn btn--main" id="rejouer" type="button">Nouvelle série</button>
+      </div>
+
+    </div>
+    <div class="rail" aria-hidden="true"></div>
+  </div>
+
+  <div class="pad">
+    <button class="btn btn--large" id="remonter" type="button">Remonter</button>
+    <button class="btn btn--main btn--large" id="descendre" type="button">Descendre</button>
+  </div>
+
+  <p class="help">Un danger déjà gronde est marqué en rouge en haut du puits : c'est lui qui peut
+    vous coûter la série. <kbd>↓</kbd> descend, <kbd>↑</kbd> remonte.</p>
+
+  <div class="foot">
+    <button class="ghost" id="restart" type="button">Nouvelle série</button>
+    <button class="ghost" id="mute" type="button" aria-pressed="false">Son : actif</button>
+  </div>
+
+</main>
+<script src="../../js/arcade.js"></script>
+<script src="quitte.js"></script>
+</body>
+</html>

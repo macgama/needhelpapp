@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tri — Machines</title>
+<meta name="description" content="Ranger des billes par couleur, un tube à la fois. Chaque niveau est vérifié solvable avant d'être servi.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../css/arcade.css">
+<link rel="stylesheet" href="tri.css">
+</head>
+<body>
+<main class="cabinet">
+
+  <nav class="topbar"><a class="back" href="../../index.html">‹ Toutes les machines</a></nav>
+
+  <header class="head">
+    <h1 class="mark">Tri</h1>
+    <p class="tag">Une couleur par tube</p>
+  </header>
+
+  <section class="readout" aria-label="Tableau de bord">
+    <div class="stat">
+      <span class="lab">Niveau</span>
+      <b class="val" id="niveau" aria-live="polite">1</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Record</span>
+      <b class="val" id="best">1</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Coups</span>
+      <b class="val" id="coups">0</b>
+    </div>
+  </section>
+
+  <div class="stage">
+    <div class="rail" aria-hidden="true"></div>
+    <div class="screen screen--tri" id="screen">
+      <div class="plateau" id="plateau">
+        <div class="tubes" id="tubes"></div>
+        <div class="billes" id="billes"></div>
+      </div>
+      <div class="over" id="over" hidden>
+        <div class="reussi" id="reussi" aria-hidden="true"></div>
+        <p class="over-kicker">Niveau rangé</p>
+        <p class="over-score" id="overScore">0</p>
+        <p class="over-note" id="overNote">coups</p>
+        <button class="btn btn--main" id="suivant" type="button">Niveau suivant</button>
+      </div>
+    </div>
+    <div class="rail" aria-hidden="true"></div>
+  </div>
+
+  <div class="pad">
+    <button class="btn btn--large" id="annuler" type="button">Annuler</button>
+    <button class="btn btn--large" id="refaire" type="button">Recommencer</button>
+  </div>
+
+  <p class="help">Touchez un tube pour prendre les billes de même couleur du dessus, puis un autre
+    pour les verser. Un tube n'accepte que sa propre couleur, ou n'importe laquelle s'il est vide.</p>
+
+  <div class="foot">
+    <button class="ghost" id="mute" type="button" aria-pressed="false">Son : actif</button>
+  </div>
+
+</main>
+<script src="../../js/arcade.js"></script>
+<script src="tri.js"></script>
+</body>
+</html>

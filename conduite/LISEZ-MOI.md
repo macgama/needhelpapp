@@ -256,7 +256,7 @@ tout ce qui fait la valeur de cette application.
 > facturation fusionne son propre manifeste dans le nôtre. Si elle y
 > ajoute `INTERNET`, la phrase « elle ne peut matériellement rien
 > envoyer » devient fausse, et doit être réécrite ici **et** dans
-> `conduite-confidentialite.php`. On ne laisse pas une promesse survivre
+> `roadsecurity/confidentialite.html`. On ne laisse pas une promesse survivre
 > à ce qui la rendait vraie.
 
 ## Ce qui n'est jamais bloqué
@@ -338,8 +338,9 @@ c'est une contrainte que le code s'impose à la source.
   matériellement rien envoyer. C'est vérifiable dans la fiche Play Store
   comme dans les réglages du téléphone.
 - La politique de confidentialité qui dit tout cela au public est
-  `needhelpapp/conduite-confidentialite.php`, et chacune de ses
-  affirmations renvoie à une ligne de code précise.
+  `roadsecurity/confidentialite.html`, et chacune de ses affirmations
+  renvoie à une ligne de code précise. La vitrine de l'application vit
+  dans le même dossier, sur roadsecurity.needhelpapp.com.
 
 ---
 
@@ -415,6 +416,9 @@ application Android se publie sur le Play Store, pas par rsync.
   du magasin : il faut une piste de test fermée et des comptes
   testeurs licence. C'est aussi là qu'on vérifiera l'acquittement, en
   laissant passer trois jours sur un achat de test.
+- **Le dossier Play.** Textes de la fiche, réponses au formulaire
+  « Sécurité des données », déclarations et script de la vidéo :
+  `PLAY-STORE.md`, prêt à copier.
 - **Signature et publication.** Aucune clé n'est dans le dépôt, et il ne
   faut pas en mettre. La position en arrière-plan demande une
   justification vidéo au dépôt sur le Play Store, et une revue humaine

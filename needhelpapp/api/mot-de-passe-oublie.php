@@ -9,7 +9,7 @@ $email = champ(json_corps(), 'email', 190);
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     json_erreur('Cette adresse e-mail ne semble pas valide.');
 }
-limiter($email, 5, 60);
+limiter($email, 5, 60, 'reinit');
 
 $st = nha_db()->prepare('SELECT id FROM accounts WHERE email = ? AND deleted_at IS NULL');
 $st->execute([nha_normalise_email($email)]);
@@ -31,7 +31,10 @@ if ($id !== false) {
         "L'équipe NeedHelpApp\n");
     nha_log((int)$id, 'reset_requested');
 }
-noter_tentative($email, false);
+/* Sous la portée « reinit », et non « connexion » : sans cela, demander
+   assez souvent un nouveau mot de passe pour l'adresse de quelqu'un
+   suffisait à lui interdire de se connecter. */
+noter_tentative($email, false, 'reinit');
 
 // Réponse identique que l'adresse existe ou non.
 json_ok(['message' => 'Si cette adresse correspond à un compte, le lien vient de partir. Vérifiez aussi vos indésirables.']);

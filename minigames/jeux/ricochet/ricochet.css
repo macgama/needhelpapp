@@ -1,0 +1,77 @@
+/* Ricochet — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css. Le terrain est une seule toile. */
+
+:root {
+  --signal:      #9ed13f;
+  --signal-deep: #4c6b12;
+
+  --screen-w: 320px;
+  --screen-h: 430px;
+}
+
+.screen--ricochet {
+  width: var(--screen-w);
+  height: var(--screen-h);
+  background: #0a1208;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+#terrain { display: block; width: 100%; height: 100%; }
+
+/* ---------- Écrans ---------- */
+
+.pret {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  text-align: center;
+  background: rgba(8, 14, 7, 0.93);
+}
+
+.pret-titre {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: clamp(15px, 4.8vw, 19px);
+  letter-spacing: 0.06em;
+  color: var(--bone);
+}
+
+.pret p { margin: 0; max-width: 30ch; font-size: 12.5px; line-height: 1.6; color: var(--dim); }
+.pret b { color: var(--signal); }
+
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes pulse { 50% { opacity: 0.45; } }
+
+.over-note b { color: var(--signal); font-weight: 700; }
+
+/* Une annonce brève au-dessus du terrain : niveau franchi, prime, tir perdu. */
+.annonce {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  z-index: 4;
+  transform: translateX(-50%);
+  padding: 7px 14px;
+  border-radius: 4px;
+  background: var(--bone);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  animation: surgir 170ms ease-out;
+}
+
+@keyframes surgir { from { opacity: 0; transform: translate(-50%, -7px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse, .annonce { animation: none; }
+}

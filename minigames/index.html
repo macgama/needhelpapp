@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Machines</title>
+<meta name="description" content="Une collection de petites machines à jouer, en HTML, CSS et JavaScript, sans dépendance.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/arcade.css">
+<link rel="stylesheet" href="css/accueil.css">
+</head>
+<body>
+<main class="cabinet hall">
+
+  <header class="head">
+    <h1 class="mark">Machines</h1>
+    <p class="tag">Petites machines à jouer</p>
+  </header>
+
+  <nav class="machines" aria-label="Les machines">
+
+    <a class="card card--chute" href="jeux/chute/index.html">
+      <span class="art art--chute" aria-hidden="true">
+        <i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Chute</h2>
+        <p class="card-desc">Lâchez des tuiles, fusionnez les valeurs identiques, déclenchez des
+          cascades. Tous les quelques coups, une rangée pousse par le bas.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="chute">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--stack" href="jeux/stack/index.html">
+      <span class="art art--stack" aria-hidden="true">
+        <i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="b4"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Stack</h2>
+        <p class="card-desc">Une barre glisse, un appui la pose. Ce qui dépasse est coupé et tombe.
+          Posez pile-poil pour ne rien perdre.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="stack" data-unit="étage">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--mot" href="jeux/mot/index.html">
+      <span class="art art--mot" aria-hidden="true">
+        <i class="c1"></i><i class="c2"></i><i class="c3"></i>
+        <i class="c4"></i><i class="c5"></i><i class="c6"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Le Mot du Jour</h2>
+        <p class="card-desc">Un mot français de cinq lettres, six essais. Le même pour tout le
+          monde, et un seul par jour.</p>
+        <p class="card-meta"><span class="lab">Meilleure série</span> <b data-record="mot" data-unit="jour">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--rebond" href="jeux/rebond/index.html">
+      <span class="art art--rebond" aria-hidden="true">
+        <i class="r1"></i><i class="r2"></i><i class="r3"></i><i class="r4"></i><i class="r5"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Rebond</h2>
+        <p class="card-desc">Une chute libre dans un puits. La bille rebondit toute seule : votre
+          seul pouvoir est d'inverser son sens, au bon moment.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="rebond" data-unit="mètre">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--tri" href="jeux/tri/index.html">
+      <span class="art art--tri" aria-hidden="true">
+        <i class="g1"></i><i class="g2"></i><i class="g3"></i>
+        <i class="t1"></i><i class="t2"></i><i class="t3"></i><i class="t4"></i><i class="t5"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Tri</h2>
+        <p class="card-desc">Ranger des billes par couleur, un tube à la fois. Chaque niveau est
+          vérifié solvable avant d'être servi.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="tri" data-unit="niveau">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--ana" href="jeux/anagrammes/index.html">
+      <span class="art art--ana" aria-hidden="true">
+        <i class="l1">M</i><i class="l2">O</i><i class="l3">T</i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Anagrammes</h2>
+        <p class="card-desc">Sept lettres, quatre-vingt-dix secondes. Le plus de mots français
+          possible, du plus court au plus payant.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="anagrammes" data-unit="point">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--sillage" href="jeux/sillage/index.html">
+      <span class="art art--sillage" aria-hidden="true">
+        <i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Sillage</h2>
+        <p class="card-desc">Sortir de son territoire, boucler, revenir. Une zone refermée n'est
+          conquise que si aucun rôdeur ne s'y trouve.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="sillage" data-unit="point">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--echo" href="jeux/echo/index.html">
+      <span class="art art--echo" aria-hidden="true">
+        <i class="e1"></i><i class="e2"></i><i class="e3"></i>
+        <i class="e4"></i><i class="e5"></i><i class="e6"></i>
+        <i class="e7"></i><i class="e8"></i><i class="e9"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Écho</h2>
+        <p class="card-desc">Une suite de touches et de notes, à rejouer en commençant par la
+          fin. On ne peut pas répondre au fur et à mesure.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="echo" data-unit="signal">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--fonderie" href="jeux/fonderie/index.html">
+      <span class="art art--fonderie" aria-hidden="true">
+        <i class="f1"></i><i class="f2"></i><i class="f3"></i><i class="f4"></i>
+        <i class="m1"></i><i class="m2"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Fonderie</h2>
+        <p class="card-desc">Deviner la recette d'un alliage à partir des rapports du laboratoire,
+          en le moins d'essais possible.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="fonderie" data-unit="point">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--quitte" href="jeux/quitte/index.html">
+      <span class="art art--quitte" aria-hidden="true">
+        <i class="q0"></i><i class="q1"></i><i class="q2"></i><i class="q3"></i><i class="q4"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Quitte</h2>
+        <p class="card-desc">Descendre le puits palier par palier, décider quand remonter. Un
+          effondrement emporte toute la série.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="quitte" data-unit="point">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--ricochet" href="jeux/ricochet/index.html">
+      <span class="art art--ricochet" aria-hidden="true">
+        <i class="w1"></i><i class="c1"></i><i class="b1"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Ricochet</h2>
+        <p class="card-desc">Tirer une bille qui rebondit sur les parois pour ramasser toutes les
+          cibles, avec des tirs comptés.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="ricochet" data-unit="point">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--intrus" href="jeux/intrus/index.html">
+      <span class="art art--intrus" aria-hidden="true">
+        <i class="i1"></i><i class="i2"></i><i class="i3"></i>
+        <i class="i4"></i><i class="i5"></i><i class="i6"></i>
+        <i class="i7"></i><i class="i8"></i><i class="i9"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Intrus</h2>
+        <p class="card-desc">Une grille de pastilles presque identiques, une seule diffère. La
+          différence change de nature à chaque manche.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="intrus" data-unit="point">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--cadence" href="jeux/cadence/index.html">
+      <span class="art art--cadence" aria-hidden="true">
+        <i class="v1"></i><i class="v2"></i><i class="v3"></i><i class="v4"></i>
+        <i class="n1"></i><i class="n2"></i><i class="ligne"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Cadence</h2>
+        <p class="card-desc">Frapper les notes en rythme sur quatre voies. La batterie donne le
+          pouls, la mélodie c'est vous.</p>
+        <p class="card-meta"><span class="lab">Record</span> <b data-record="cadence" data-unit="point">—</b></p>
+      </span>
+    </a>
+
+    <a class="card card--fonte" href="jeux/fonte/index.html">
+      <span class="art art--fonte" aria-hidden="true">
+        <i class="l1"></i><i class="n1"></i>
+        <i class="p1"></i><i class="p2"></i><i class="p3"></i>
+      </span>
+      <span class="card-body">
+        <h2 class="card-name">Fonte</h2>
+        <p class="card-desc">Piocher, fondre, vendre — puis monter la chaîne qui le fera à votre
+          place, et tout refondre pour aller plus vite.</p>
+        <p class="card-meta"><span class="lab">Or</span> <b data-record="fonte">—</b></p>
+      </span>
+    </a>
+
+    <div class="soon">
+      <span class="art" aria-hidden="true">+</span>
+      <p>La collection reste ouverte. Une machine de plus, c'est un dossier dans
+        <strong>jeux/</strong> : une page, une feuille de style, un script — et une carte ici.</p>
+    </div>
+
+  </nav>
+
+  <p class="help">Tout tourne côté navigateur, sans compte ni réseau. Les records restent sur cet
+    appareil, et le réglage du son vaut pour toutes les machines.</p>
+
+  <div class="foot">
+    <button class="ghost" id="mute" type="button" aria-pressed="false">Son : actif</button>
+    <a class="ghost" href="https://needhelpapp.com/">NeedHelpApp</a>
+  </div>
+
+</main>
+<script src="js/arcade.js"></script>
+<script src="js/accueil.js"></script>
+</body>
+</html>

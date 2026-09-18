@@ -21,7 +21,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/nha-core.php';
 
 /** Doit correspondre à NHA_BUILD_CORE. Voir includes/nha-core.php. */
-const NHA_BUILD_MAILER = '2026-09-03.3';
+const NHA_BUILD_MAILER = '2026-09-17.1';
 
 /**
  * Garde-fou contre un dépôt FTP incomplet.

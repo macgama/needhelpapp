@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cadence — Machines</title>
+<meta name="description" content="Frapper les notes en rythme sur quatre voies. Tout est calé sur l'horloge audio.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../css/arcade.css">
+<link rel="stylesheet" href="cadence.css">
+</head>
+<body>
+<main class="cabinet">
+
+  <nav class="topbar"><a class="back" href="../../index.html">‹ Toutes les machines</a></nav>
+
+  <header class="head">
+    <h1 class="mark">Cadence</h1>
+    <p class="tag">Frapper juste</p>
+  </header>
+
+  <section class="readout" aria-label="Tableau de bord">
+    <div class="stat">
+      <span class="lab">Score</span>
+      <b class="val" id="score" aria-live="off">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Record</span>
+      <b class="val" id="best">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Combo</span>
+      <b class="val" id="combo">0</b>
+    </div>
+  </section>
+
+  <div class="meter meter--justesse" id="meter">
+    <div class="meter-head">
+      <span class="lab" id="meterLab">Justesse</span>
+      <span class="lab meter-left" id="justesse">70 %</span>
+    </div>
+    <div class="meter-track"><i id="jauge" style="width:70%"></i></div>
+  </div>
+
+  <div class="stage">
+    <div class="rail" aria-hidden="true"></div>
+    <div class="screen screen--cadence" id="screen">
+      <canvas id="piste"></canvas>
+
+      <div class="pret" id="pret">
+        <p class="pret-titre">Quatre voies, un pouls</p>
+        <p>Frappez chaque note quand elle atteint la ligne. La batterie donne le pouls ;
+          la mélodie, c'est vous qui la jouez.</p>
+        <p>Au clavier : <kbd>D</kbd> <kbd>F</kbd> <kbd>J</kbd> <kbd>K</kbd>, ou les flèches.
+          Au doigt : touchez la voie. <b>Frapper dans le vide coûte de la justesse</b>.</p>
+        <p class="lab pulse">Touchez l'écran pour lancer</p>
+      </div>
+
+      <div class="over" id="over" hidden>
+        <p class="over-kicker">Hors mesure</p>
+        <p class="over-score" id="overScore">0</p>
+        <p class="over-note" id="overNote">points</p>
+        <button class="btn btn--main" id="rejouer" type="button">Rejouer</button>
+      </div>
+    </div>
+    <div class="rail" aria-hidden="true"></div>
+  </div>
+
+  <p class="help">Position des notes et jugement des frappes sont calculés sur la même horloge,
+    celle du son. Le tempo monte avec les notes réussies.</p>
+
+  <div class="foot">
+    <button class="ghost" id="restart" type="button">Nouvelle partie</button>
+    <button class="ghost" id="mute" type="button" aria-pressed="false">Son : actif</button>
+  </div>
+
+</main>
+<script src="../../js/arcade.js"></script>
+<script src="cadence.js"></script>
+</body>
+</html>

@@ -36,6 +36,9 @@ $puces = [
   'quartier' => ['Annonces limitées au voisinage',
                  'Prêt d\'outils et de matériel',
                  'Sans échange d\'argent'],
+  'machines' => ['Quinze jeux, du mot du jour aux réflexes',
+                 'Rien à installer, aucun compte à créer',
+                 'Les records restent sur votre appareil'],
 ];
 $libelle_etat = ['en_ligne' => 'En ligne', 'maintenance' => 'Mise à jour en cours',
                  'construction' => 'En construction', 'etude' => 'À l\'étude'];

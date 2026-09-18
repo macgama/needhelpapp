@@ -21,6 +21,34 @@ require __DIR__ . '/db.php';
 
 header('Content-Type: text/plain; charset=utf-8');
 
+/* ---------------------------------------------------------------
+   Qui a le droit d'ouvrir cette page
+
+   LA CLÉ SE VÉRIFIE ICI, ET NON PLUS AVANT D'EXÉCUTER.
+
+   Le contrôle vivait en bas, sur le seul chemin qui ÉCRIT. Le chemin
+   qui AFFICHE, lui, ne demandait rien : ouvrir cette adresse sans
+   aucun paramètre rendait la structure de la base à qui passait —
+   noms des tables, noms des colonnes, et la liste de ce qui manque
+   encore. C'est un plan de l'intérieur, et il n'y a pas de raison de
+   l'offrir.
+
+   Ses deux voisins, portail-test.php et paiement-test.php, se ferment
+   dès leur première ligne. Celui-ci fait désormais de même : pas de
+   clé configurée = page fermée, et rien n'est interrogé en base pour
+   un visiteur qu'on ne connaît pas.
+   --------------------------------------------------------------- */
+$cle = (string) (config()['maintenance_token'] ?? '');
+if ($cle === '' || !hash_equals($cle, (string) ($_GET['cle'] ?? ''))) {
+    http_response_code(403);
+    echo "Mise à jour réservée à la maintenance.\n\n";
+    echo "Ajoutez dans api/config.php :\n";
+    echo "   'maintenance_token' => 'un-mot-de-passe-que-vous-choisissez',\n";
+    echo "puis ouvrez cette page avec ?cle=ce-mot-de-passe pour LIRE le SQL,\n";
+    echo "et ?cle=ce-mot-de-passe&executer=1 pour l'APPLIQUER.\n";
+    exit;
+}
+
 $sqlite = (config()['driver'] ?? 'mysql') === 'sqlite';
 
 /** Colonnes présentes dans une table, tableau vide si la table n'existe pas. */
@@ -193,9 +221,8 @@ if ($mysql) {
 /* ---------------------------------------------------------------
    Affichage, ou exécution
    --------------------------------------------------------------- */
-$cle = (string) (config()['maintenance_token'] ?? '');
+/* La clé a déjà été vérifiée, tout en haut du fichier. */
 $demandeExecution = !empty($_GET['executer']);
-$cleFournie = (string) ($_GET['cle'] ?? '');
 
 if (!$instructions) {
     echo "La base est à jour : rien à faire.\n";
@@ -221,17 +248,8 @@ if (!$demandeExecution) {
         echo rtrim($sql, ';') . ";\n";
     }
     echo "\n" . str_repeat('-', 68) . "\n";
-    echo "Pour que ce script applique tout lui-même, ajoutez dans config.php\n";
-    echo "   'maintenance_token' => 'un-mot-de-passe-que-vous-choisissez',\n";
-    echo "puis ouvrez : api/migrer.php?executer=1&cle=ce-mot-de-passe\n";
-    exit;
-}
-
-if ($cle === '' || !hash_equals($cle, $cleFournie)) {
-    http_response_code(403);
-    echo "Clé de maintenance absente ou incorrecte.\n";
-    echo "Ajoutez 'maintenance_token' dans config.php, puis rappelez cette page\n";
-    echo "avec ?executer=1&cle=votre-clé\n";
+    echo "Pour que ce script applique tout lui-même, ajoutez &executer=1 à\n";
+    echo "l'adresse de cette page.\n";
     exit;
 }
 

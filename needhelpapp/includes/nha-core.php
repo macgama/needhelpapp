@@ -20,7 +20,7 @@ declare(strict_types=1);
  * pénible à diagnostiquer : le code plante à un endroit sans rapport avec
  * le fichier oublié. Ce marqueur permet de le détecter tout de suite.
  */
-const NHA_BUILD_CORE = '2026-09-03.3';
+const NHA_BUILD_CORE = '2026-09-17.1';
 
 const NHA_COOKIE       = 'nha_session';
 const NHA_SESSION_DAYS = 30;

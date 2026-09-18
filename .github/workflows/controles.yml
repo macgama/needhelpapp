@@ -273,6 +273,119 @@ jobs:
               sys.exit(1)
           PY
 
+      # TROIS COPIES D'UN MÊME FICHIER, ET AUCUN GARDE-FOU.
+      #
+      # api/nha.php est le pont vers le portail : il lit le cookie de
+      # session, retrouve le compte central, en tire le rôle et
+      # l'abonnement. Il vit en TROIS exemplaires — teaching, familyshop,
+      # budget — et les trois sont aujourd'hui identiques, au code
+      # d'application près. Rien ne garantissait qu'ils le restent.
+      #
+      # Corriger le pont dans une application et l'oublier dans les deux
+      # autres est l'erreur qui attend, et elle ne se verrait qu'à
+      # l'usage, sur le sous-domaine qu'on n'a pas rouvert depuis des
+      # semaines. C'est exactement la panne que les marqueurs de version
+      # de includes/ évitent — sauf qu'ici ils ne peuvent rien : les
+      # trois fichiers ne sont JAMAIS chargés ensemble, chacun vivant sur
+      # son propre sous-domaine. Aucun contrôle n'est possible à
+      # l'exécution. Il se fait donc ici.
+      #
+      # On compare le CODE, pas le texte. token_get_all() retire
+      # commentaires et espaces, ce qui laisse chaque en-tête libre de
+      # raconter son histoire — et c'est le cas aujourd'hui : les trois
+      # ne diffèrent que par leurs commentaires.
+      - name: Les trois ponts vers le portail sont-ils identiques ?
+        run: |
+          php <<'PHP'
+          <?php
+          $apps = ['teaching', 'familyshop', 'budget'];
+          $empreintes = [];
+
+          foreach ($apps as $app) {
+              $chemin = $app . '/api/nha.php';
+              if (!is_file($chemin)) {
+                  fwrite(STDERR, "::error::" . $chemin . " est absent du depot.\n");
+                  exit(1);
+              }
+              $code = '';
+              foreach (token_get_all((string) file_get_contents($chemin)) as $t) {
+                  if (!is_array($t)) { $code .= $t; continue; }
+                  if (in_array($t[0], [T_COMMENT, T_DOC_COMMENT, T_WHITESPACE], true)) { continue; }
+                  $code .= $t[1];
+              }
+              // Le code de l'application est la SEULE difference permise.
+              $empreintes[$app] = hash('sha256', str_replace($app, 'APP', $code));
+          }
+
+          if (count(array_unique($empreintes)) === 1) {
+              echo "  ok  les trois ponts portent le meme code.\n";
+              exit(0);
+          }
+
+          fwrite(STDERR, "::error::Les ponts api/nha.php ont diverge. Une correction "
+              . "portee dans une application ne l'a pas ete dans les autres : reportez-la, "
+              . "puis relancez.\n");
+          foreach ($empreintes as $app => $h) {
+              fwrite(STDERR, "  " . str_pad($app, 12) . substr($h, 0, 16) . "\n");
+          }
+          exit(1);
+          PHP
+
+      # DEUX LISTES QUI DOIVENT S'ACCORDER, LE RETOUR.
+      #
+      # Celle des rayons, au-dessus, vivait des deux côtés de la même
+      # application. Celle-ci vit d'un côté en PHP, de l'autre en SQL —
+      # et elle a divergé sans que rien ne le dise.
+      #
+      # /admin/applications.php propose « fermée pour mise à jour ».
+      # api/admin-application.php l'accepte : « maintenance » figure dans
+      # sa constante ETATS. Mais la colonne apps.status ne connaissait
+      # pas cette valeur. En mode strict — celui de MariaDB par défaut —
+      # l'UPDATE lève, le point d'entrée rend un 500 générique, et
+      # L'APPLICATION VISÉE RESTE OUVERTE. Le levier d'urgence du portail
+      # ne faisait rien, et rien ne le disait.
+      #
+      # Ce contrôle interroge la vraie colonne de la vraie base, celle
+      # que l'étape des schémas vient de charger.
+      - name: Les états d'application concordent-ils ?
+        run: |
+          php <<'PHP'
+          <?php
+          $src = (string) file_get_contents('needhelpapp/api/admin-application.php');
+          if (!preg_match('/const\s+ETATS\s*=\s*\[(.*?)\]\s*;/s', $src, $m)) {
+              fwrite(STDERR, "::error::La constante ETATS est introuvable dans admin-application.php.\n");
+              exit(1);
+          }
+          preg_match_all("/'([a-z_]+)'/", $m[1], $mm);
+          $php = $mm[1];
+          sort($php);
+
+          $pdo = new PDO(
+              'mysql:host=127.0.0.1;port=3306;dbname=6l3nq9_core;charset=utf8mb4',
+              'root', 'essai', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+          );
+          $type = (string) $pdo->query(
+              "SELECT COLUMN_TYPE FROM information_schema.columns
+                WHERE table_schema = '6l3nq9_core'
+                  AND table_name = 'apps' AND column_name = 'status'"
+          )->fetchColumn();
+          preg_match_all("/'([a-z_]+)'/", $type, $mm);
+          $sql = $mm[1];
+          sort($sql);
+
+          if ($php !== [] && $php === $sql) {
+              echo '  ok  ' . count($php) . " etats, les memes des deux cotes.\n";
+              exit(0);
+          }
+
+          fwrite(STDERR, "::error::Les etats d'application divergent. "
+              . "admin-application.php : " . implode(', ', $php)
+              . " — colonne apps.status : " . implode(', ', $sql)
+              . ". Une valeur presente cote PHP mais absente de l'enum fait echouer "
+              . "l'ecriture, et l'application reste ouverte.\n");
+          exit(1);
+          PHP
+
       - name: Le coffre et les échéanciers de budget
         if: hashFiles('budget/api/calcul-test.php') != ''
         run: php budget/api/calcul-test.php

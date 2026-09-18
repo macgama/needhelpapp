@@ -1,0 +1,117 @@
+/* Écho — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css.
+
+   Les neuf touches vont du grave au bleu profond, en bas à gauche, à l'aigu
+   clair, en haut à droite : la couleur suit la hauteur, ce qui donne un
+   second appui à la mémoire. */
+
+:root {
+  --signal:      #4d7ff0;
+  --signal-deep: #1d3a8a;
+
+  --panel-w: 330px;
+}
+
+.stage { width: 100%; max-width: var(--panel-w); }
+
+.screen--echo {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  display: grid;
+  place-items: center;
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  width: 100%;
+}
+
+.touche {
+  position: relative;
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 6px;
+  background: var(--fond);
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -3px 0 rgba(0, 0, 0, 0.3);
+  transition: background 220ms ease, box-shadow 220ms ease, transform 90ms ease;
+}
+
+.touche::after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  transition: background 220ms ease, transform 220ms ease;
+}
+
+.touche:active { transform: translateY(2px); }
+
+.touche.vive {
+  background: var(--vif);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 22px var(--halo);
+  transition-duration: 40ms;
+}
+.touche.vive::after { background: rgba(255, 255, 255, 0.85); transform: scale(1.12); }
+
+.touche.faute {
+  background: #c0392b;
+  box-shadow: 0 0 22px rgba(192, 57, 43, 0.8);
+  animation: faute 420ms ease-in-out;
+}
+
+@keyframes faute {
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+/* Pendant que la machine parle, la main du joueur n'a rien à y faire. */
+.grille.parle .touche { cursor: default; }
+.grille.parle { opacity: 0.96; }
+
+/* ---------- Écrans ---------- */
+
+.pret {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  text-align: center;
+  background: rgba(9, 16, 26, 0.92);
+}
+
+.pret-titre {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: clamp(16px, 5vw, 21px);
+  letter-spacing: 0.07em;
+  color: var(--bone);
+}
+
+.pret p { margin: 0; max-width: 28ch; font-size: 13px; line-height: 1.55; color: var(--dim); }
+.pret b { color: var(--signal); }
+
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes pulse { 50% { opacity: 0.45; } }
+
+.over-note b { color: var(--signal); font-weight: 700; }
+
+/* La consigne change de ton selon qui parle. */
+.meter.ecoute .meter-track i { background: var(--rail-2); }
+.meter.repond .meter-track i { background: var(--signal); }
+.meter.repond .meter-left { color: var(--signal); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse, .touche.faute { animation: none; }
+  .touche { transition-duration: 40ms; }
+}

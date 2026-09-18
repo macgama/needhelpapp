@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stack — Machines</title>
+<meta name="description" content="Une barre qui glisse, un appui pour la poser. Ce qui dépasse tombe, et la barre rétrécit. Jusqu'où monte votre tour ?">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../css/arcade.css">
+<link rel="stylesheet" href="stack.css">
+</head>
+<body>
+<main class="cabinet">
+
+  <nav class="topbar"><a class="back" href="../../index.html">‹ Toutes les machines</a></nav>
+
+  <header class="head">
+    <h1 class="mark">Stack</h1>
+    <p class="tag">Une barre. Un appui.</p>
+  </header>
+
+  <section class="readout" aria-label="Tableau de bord">
+    <div class="stat">
+      <span class="lab">Hauteur</span>
+      <b class="val" id="height" aria-live="polite">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Record</span>
+      <b class="val" id="best">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Série</span>
+      <span class="streak" id="streak">0<i>×</i></span>
+    </div>
+  </section>
+
+  <div class="stage">
+    <div class="rail" aria-hidden="true"></div>
+    <div class="screen screen--stack" id="screen">
+      <canvas id="sky"></canvas>
+      <div class="over" id="over" hidden>
+        <p class="over-kicker">La tour s'arrête</p>
+        <p class="over-score" id="overScore">0</p>
+        <p class="over-note" id="overNote">étages</p>
+        <button class="btn btn--main" id="again" type="button">Rejouer</button>
+      </div>
+    </div>
+    <div class="rail" aria-hidden="true"></div>
+  </div>
+
+  <div class="pad">
+    <button class="btn btn--main" id="place" type="button">Poser</button>
+  </div>
+
+  <p class="help"><kbd>Espace</kbd>, un clic ou une touche sur la tour pour poser. Pile-poil : la barre ne
+    rétrécit pas, et trois fois de suite, elle regagne du terrain.</p>
+
+  <div class="foot">
+    <button class="ghost" id="restart" type="button">Nouvelle partie</button>
+    <button class="ghost" id="mute" type="button" aria-pressed="false">Son : actif</button>
+  </div>
+
+</main>
+<script src="../../js/arcade.js"></script>
+<script src="stack.js"></script>
+</body>
+</html>

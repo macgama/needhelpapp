@@ -1,0 +1,193 @@
+/* Quitte — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css.
+
+   Deux couleurs portent tout le sens : l'or est ce qu'on ramasse, le rouge
+   est ce qui peut tout emporter. Rien d'autre n'est coloré. */
+
+:root {
+  --signal:      #c9453f;
+  --signal-deep: #6e1c19;
+  --or:          #e8c33a;
+
+  --panel-w: 340px;
+}
+
+.stage { width: 100%; max-width: var(--panel-w); }
+
+.screen--quitte {
+  flex: 1;
+  min-width: 0;
+  min-height: 330px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: linear-gradient(to bottom, #0d1418, #06090c);
+}
+
+/* ---------- Les dangers déjà rencontrés ---------- */
+
+.dangers {
+  display: flex;
+  gap: 6px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--rail);
+}
+
+.danger {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  padding: 5px 2px;
+  border-radius: 4px;
+  background: #121b21;
+  box-shadow: inset 0 0 0 1px var(--rail);
+  transition: background 220ms ease, box-shadow 220ms ease, color 220ms ease;
+}
+
+.danger .signe { font-size: 15px; line-height: 1; color: var(--rail-2); transition: color 220ms ease; }
+.danger .nom {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 7.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* Un type déjà gronde : la prochaine carte de ce type fait tout s'effondrer. */
+.danger.arme {
+  background: rgba(201, 69, 63, 0.16);
+  box-shadow: inset 0 0 0 1px var(--signal), 0 0 14px rgba(201, 69, 63, 0.25);
+}
+.danger.arme .signe { color: var(--signal); }
+.danger.arme .nom { color: var(--signal); }
+
+/* ---------- La descente ---------- */
+
+.puits {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.puits:empty::after {
+  content: "La galerie est intacte. Descendez d'un palier.";
+  display: block;
+  padding-top: 8px;
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.carte {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 8px;
+  border-radius: 3px;
+  background: #101820;
+  font-size: 13px;
+  animation: descend 240ms ease-out;
+}
+
+@keyframes descend { from { opacity: 0; transform: translateY(-10px); } }
+
+.carte .prof {
+  width: 16px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--dim);
+}
+.carte .quoi { flex: 1; color: var(--bone); }
+.carte .valeur {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 600;
+  color: var(--or);
+}
+
+.carte--filon .quoi::before { content: "◆ "; color: var(--or); }
+.carte--gronde { background: rgba(201, 69, 63, 0.1); }
+.carte--gronde .quoi { color: var(--signal); }
+.carte--fatal {
+  background: var(--signal);
+  color: #170606;
+  animation: fatal 500ms ease-out;
+}
+.carte--fatal .quoi, .carte--fatal .prof { color: #170606; font-weight: 700; }
+
+@keyframes fatal {
+  0%   { transform: scale(0.94); }
+  40%  { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- La sacoche ---------- */
+
+.sacoche {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 9px;
+  border-top: 1px solid var(--rail);
+}
+
+.sacoche b {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--or);
+}
+.sacoche b.perdue { color: var(--signal); text-decoration: line-through; }
+.sacoche .reste { font-size: 11px; color: var(--dim); text-align: right; }
+
+/* ---------- Écrans ---------- */
+
+.pret {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  text-align: center;
+  background: rgba(6, 9, 12, 0.94);
+}
+
+.pret-titre {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: clamp(15px, 4.8vw, 19px);
+  letter-spacing: 0.06em;
+  color: var(--bone);
+}
+
+.pret p { margin: 0; max-width: 31ch; font-size: 12.5px; line-height: 1.6; color: var(--dim); }
+.pret b { color: var(--bone); }
+.pret .or { color: var(--or); }
+.pret .rouge { color: var(--signal); }
+
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes pulse { 50% { opacity: 0.45; } }
+
+.over-note b { color: var(--or); font-weight: 700; }
+
+/* La jauge de risque vire au rouge, elle ne mesure pas un progrès. */
+.meter--risque .meter-track i { background: var(--signal); }
+.meter--risque.hot .meter-left { color: var(--signal); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse, .carte, .carte--fatal { animation: none; }
+}
+
+/* Deux commandes de même poids : remonter n'est pas un repli, c'est un coup. */
+.btn--large { flex: 1; font-size: 14px; }

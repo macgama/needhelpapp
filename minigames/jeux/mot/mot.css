@@ -1,0 +1,257 @@
+/* Le Mot du Jour — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css. */
+
+:root {
+  --signal:      #7bc47f;
+  --signal-deep: #2f6b3a;
+
+  --panel-w: 340px;
+  --tile: clamp(42px, 15.5vw, 58px);
+
+  /* États d'une lettre. Le mode contraste bascule vers un couple
+     bleu / orange, lisible pour les daltonismes rouge-vert. */
+  --place:   #4f9b55;
+  --present: #d9a12c;
+  --absent:  #16292f;
+}
+
+:root[data-contraste="1"] {
+  --place:   #4f9bb5;
+  --present: #ef7f3c;
+}
+
+.mark { font-size: clamp(21px, 6.4vw, 28px); }
+
+/* ---------- La grille ---------- */
+
+.board {
+  display: grid;
+  grid-template-rows: repeat(6, var(--tile));
+  gap: 6px;
+  margin-block: 2px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, var(--tile));
+  gap: 6px;
+}
+
+.case {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--rail);
+  border-radius: 3px;
+  background: transparent;
+  font-weight: 800;
+  font-size: calc(var(--tile) * 0.48);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--bone);
+  user-select: none;
+}
+
+.case.pleine { border-color: var(--rail-2); animation: frappe 110ms ease-out; }
+
+@keyframes frappe {
+  50% { transform: scale(1.09); }
+}
+
+.case.retourne { animation: retourne 420ms ease-in-out; }
+
+@keyframes retourne {
+  0%, 100% { transform: rotateX(0); }
+  50%      { transform: rotateX(90deg); }
+}
+
+.case.place   { background: var(--place);   border-color: var(--place);   color: #0c1a12; }
+.case.present { background: var(--present); border-color: var(--present); color: #1d1405; }
+.case.absent  { background: var(--absent);  border-color: var(--absent);  color: var(--dim); }
+
+/* Le repère de forme : « présent » est l'état que la couleur seule rend
+   ambigu, il porte donc un losange. Rempli sans losange = bien placé,
+   sombre = absent. Le bouton Contraste offre en plus un couple de teintes
+   lisible pour les daltonismes rouge-vert. */
+.case.present::after {
+  content: "";
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 6px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  transform: rotate(45deg);
+}
+
+.row.gagne .case { animation: saute 520ms ease-in-out; }
+.row.gagne .case:nth-child(2) { animation-delay: 70ms; }
+.row.gagne .case:nth-child(3) { animation-delay: 140ms; }
+.row.gagne .case:nth-child(4) { animation-delay: 210ms; }
+.row.gagne .case:nth-child(5) { animation-delay: 280ms; }
+
+@keyframes saute {
+  0%, 100% { transform: translateY(0); }
+  35%      { transform: translateY(-14px); }
+  60%      { transform: translateY(3px); }
+}
+
+.row.refuse { animation: refus 420ms ease-in-out; }
+
+@keyframes refus {
+  20%, 60% { transform: translateX(-7px); }
+  40%, 80% { transform: translateX(7px); }
+}
+
+/* ---------- Le clavier ---------- */
+
+.clavier {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  max-width: var(--panel-w);
+}
+
+.krow { display: flex; justify-content: center; gap: 4px; }
+
+.touche {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 2px;
+  border: 0;
+  border-radius: 3px;
+  background: var(--rail);
+  color: var(--bone);
+  font-family: Archivo, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, transform 80ms ease;
+}
+.touche:active { transform: translateY(2px); }
+.touche--large { flex: 1.6 1 0; font-size: 11px; letter-spacing: 0.04em; }
+
+.touche.place   { background: var(--place);   color: #0c1a12; }
+.touche.present { background: var(--present); color: #1d1405; }
+.touche.absent  { background: var(--absent);  color: #4d6b71; }
+
+
+/* ---------- Message éphémère ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  top: 14px;
+  z-index: 20;
+  transform: translateX(-50%);
+  padding: 9px 16px;
+  border-radius: 4px;
+  background: var(--bone);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
+  animation: toast 180ms ease-out;
+}
+
+@keyframes toast { from { opacity: 0; transform: translate(-50%, -8px); } }
+
+/* ---------- Résultat et statistiques ---------- */
+
+.panneau {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  max-width: var(--panel-w);
+  padding: 16px;
+  border-radius: 4px;
+  background: var(--ink-2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.verdict { display: grid; gap: 4px; justify-items: center; text-align: center; }
+
+.verdict-mot {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: 24px;
+  letter-spacing: 0.1em;
+  color: var(--signal);
+}
+
+.verdict p { margin: 0; font-size: 13px; color: var(--dim); }
+
+.chiffres { display: flex; gap: 2px; }
+
+.chiffre {
+  flex: 1;
+  display: grid;
+  gap: 3px;
+  justify-items: center;
+  text-align: center;
+}
+.chiffre b {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+}
+
+.repart { display: grid; gap: 3px; }
+
+.barre {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  align-items: center;
+  gap: 7px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+.barre i {
+  display: block;
+  min-width: 22px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: var(--rail);
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--bone);
+  transition: width 400ms ease-out;
+}
+.barre.ici i { background: var(--place); color: #0c1a12; }
+
+.suivant {
+  display: grid;
+  gap: 3px;
+  justify-items: center;
+  padding-top: 2px;
+  border-top: 1px solid var(--rail);
+  text-align: center;
+}
+.suivant b {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.copie {
+  width: 100%;
+  min-height: 74px;
+  padding: 8px;
+  border: 1px solid var(--rail-2);
+  border-radius: 3px;
+  background: var(--well);
+  color: var(--bone);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.35;
+  resize: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case, .row, .toast { animation: none !important; }
+}
