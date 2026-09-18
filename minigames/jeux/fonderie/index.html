@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fonderie — Machines</title>
+<meta name="description" content="Deviner la recette d'un alliage à partir des rapports du laboratoire, en le moins d'essais possible.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../css/arcade.css">
+<link rel="stylesheet" href="fonderie.css">
+</head>
+<body>
+<main class="cabinet">
+
+  <nav class="topbar"><a class="back" href="../../index.html">‹ Toutes les machines</a></nav>
+
+  <header class="head">
+    <h1 class="mark">Fonderie</h1>
+    <p class="tag">Devinez l'alliage</p>
+  </header>
+
+  <section class="readout" aria-label="Tableau de bord">
+    <div class="stat">
+      <span class="lab">Score</span>
+      <b class="val" id="score" aria-live="polite">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Record</span>
+      <b class="val" id="best">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Commande</span>
+      <b class="val" id="commandeNo">1</b>
+    </div>
+  </section>
+
+  <div class="meter" id="meter">
+    <div class="meter-head">
+      <span class="lab">Essais</span>
+      <span class="lab meter-left" id="reste">0 / 8</span>
+    </div>
+    <div class="meter-track"><i id="jauge" style="width:0%"></i></div>
+  </div>
+
+  <div class="stage">
+    <div class="rail" aria-hidden="true"></div>
+    <div class="screen screen--fonderie" id="screen">
+
+      <div class="commande">
+        <span class="lab">Commande</span>
+        <div class="moules" id="moules" aria-label="L'alliage demandé"></div>
+      </div>
+
+      <div class="essais" id="essais"></div>
+
+      <div class="creuset" id="creuset" aria-label="Alliage en préparation"></div>
+
+      <div class="pret" id="pret">
+        <p class="pret-titre">Quatre doses, sept métaux</p>
+        <p>Le client commande un alliage de <b>quatre doses</b>. Composez un essai, versez-le :
+          le laboratoire vous dira combien de doses sont <b>du bon métal à la bonne place</b>
+          (carré plein) et combien sont <b>du bon métal mal placé</b> (cercle creux). Un même
+          métal peut revenir plusieurs fois.</p>
+        <p class="lab pulse">Touchez l'écran pour prendre la commande</p>
+      </div>
+
+      <div class="over" id="over" hidden>
+        <div class="moules" id="solution" aria-hidden="true"></div>
+        <p class="over-kicker" id="overKicker">Commande manquée</p>
+        <p class="over-score" id="overScore">0</p>
+        <p class="over-note" id="overNote">points</p>
+        <button class="btn btn--main" id="rejouer" type="button">Nouvelle série</button>
+      </div>
+
+    </div>
+    <div class="rail" aria-hidden="true"></div>
+  </div>
+
+  <div class="palette" id="palette"></div>
+
+  <div class="pad">
+    <button class="btn" id="effacer" type="button" aria-label="Retirer la dernière dose">⌫</button>
+    <button class="btn btn--main" id="couler" type="button">Couler l'essai</button>
+  </div>
+
+  <p class="help">Touchez un métal pour l'ajouter, une dose du creuset pour la retirer. Les touches
+    <kbd>1</kbd> à <kbd>7</kbd> marchent aussi, <kbd>Entrée</kbd> coule l'essai.</p>
+
+  <div class="foot">
+    <button class="ghost" id="restart" type="button">Nouvelle série</button>
+    <button class="ghost" id="mute" type="button" aria-pressed="false">Son : actif</button>
+  </div>
+
+</main>
+<script src="../../js/arcade.js"></script>
+<script src="fonderie.js"></script>
+</body>
+</html>

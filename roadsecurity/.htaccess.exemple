@@ -16,3 +16,29 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # sous-domaine, et la page du portail n'a jamais été mise en ligne — le
 # déploiement n'était pas réglé. Personne n'a l'ancienne adresse, et
 # aucune fiche Play ne la porte.
+
+# ---- En-têtes de sécurité ----
+#
+# Ce bloc manquait ici alors qu'il existait sur le portail et sur budget.
+# Ce n'est pas un détail de confort : le cookie anti-CSRF du portail est
+# posé sur .needhelpapp.com, donc une faille d'injection sur CE
+# sous-domaine permettrait d'y écrire un jeton choisi et de forger une
+# requête vers needhelpapp.com. Les sous-domaines se tiennent les uns les
+# autres — celui qui est le moins protégé décide du niveau de tous.
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # La plus stricte des cinq, et elle le peut : deux pages statiques, une
+  # feuille de style locale, une icône en data:, et pas une seule ligne de
+  # JavaScript. Rien à assouplir ici tant que la vitrine reste ce qu'elle est.
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'none'; font-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'none'"
+</IfModule>
+
+# ---- Fichiers jamais servis ----
+<FilesMatch "(^\.|\.(sql|md|log|ini)$)">
+  Require all denied
+</FilesMatch>

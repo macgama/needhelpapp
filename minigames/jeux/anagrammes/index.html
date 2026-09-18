@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anagrammes — Machines</title>
+<meta name="description" content="Sept lettres, quatre-vingt-dix secondes, le plus de mots français possible.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../css/arcade.css">
+<link rel="stylesheet" href="anagrammes.css">
+</head>
+<body>
+<main class="cabinet">
+
+  <nav class="topbar"><a class="back" href="../../index.html">‹ Toutes les machines</a></nav>
+
+  <header class="head">
+    <h1 class="mark">Anagrammes</h1>
+    <p class="tag">Sept lettres, quatre-vingt-dix secondes</p>
+  </header>
+
+  <section class="readout" aria-label="Tableau de bord">
+    <div class="stat">
+      <span class="lab">Score</span>
+      <b class="val" id="score" aria-live="polite">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Record</span>
+      <b class="val" id="best">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Mots</span>
+      <b class="val" id="compte">0</b>
+    </div>
+  </section>
+
+  <div class="meter" id="meter">
+    <div class="meter-head">
+      <span class="lab">Temps</span>
+      <span class="lab meter-left" id="reste">1:30</span>
+    </div>
+    <div class="meter-track"><i id="jauge" style="width:100%"></i></div>
+  </div>
+
+  <div class="stage">
+    <div class="rail" aria-hidden="true"></div>
+    <div class="screen screen--ana" id="screen">
+      <div class="saisie" id="saisie"><span class="vide">Composez un mot</span></div>
+      <div class="rack" id="rack"></div>
+      <div class="trouves" id="trouves"></div>
+
+      <div class="pret" id="pret">
+        <p class="pret-titre">Sept lettres, 90 secondes</p>
+        <p>Composez le plus de mots français possible, de trois à sept lettres. Chaque
+          lettre du tirage ne sert qu'une fois par mot. Plus le mot est long, plus il
+          rapporte.</p>
+        <button class="btn btn--main" id="demarrer" type="button">Commencer</button>
+      </div>
+
+      <div class="over" id="over" hidden>
+        <div class="rates" id="rates" aria-hidden="true"></div>
+        <p class="over-kicker">Temps écoulé</p>
+        <p class="over-score" id="overScore">0</p>
+        <p class="over-note" id="overNote">points</p>
+        <button class="btn btn--main" id="rejouer" type="button">Nouveau tirage</button>
+      </div>
+    </div>
+    <div class="rail" aria-hidden="true"></div>
+  </div>
+
+  <div class="pad">
+    <button class="btn" id="melanger" type="button" aria-label="Mélanger le tirage">⇄</button>
+    <button class="btn btn--main" id="valider" type="button">Valider</button>
+    <button class="btn" id="effacer" type="button" aria-label="Effacer la dernière lettre">⌫</button>
+  </div>
+
+  <p class="help">Tapez les lettres au clavier ou touchez les jetons. <kbd>Entrée</kbd> valide,
+    <kbd>Retour arrière</kbd> efface, <kbd>Espace</kbd> mélange le tirage.</p>
+
+  <div class="foot">
+    <button class="ghost" id="mute" type="button" aria-pressed="false">Son : actif</button>
+  </div>
+
+</main>
+<script src="../../js/arcade.js"></script>
+<script src="grilles.js"></script>
+<script src="anagrammes.js"></script>
+</body>
+</html>

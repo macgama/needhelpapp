@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fonte — Machines</title>
+<meta name="description" content="Piocher, fondre, vendre — puis monter la chaîne qui le fera à votre place.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../css/arcade.css">
+<link rel="stylesheet" href="fonte.css">
+</head>
+<body>
+<main class="cabinet">
+
+  <nav class="topbar"><a class="back" href="../../index.html">‹ Toutes les machines</a></nav>
+
+  <header class="head">
+    <h1 class="mark">Fonte</h1>
+    <p class="tag">L'usine finit par tourner seule</p>
+  </header>
+
+  <section class="readout" aria-label="Tableau de bord">
+    <div class="stat">
+      <span class="lab">Écus</span>
+      <b class="val" id="ecus" aria-live="off">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Par seconde</span>
+      <b class="val" id="parSec">0</b>
+    </div>
+    <div class="stat">
+      <span class="lab">Or</span>
+      <b class="val" id="or">0</b>
+      <span class="lab" id="orBonus">aucun</span>
+    </div>
+  </section>
+
+  <div class="stage">
+    <div class="rail" aria-hidden="true"></div>
+    <div class="screen screen--fonte">
+
+      <p class="annonce" id="annonce" hidden></p>
+
+      <button class="mine" id="mine" type="button">
+        <span class="mine-art" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="mine-lab">Piocher</span>
+        <span class="mine-gain" id="gain" aria-hidden="true"></span>
+      </button>
+
+      <div class="stocks">
+        <div class="stock" id="stockMinerai">
+          <span class="lab">Minerai</span>
+          <b id="minerai">0</b>
+          <span class="stock-taux" id="mineraiTaux">0 /s</span>
+        </div>
+        <div class="stock" id="stockLingots">
+          <span class="lab">Lingots</span>
+          <b id="lingots">0</b>
+          <span class="stock-taux" id="lingotsTaux">0 /s</span>
+        </div>
+      </div>
+
+      <div class="mains" id="mains">
+        <button class="petit" id="fondre" type="button">Fondre <small>8 minerai → 1 lingot</small></button>
+        <button class="petit" id="vendre" type="button">Vendre <small>1 lingot → 5 écus</small></button>
+      </div>
+
+    </div>
+    <div class="rail" aria-hidden="true"></div>
+  </div>
+
+  <section class="bloc" aria-label="Améliorations">
+    <div class="amelios" id="amelios" hidden></div>
+  </section>
+
+  <section class="bloc">
+    <div class="bloc-tete">
+      <h2 class="bloc-nom">Atelier</h2>
+      <div class="lots" role="group" aria-label="Quantité achetée">
+        <button class="lot" type="button" data-lot="1" aria-pressed="true">×1</button>
+        <button class="lot" type="button" data-lot="10" aria-pressed="false">×10</button>
+        <button class="lot" type="button" data-lot="max" aria-pressed="false">max</button>
+      </div>
+    </div>
+    <ul class="atelier" id="atelier"></ul>
+  </section>
+
+  <section class="bloc refonte" id="refonte" hidden>
+    <h2 class="bloc-nom">Refonte</h2>
+    <p class="refonte-note" id="refonteNote"></p>
+    <button class="btn btn--main" id="refondre" type="button" disabled>Refondre l'usine</button>
+  </section>
+
+  <p class="help">Tous les neuf exemplaires d'un même bâtiment, sa production double.
+    L'usine continue sans vous, à mi-régime, jusqu'à quatre heures. <kbd>Espace</kbd> pioche.</p>
+
+  <div class="foot">
+    <button class="ghost" id="vider" type="button">Vider l'usine</button>
+    <button class="ghost" id="mute" type="button" aria-pressed="false">Son : actif</button>
+  </div>
+
+</main>
+<script src="../../js/arcade.js"></script>
+<script src="fonte.js"></script>
+</body>
+</html>

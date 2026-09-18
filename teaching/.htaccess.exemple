@@ -12,3 +12,46 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Le dossier de configuration n'est jamais servi.
 RedirectMatch 404 ^/config/
+
+# ---- En-têtes de sécurité ----
+#
+# Ce bloc manquait ici alors qu'il existait sur le portail et sur budget.
+# Ce n'est pas un détail de confort : le cookie anti-CSRF du portail est
+# posé sur .needhelpapp.com, donc une faille d'injection sur CE
+# sous-domaine permettrait d'y écrire un jeton choisi et de forger une
+# requête vers needhelpapp.com. Les sous-domaines se tiennent les uns les
+# autres — celui qui est le moins protégé décide du niveau de tous.
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # LA POLITIQUE DE CONTENU EST EN OBSERVATION, PAS EN APPLICATION.
+  #
+  # Report-Only, et c'est délibéré. teaching est la seule des cinq
+  # applications à charger du code de l'extérieur : pdf.js et Tesseract
+  # depuis deux CDN, leurs données de langue depuis un troisième, et la
+  # synthèse vocale depuis ElevenLabs ou Google avec la clé que
+  # l'utilisateur a saisie dans son profil. Tesseract fabrique en outre
+  # ses travailleurs en blob: et compile du WebAssembly.
+  #
+  # Une politique appliquée qui se tromperait d'un seul de ces points ne
+  # produirait pas d'erreur visible : la dictée par PDF cesserait
+  # simplement de fonctionner, sans message, et personne ne ferait le
+  # lien avec ce fichier. Report-Only écrit les violations dans la
+  # console du navigateur sans rien bloquer.
+  #
+  # POUR LA METTRE EN VIGUEUR : ouvrez conjugaison, dictée (import PDF et
+  # photo), vocabulaire et mathématiques, console ouverte. Tant qu'une
+  # ligne « Content Security Policy » apparaît, complétez la directive
+  # qu'elle nomme. Quand plus rien ne s'affiche, retirez « -Report-Only »
+  # du nom de l'en-tête ci-dessous.
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; img-src 'self' data: blob: https://*.googleusercontent.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'wasm-unsafe-eval' https://accounts.google.com/gsi/client https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; worker-src 'self' blob:; child-src 'self' blob:; connect-src 'self' blob: data: https://accounts.google.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://tessdata.projectnaptha.com https://api.elevenlabs.io https://texttospeech.googleapis.com; frame-src https://accounts.google.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+</IfModule>
+
+# ---- Fichiers jamais servis ----
+<FilesMatch "(^\.|\.(sql|md|log|ini)$)">
+  Require all denied
+</FilesMatch>

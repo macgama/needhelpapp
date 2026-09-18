@@ -120,87 +120,181 @@ function analyserIngredient(string $texte): array
 }
 
 /**
+ * Les adresses IP d'un hôte, IPv4 ET IPv6.
+ *
+ * gethostbynamel() ne lit que les enregistrements A. Un domaine pointant
+ * en A vers une adresse publique et en AAAA vers ::1 franchissait donc
+ * le contrôle, après quoi cURL — qui préfère l'IPv6 quand il est
+ * disponible — se connectait à la boucle locale. On lit les deux.
+ *
+ * Un littéral, « 93.184.216.34 » ou « [2606:2800::1] », se rend
+ * lui-même : il n'y a pas de nom à résoudre.
+ */
+function adressesDe(string $hote): array
+{
+    $nu = trim($hote, '[]');
+    if (filter_var($nu, FILTER_VALIDATE_IP)) {
+        return [$nu];
+    }
+
+    $ips = @gethostbynamel($hote) ?: [];
+    foreach (@dns_get_record($hote, DNS_AAAA) ?: [] as $e) {
+        if (!empty($e['ipv6'])) {
+            $ips[] = $e['ipv6'];
+        }
+    }
+    return array_values(array_unique($ips));
+}
+
+/**
  * Cette adresse est-elle sûre à aller chercher ?
  * Sans ce contrôle, on offrirait au premier venu un moyen d'interroger
  * le réseau interne de l'hébergeur depuis notre serveur.
+ *
+ * Rend [sûre, pourquoi pas, épinglage] — l'épinglage étant ce qu'il faut
+ * passer à CURLOPT_RESOLVE pour que cURL se connecte AUX ADRESSES QUE
+ * L'ON VIENT DE CONTRÔLER, et non à ce qu'un second appel au DNS lui
+ * répondrait. Voir telecharger().
  */
 function adresseSure(string $url): array
 {
     $p = parse_url($url);
     if (!$p || empty($p['scheme']) || empty($p['host'])) {
-        return [false, 'cette adresse n\'est pas valide'];
+        return [false, 'cette adresse n\'est pas valide', []];
     }
-    if (!in_array(strtolower($p['scheme']), ['http', 'https'], true)) {
-        return [false, 'seules les adresses http et https sont acceptées'];
+    $schema = strtolower($p['scheme']);
+    if (!in_array($schema, ['http', 'https'], true)) {
+        return [false, 'seules les adresses http et https sont acceptées', []];
     }
     $hote = $p['host'];
+    $port = (int) ($p['port'] ?? ($schema === 'https' ? 443 : 80));
 
-    $ips = @gethostbynamel($hote);
+    $ips = adressesDe($hote);
     if (!$ips) {
-        $ips = filter_var($hote, FILTER_VALIDATE_IP) ? [$hote] : [];
-    }
-    if (!$ips) {
-        return [false, 'ce site est introuvable'];
+        return [false, 'ce site est introuvable', []];
     }
     foreach ($ips as $ip) {
         if (!filter_var($ip, FILTER_VALIDATE_IP,
                         FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-            return [false, 'cette adresse mène au réseau interne'];
+            return [false, 'cette adresse mène au réseau interne', []];
         }
     }
-    return [true, ''];
+
+    /* Toutes les adresses ont été contrôlées, donc toutes peuvent être
+       épinglées : si la première ne répond pas, cURL peut basculer sur
+       une autre sans sortir de ce qu'on a autorisé.
+
+       Un littéral n'est pas épinglé — il n'y a rien à résoudre, cURL s'y
+       connecte directement — et une adresse IPv6 entre crochets rendrait
+       de toute façon la syntaxe hôte:port:ip indéchiffrable. */
+    $epingle = filter_var(trim($hote, '[]'), FILTER_VALIDATE_IP)
+        ? []
+        : [$hote . ':' . $port . ':' . implode(',', $ips)];
+
+    return [true, '', $epingle];
 }
 
-/** Va chercher la page, en bornant tout ce qui peut l'être. */
+/** Au-delà, on considère que le site tourne en rond. */
+const IMPORT_SAUTS_MAX = 3;
+
+/**
+ * Va chercher la page, en bornant tout ce qui peut l'être.
+ *
+ * TROIS TROUS ONT ÉTÉ BOUCHÉS ICI, ET ILS SE RESSEMBLENT : entre le
+ * moment où l'on VÉRIFIE une adresse et le moment où l'on s'y CONNECTE,
+ * quelque chose pouvait changer.
+ *
+ *   1. LE DNS. adresseSure() résolvait le nom, puis cURL le résolvait à
+ *      son tour, pour son propre compte. Un serveur de noms complice,
+ *      avec une durée de vie d'une seconde, répondait « adresse
+ *      publique » au contrôle et « 127.0.0.1 » à la connexion. On
+ *      épingle désormais les adresses contrôlées : cURL ne redemande
+ *      rien à personne.
+ *
+ *   2. LES REDIRECTIONS. CURLOPT_FOLLOWLOCATION les suivait seul, sans
+ *      qu'aucun saut intermédiaire ne soit examiné. Seule l'adresse
+ *      FINALE était revérifiée — donc APRÈS que la requête vers le
+ *      réseau interne avait déjà eu lieu. Cela ne rendait pas la
+ *      réponse, mais cela suffisait à atteindre un service interne qui
+ *      agit sur ce qu'on lui demande. On suit maintenant les
+ *      redirections à la main, en contrôlant chaque saut AVANT de le
+ *      faire.
+ *
+ *   3. L'IPV6. Voir adressesDe().
+ *
+ * Le reste des bornes n'a pas changé : douze secondes, trois sauts,
+ * deux mégaoctets, et le certificat vérifié.
+ */
 function telecharger(string $url): array
 {
-    [$sure, $pourquoi] = adresseSure($url);
-    if (!$sure) {
-        return [null, $pourquoi];
-    }
     if (!function_exists('curl_init')) {
         return [null, 'le serveur ne sait pas aller chercher de page'];
     }
 
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_MAXREDIRS      => 3,
-        CURLOPT_TIMEOUT        => 12,
-        CURLOPT_CONNECTTIMEOUT => 5,
-        CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_PROTOCOLS      => CURLPROTO_HTTP | CURLPROTO_HTTPS,
-        CURLOPT_REDIR_PROTOCOLS=> CURLPROTO_HTTP | CURLPROTO_HTTPS,
-        CURLOPT_USERAGENT      => 'FamilyShop/1.0 (+https://familyshop.needhelpapp.com)',
-        CURLOPT_ACCEPT_ENCODING => '',
-        // une page de recette pèse rarement plus de 2 Mo ; au-delà, on coupe
-        CURLOPT_BUFFERSIZE     => 65536,
-        CURLOPT_NOPROGRESS     => false,
-        CURLOPT_PROGRESSFUNCTION => static function ($r, $recu) {
-            return $recu > 2097152 ? 1 : 0;
-        },
-    ]);
-    $html = curl_exec($ch);
-    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $erreur = curl_error($ch);
-    $finale = (string) curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
-    curl_close($ch);
+    $vues = [];
 
-    if ($html === false || $html === '') {
-        return [null, $erreur !== '' ? 'la page n\'a pas pu être lue' : 'la page est vide'];
-    }
-    if ($code >= 400) {
-        return [null, 'le site a répondu ' . $code];
-    }
-    // une redirection peut mener ailleurs : on revérifie
-    if ($finale !== '' && $finale !== $url) {
-        [$sure2, $pourquoi2] = adresseSure($finale);
-        if (!$sure2) {
-            return [null, $pourquoi2];
+    for ($saut = 0; $saut <= IMPORT_SAUTS_MAX; $saut++) {
+        [$sure, $pourquoi, $epingle] = adresseSure($url);
+        if (!$sure) {
+            return [null, $pourquoi];
         }
+        if (isset($vues[$url])) {
+            return [null, 'ce site renvoie en boucle sur lui-même'];
+        }
+        $vues[$url] = true;
+
+        $ch = curl_init($url);
+        $options = [
+            CURLOPT_RETURNTRANSFER => true,
+            // Surtout pas : elles sont suivies à la main, ci-dessous.
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_TIMEOUT        => 12,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_PROTOCOLS      => CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_USERAGENT      => 'FamilyShop/1.0 (+https://familyshop.needhelpapp.com)',
+            CURLOPT_ACCEPT_ENCODING => '',
+            // une page de recette pèse rarement plus de 2 Mo ; au-delà, on coupe
+            CURLOPT_BUFFERSIZE     => 65536,
+            CURLOPT_NOPROGRESS     => false,
+            CURLOPT_PROGRESSFUNCTION => static function ($r, $recu) {
+                return $recu > 2097152 ? 1 : 0;
+            },
+        ];
+        if ($epingle) {
+            $options[CURLOPT_RESOLVE] = $epingle;
+        }
+        curl_setopt_array($ch, $options);
+
+        $corps  = curl_exec($ch);
+        $code   = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        /* Renseigné même sans FOLLOWLOCATION, et déjà rendu absolu : c'est
+           précisément à cela que sert cette information. */
+        $suivant = (string) curl_getinfo($ch, CURLINFO_REDIRECT_URL);
+        $erreur = curl_error($ch);
+        curl_close($ch);
+
+        if ($corps === false) {
+            return [null, $erreur !== '' ? 'la page n\'a pas pu être lue' : 'la page est vide'];
+        }
+        if ($code >= 300 && $code < 400) {
+            if ($suivant === '') {
+                return [null, 'ce site redirige vers une adresse illisible'];
+            }
+            // Le tour suivant le contrôlera AVANT de s'y rendre.
+            $url = $suivant;
+            continue;
+        }
+        if ($code >= 400) {
+            return [null, 'le site a répondu ' . $code];
+        }
+        if ($corps === '') {
+            return [null, 'la page est vide'];
+        }
+        return [$corps, ''];
     }
-    return [$html, ''];
+
+    return [null, 'ce site enchaîne trop de redirections'];
 }
 
 /**

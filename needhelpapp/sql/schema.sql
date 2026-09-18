@@ -70,7 +70,11 @@ CREATE TABLE IF NOT EXISTS `apps` (
   `url` varchar(255) DEFAULT NULL,
   `color` char(7) NOT NULL DEFAULT '#3B2F7F',
   `keywords` varchar(500) NOT NULL DEFAULT '',
-  `status` enum('en_ligne','construction','etude','archive') NOT NULL DEFAULT 'etude',
+  -- « maintenance » ferme l'application le temps d'une mise à jour, les
+  -- administrateurs continuant d'entrer. Il manquait, alors que
+  -- /admin/applications.php proposait déjà le bouton : voir
+  -- migration-maintenance.sql.
+  `status` enum('en_ligne','maintenance','construction','etude','archive') NOT NULL DEFAULT 'etude',
   `position` smallint(6) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_apps_code` (`code`),

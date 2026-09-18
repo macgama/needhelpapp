@@ -26,12 +26,12 @@ if (mb_strlen($mdp) < 10) {
 if (empty($d['conditions'])) {
     json_erreur('Merci d\'accepter les conditions générales pour continuer.');
 }
-limiter($email, 10, 60);
+limiter($email, 10, 60, 'inscription');
 
 $res = nha_register($email, $mdp, $nom !== '' ? $nom : null);
 
 if ($res['status'] === 'already_exists') {
-    noter_tentative($email, false);
+    noter_tentative($email, false, 'inscription');
     $apps = $res['lookup']['apps'];
 
     // Choix assumé : on indique que le compte existe, plutôt que de renvoyer

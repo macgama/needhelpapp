@@ -1,0 +1,64 @@
+/* Cadence — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css.
+
+   L'accent est le plus proche voisin de la collection : un sarcelle profond,
+   là où Stack a un cyan clair. Treize machines, treize accents — celui-ci est
+   le premier qui frôle un autre, et c'est assumé plutôt que caché. */
+
+:root {
+  --signal:      #17b3a0;
+  --signal-deep: #0a5a50;
+
+  --screen-w: 320px;
+  --screen-h: 430px;
+}
+
+.screen--cadence {
+  width: var(--screen-w);
+  height: var(--screen-h);
+  background: #06100f;
+  touch-action: none;
+}
+
+#piste { display: block; width: 100%; height: 100%; }
+
+/* ---------- Écrans ---------- */
+
+.pret {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  text-align: center;
+  background: rgba(5, 14, 13, 0.94);
+}
+
+.pret-titre {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: clamp(15px, 4.8vw, 19px);
+  letter-spacing: 0.06em;
+  color: var(--bone);
+}
+
+.pret p { margin: 0; max-width: 30ch; font-size: 12.5px; line-height: 1.6; color: var(--dim); }
+.pret b { color: var(--signal); }
+.pret kbd { background: var(--rail); }
+
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes pulse { 50% { opacity: 0.45; } }
+
+.over-note b { color: var(--signal); font-weight: 700; }
+
+/* La jauge de justesse : elle descend, elle ne progresse pas. */
+.meter--justesse .meter-track i { background: var(--signal); }
+.meter--justesse.hot .meter-track i { background: #d9534a; }
+.meter--justesse.hot .meter-left { color: #d9534a; }
+
+@media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }

@@ -1,0 +1,50 @@
+# Machines — à déposer à la racine du sous-domaine, renommé .htaccess
+
+# Pas de SetEnv NHA_APP ici, comme pour roadsecurity : ce site est du
+# HTML statique. Il ne charge pas le socle PHP, ne connaît aucun compte,
+# et n'a donc aucun droit à faire lire. Les records vivent dans le
+# navigateur de chacun.
+
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+DirectoryIndex index.html
+
+# ---- En-têtes de sécurité ----
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+  # Stricte, et elle peut l'être : depuis que les polices sont
+  # auto-hébergées, ce site ne charge plus rien de l'extérieur. Aucun
+  # <script> en ligne non plus — tout passe par js/.
+  #
+  # 'unsafe-inline' ne concerne QUE les styles, et pour une raison
+  # précise : huit pages portent un style="width:…" sur leur jauge, la
+  # valeur de départ que le jeu remplace ensuite. Un attribut de style
+  # ne peut pas recevoir de nonce. C'est la même concession que le
+  # portail, et elle s'arrête aux styles : script-src reste 'self' seul.
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'none'"
+</IfModule>
+
+# ---- Cache ----
+# Les jeux ne changent qu'au déploiement, et les fichiers ne sont pas
+# versionnés dans leur nom : une semaine, pas un an.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# ---- Fichiers jamais servis ----
+<FilesMatch "(^\.|\.(sql|md|log|ini)$)">
+  Require all denied
+</FilesMatch>
+
+Options -Indexes

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le Mot du Jour — Machines</title>
+<meta name="description" content="Un mot français de cinq lettres, six essais, le même pour tout le monde, un seul par jour.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../css/arcade.css">
+<link rel="stylesheet" href="mot.css">
+</head>
+<body>
+<main class="cabinet">
+
+  <nav class="topbar"><a class="back" href="../../index.html">‹ Toutes les machines</a></nav>
+
+  <header class="head">
+    <h1 class="mark">Le Mot du Jour</h1>
+    <p class="tag" id="tag">Mot n° 1 · un seul par jour</p>
+  </header>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <div class="board" id="board"></div>
+
+  <div class="clavier" id="clavier"></div>
+
+  <section class="panneau" id="panneau" hidden>
+    <div class="verdict" id="verdict"></div>
+
+    <div class="chiffres">
+      <div class="chiffre"><b id="sJouees">0</b><span class="lab">Parties</span></div>
+      <div class="chiffre"><b id="sGagnees">0</b><span class="lab">% gagnées</span></div>
+      <div class="chiffre"><b id="sSerie">0</b><span class="lab">Série</span></div>
+      <div class="chiffre"><b id="sMeilleure">0</b><span class="lab">Record</span></div>
+    </div>
+
+    <div class="repart" id="repart" aria-label="Essais utilisés"></div>
+
+    <div class="suivant">
+      <span class="lab">Prochain mot dans</span>
+      <b id="compte">—</b>
+    </div>
+
+    <button class="btn btn--main" id="partager" type="button">Partager ma grille</button>
+    <textarea class="copie" id="copie" readonly aria-label="Grille à copier" hidden></textarea>
+  </section>
+
+  <p class="help">Un mot de cinq lettres, six essais. Les accents ne comptent pas :
+    tapez <kbd>E</kbd> pour <kbd>É</kbd>. Le mot est le même pour tout le monde, et il
+    change à minuit.</p>
+
+  <div class="foot">
+    <button class="ghost" id="voirStats" type="button">Statistiques</button>
+    <button class="ghost" id="contraste" type="button" aria-pressed="false">Contraste</button>
+    <button class="ghost" id="mute" type="button" aria-pressed="false">Son : actif</button>
+  </div>
+
+</main>
+<script src="../../js/arcade.js"></script>
+<script src="mots.js"></script>
+<script src="mot.js"></script>
+</body>
+</html>

@@ -62,6 +62,63 @@ ON DUPLICATE KEY UPDATE name = VALUES(name), tagline = VALUES(tagline),
                         url = VALUES(url), color = VALUES(color),
                         keywords = VALUES(keywords), status = VALUES(status);
 
+-- ---------------------------------------------------------------
+-- machines.needhelpapp.com
+--
+-- Quinze petits jeux en HTML, CSS et JavaScript. Aucune base, aucun
+-- compte, aucun réseau : les records vivent dans le navigateur de
+-- chacun. C'est, avec roadsecurity, la seule application entièrement
+-- statique du dépôt — elle ne charge même pas le socle PHP.
+--
+-- Le nom compte trois mots, et ce n'est pas un hasard : titre_accentue()
+-- dans index.php met le DERNIER en italique. « Machines », seul, se
+-- serait affiché entièrement penché.
+--
+-- status vaut 'construction' tant que machines.needhelpapp.com n'existe
+-- pas, pour la raison écrite plus haut à propos de budget : une
+-- application annoncée « en ligne » qui n'existe pas envoie les
+-- visiteurs sur une erreur, et se compte dans la bannière des
+-- applications ouvertes. Passez-la en 'en_ligne' le jour où le
+-- sous-domaine répond, c'est-à-dire quand CHEMIN_MACHINES est renseigné
+-- et qu'un premier déploiement a eu lieu.
+-- ---------------------------------------------------------------
+
+INSERT INTO apps (code, name, tagline, url, color, keywords, status, position) VALUES
+  ('machines', 'Les petites machines',
+   'Quinze jeux qui tiennent dans un navigateur, sans compte et sans réseau.',
+   'https://machines.needhelpapp.com/', '#2B565E',
+   'jeux jeu machine arcade mot du jour anagrammes puzzle réflexe casse-tête mémoire logique vocabulaire calcul détente pause navigateur hors ligne sans compte',
+   'construction', 5)
+ON DUPLICATE KEY UPDATE name = VALUES(name), tagline = VALUES(tagline),
+                        url = VALUES(url), color = VALUES(color),
+                        keywords = VALUES(keywords), status = VALUES(status);
+
+-- ---------------------------------------------------------------
+-- L'ORDRE D'AFFICHAGE, ENFIN APPLIQUÉ.
+--
+-- Le commentaire ci-dessous proposait ces mises à jour depuis
+-- longtemps, sans que personne ne les passe. Deux lignes partageaient la
+-- position 2, deux autres la position 4, et deux lignes de même position
+-- sortent dans un ordre arbitraire — donc dans un ordre qui pouvait
+-- changer d'une requête à l'autre.
+--
+-- Elles sont ici plutôt que dans un fichier à part parce que ce
+-- fichier-ci est rejouable : le catalogue déclaré, c'est lui.
+-- Les applications ouvertes viennent en tête, les chantiers ensuite,
+-- les idées en dernier.
+-- ---------------------------------------------------------------
+
+UPDATE apps SET position = 0 WHERE code = 'portail';
+UPDATE apps SET position = 1 WHERE code = 'teaching';
+UPDATE apps SET position = 2 WHERE code = 'familyshop';
+UPDATE apps SET position = 3 WHERE code = 'budget';
+UPDATE apps SET position = 4 WHERE code = 'sport';
+UPDATE apps SET position = 5 WHERE code = 'machines';
+UPDATE apps SET position = 6 WHERE code = 'artisans';
+UPDATE apps SET position = 7 WHERE code = 'asso';
+UPDATE apps SET position = 8 WHERE code = 'admin';
+UPDATE apps SET position = 9 WHERE code = 'quartier';
+
 -- Les autres sont déjà en base :
 --   teaching    L'apprentissage scolaire     en ligne
 --   familyshop  Les courses en famille       en ligne
@@ -71,22 +128,9 @@ ON DUPLICATE KEY UPDATE name = VALUES(name), tagline = VALUES(tagline),
 --   admin       Les démarches administratives à l'étude
 --   quartier    L'entraide de quartier       à l'étude
 --
--- ATTENTION aux positions, qui donnent l'ordre d'affichage : sport et
--- familyshop valent toutes deux 2, asso et budget toutes deux 4. Deux
--- lignes de même position sortent dans un ordre arbitraire. Rien ne
--- casse, mais si vous voulez que les applications ouvertes viennent en
--- tête, une renumérotation s'impose :
+-- Les positions sont désormais fixées plus haut, une ligne par
+-- application : c'est là qu'on change l'ordre du catalogue.
 --
---   UPDATE apps SET position = 0 WHERE code = 'portail';
---   UPDATE apps SET position = 1 WHERE code = 'teaching';
---   UPDATE apps SET position = 2 WHERE code = 'familyshop';
---   UPDATE apps SET position = 3 WHERE code = 'budget';
---   UPDATE apps SET position = 4 WHERE code = 'sport';
---   UPDATE apps SET position = 5 WHERE code = 'artisans';
---   UPDATE apps SET position = 6 WHERE code = 'asso';
---   UPDATE apps SET position = 7 WHERE code = 'admin';
---   UPDATE apps SET position = 8 WHERE code = 'quartier';
---
--- Pour en brancher une nouvelle, reprenez le bloc de budget ci-dessus :
+-- Pour en brancher une nouvelle, reprenez le bloc de machines ci-dessus :
 -- il porte le ON DUPLICATE KEY UPDATE complet, celui qui rattrape une
 -- ligne déjà posée à la main.

@@ -1,0 +1,467 @@
+/* Le hall : la vitrine des machines.
+   À charger après css/arcade.css. */
+
+:root { --panel-w: 420px; }
+
+.hall {
+  gap: 10px;
+  max-width: 452px;
+}
+
+.hall .head { margin-bottom: 6px; }
+
+.machines {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: var(--panel-w);
+}
+
+.card {
+  --accent: var(--signal);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 4px;
+  border-left: 3px solid var(--accent);
+  background: var(--ink-2);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 6px 18px rgba(0, 0, 0, 0.4);
+  transition: transform 140ms ease, background 140ms ease;
+}
+
+.card:hover, .card:focus-visible {
+  transform: translateY(-2px);
+  background: #17333a;
+}
+
+.card--chute { --accent: #ff5a2b; }
+.card--stack { --accent: #4fd8e8; }
+.card--mot   { --accent: #7bc47f; }
+.card--rebond { --accent: #ff4d8d; }
+.card--tri    { --accent: #ddd3bd; }
+.card--ana    { --accent: #a082e8; }
+.card--sillage { --accent: #e8c33a; }
+.card--echo   { --accent: #4d7ff0; }
+.card--fonderie { --accent: #9fb0bd; }
+.card--quitte  { --accent: #c9453f; }
+.card--ricochet { --accent: #9ed13f; }
+.card--intrus  { --accent: #dd6ad0; }
+.card--cadence { --accent: #17b3a0; }
+.card--fonte   { --accent: #f0a12e; }
+
+.card-body { display: grid; gap: 4px; }
+
+.card-name {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: 19px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: var(--bone);
+}
+
+.card-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.card-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin: 2px 0 0;
+}
+
+.card-meta b {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.card-meta b.vierge { color: var(--dim); font-weight: 400; }
+
+/* ---------- Miniatures ---------- */
+
+.art {
+  position: relative;
+  flex: 0 0 76px;
+  height: 76px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #071215;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.art i { position: absolute; display: block; border-radius: 2px; }
+
+/* Chute : deux tuiles jumelles au sol, une troisième qui tombe dessus. */
+.art--chute i { width: 17px; height: 17px; }
+.art--chute .a1 { left: 9px;  bottom: 8px;  background: var(--t1); }
+.art--chute .a2 { left: 29px; bottom: 8px;  background: var(--t4); }
+.art--chute .a3 { left: 29px; bottom: 28px; background: var(--t4); }
+.art--chute .a4 { left: 49px; bottom: 8px;  background: var(--t2); animation: miniDrop 2.6s cubic-bezier(0.5, 0, 0.75, 0.4) infinite; }
+
+@keyframes miniDrop {
+  0%   { transform: translateY(-46px); opacity: 0; }
+  10%  { opacity: 1; }
+  34%  { transform: translateY(0); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Stack : une pile qui se resserre, et la barre qui cherche son aplomb. */
+.art--stack i { height: 8px; }
+.art--stack .b1 { width: 48px; left: 14px; bottom: 10px; background: hsl(188, 56%, 58%); }
+.art--stack .b2 { width: 43px; left: 17px; bottom: 19px; background: hsl(203, 56%, 58%); }
+.art--stack .b3 { width: 39px; left: 19px; bottom: 28px; background: hsl(218, 56%, 58%); }
+.art--stack .b4 { width: 39px; left: 19px; bottom: 39px; background: hsl(233, 56%, 62%); animation: miniSlide 2.4s ease-in-out infinite; }
+
+@keyframes miniSlide {
+  0%, 100% { transform: translateX(-17px); }
+  50%      { transform: translateX(17px); }
+}
+
+/* Le Mot : une ligne jugée, et la suivante qui se retourne. */
+.art--mot i { width: 16px; height: 16px; }
+.art--mot .c1 { left: 10px; bottom: 40px; background: var(--rail); }
+.art--mot .c2 { left: 30px; bottom: 40px; background: #d9a12c; }
+.art--mot .c3 { left: 50px; bottom: 40px; background: var(--rail); }
+.art--mot .c4 { left: 10px; bottom: 18px; background: #4f9b55; animation: miniFlip 2.8s ease-in-out infinite; }
+.art--mot .c5 { left: 30px; bottom: 18px; background: #4f9b55; animation: miniFlip 2.8s ease-in-out infinite .16s; }
+.art--mot .c6 { left: 50px; bottom: 18px; background: #4f9b55; animation: miniFlip 2.8s ease-in-out infinite .32s; }
+
+@keyframes miniFlip {
+  0%, 58%, 100% { transform: scaleY(1); }
+  68%           { transform: scaleY(0.08); }
+}
+
+/* Rebond : deux barres percées, et la bille qui se faufile. */
+.art--rebond i { height: 5px; background: #ff4d8d; }
+.art--rebond .r1 { left: 6px;  bottom: 48px; width: 12px; }
+.art--rebond .r2 { left: 30px; bottom: 48px; width: 40px; }
+.art--rebond .r3 { left: 6px;  bottom: 24px; width: 40px; }
+.art--rebond .r4 { left: 58px; bottom: 24px; width: 12px; }
+.art--rebond .r5 {
+  left: 19px;
+  bottom: 60px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ffe8f1;
+  box-shadow: 0 0 8px rgba(255, 77, 141, 0.9);
+  animation: miniFall 2.2s linear infinite;
+}
+
+@keyframes miniFall {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  12%  { opacity: 1; }
+  100% { transform: translate(28px, 46px); opacity: 1; }
+}
+
+/* Tri : trois tubes, et une bille qui rejoint sa couleur. */
+.art--tri .g1, .art--tri .g2, .art--tri .g3 {
+  width: 18px;
+  height: 44px;
+  bottom: 10px;
+  border: 1px solid var(--rail);
+  border-top: 0;
+  border-radius: 2px 2px 7px 7px;
+}
+.art--tri .g1 { left: 10px; }
+.art--tri .g2 { left: 29px; }
+.art--tri .g3 { left: 48px; }
+
+.art--tri .t1, .art--tri .t2, .art--tri .t3, .art--tri .t4, .art--tri .t5 {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+.art--tri .t1 { left: 12px; bottom: 12px; background: #e0574f; }
+.art--tri .t2 { left: 12px; bottom: 27px; background: #e0574f; }
+.art--tri .t3 { left: 31px; bottom: 12px; background: #5b7fd4; }
+.art--tri .t4 { left: 50px; bottom: 12px; background: #5b7fd4; }
+.art--tri .t5 { left: 31px; bottom: 27px; background: #5b7fd4; animation: miniHop 2.6s ease-in-out infinite; }
+
+@keyframes miniHop {
+  0%, 12%   { transform: translate(0, 0); }
+  50%       { transform: translate(9px, -16px); }
+  84%, 100% { transform: translate(19px, 0); }
+}
+
+/* Anagrammes : trois jetons, dont un qui se retourne. */
+.art--ana i {
+  width: 20px;
+  height: 23px;
+  bottom: 27px;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, #f0ead9, #ded5be);
+  color: #1b1526;
+  font-family: Archivo, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  font-style: normal;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 2px 0 #8d8571;
+}
+.art--ana .l1 { left: 8px; }
+.art--ana .l2 { left: 28px; }
+.art--ana .l3 { left: 48px; animation: miniTourne 2.6s ease-in-out infinite; }
+
+@keyframes miniTourne {
+  0%, 58%, 100% { transform: rotateY(0); }
+  78%           { transform: rotateY(82deg); }
+}
+
+/* Sillage : un territoire, un sillage qui s'avance, un rôdeur. */
+.art--sillage .s1 {
+  left: 8px;
+  top: 8px;
+  width: 60px;
+  height: 22px;
+  border-radius: 2px;
+  background: #8a6a06;
+  box-shadow: inset 0 1px 0 rgba(232, 195, 58, 0.6);
+}
+.art--sillage .s2 {
+  left: 24px;
+  top: 30px;
+  width: 4px;
+  height: 26px;
+  background: #ffe9a3;
+}
+.art--sillage .s3 {
+  left: 24px;
+  top: 52px;
+  width: 26px;
+  height: 4px;
+  background: #ffe9a3;
+  animation: miniTrace 2.4s ease-in-out infinite;
+  transform-origin: left center;
+}
+.art--sillage .s4 {
+  left: 52px;
+  top: 20px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff4d5e;
+  box-shadow: 0 0 7px rgba(255, 77, 94, 0.8);
+  animation: miniRode 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes miniTrace {
+  0%, 10%  { transform: scaleX(0.1); }
+  70%, 100% { transform: scaleX(1); }
+}
+
+@keyframes miniRode {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(-28px, 34px); }
+}
+
+/* Écho : neuf touches, trois qui s'allument à rebours. */
+.art--echo i {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: #1b2a4a;
+}
+.art--echo .e1 { left: 10px; bottom: 44px; }
+.art--echo .e2 { left: 30px; bottom: 44px; }
+.art--echo .e3 { left: 50px; bottom: 44px; }
+.art--echo .e4 { left: 10px; bottom: 24px; }
+.art--echo .e5 { left: 30px; bottom: 24px; }
+.art--echo .e6 { left: 50px; bottom: 24px; }
+.art--echo .e7 { left: 10px; bottom: 4px; }
+.art--echo .e8 { left: 30px; bottom: 4px; }
+.art--echo .e9 { left: 50px; bottom: 4px; }
+
+.art--echo .e3 { animation: miniEcho 2.7s ease-in-out infinite; }
+.art--echo .e5 { animation: miniEcho 2.7s ease-in-out infinite 0.5s; }
+.art--echo .e7 { animation: miniEcho 2.7s ease-in-out infinite 1s; }
+
+@keyframes miniEcho {
+  0%, 100% { background: #1b2a4a; }
+  8%       { background: #6d9bff; box-shadow: 0 0 10px rgba(109, 155, 255, 0.9); }
+  26%      { background: #1b2a4a; box-shadow: none; }
+}
+
+/* Fonderie : quatre doses, et le rapport du laboratoire à côté. */
+.art--fonderie i { border-radius: 50%; }
+.art--fonderie .f1, .art--fonderie .f2, .art--fonderie .f3, .art--fonderie .f4 {
+  width: 15px;
+  height: 15px;
+  bottom: 31px;
+}
+.art--fonderie .f1 { left: 7px;  background: #c8763c; }
+.art--fonderie .f2 { left: 24px; background: #6fae9e; }
+.art--fonderie .f3 { left: 41px; background: #c3c25e; }
+.art--fonderie .f4 { left: 58px; background: #5b7fd4; animation: miniEssai 2.8s ease-in-out infinite; }
+
+.art--fonderie .m1, .art--fonderie .m2 {
+  width: 8px;
+  height: 8px;
+  bottom: 16px;
+  border-radius: 0;
+}
+.art--fonderie .m1 { left: 28px; background: var(--bone); }
+.art--fonderie .m2 { left: 40px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--bone); }
+
+@keyframes miniEssai {
+  0%, 55%, 100% { background: #5b7fd4; }
+  65%, 90%      { background: #c8763c; }
+}
+
+/* Quitte : la lampe descend le long du puits, le danger attend en bas. */
+.art--quitte .q0 { left: 37px; top: 8px; width: 2px; height: 56px; background: var(--rail); }
+.art--quitte .q1, .art--quitte .q2, .art--quitte .q3 {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e8c33a;
+  left: 22px;
+}
+.art--quitte .q1 { top: 16px; }
+.art--quitte .q2 { top: 30px; }
+.art--quitte .q3 { top: 44px; opacity: 0.35; }
+.art--quitte .q4 {
+  left: 30px;
+  top: 8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff3cf;
+  box-shadow: 0 0 12px rgba(232, 195, 58, 0.9);
+  animation: miniDescend 2.8s ease-in-out infinite;
+}
+
+@keyframes miniDescend {
+  0%, 8%    { transform: translateY(0); background: #fff3cf; }
+  62%       { transform: translateY(34px); background: #fff3cf; }
+  74%, 100% { transform: translateY(44px); background: #c9453f; box-shadow: 0 0 14px rgba(201, 69, 63, 0.9); }
+}
+
+/* Ricochet : la bille part, rebondit sur le bloc, rejoint la cible. */
+.art--ricochet .w1 { left: 8px; top: 30px; width: 30px; height: 8px; border-radius: 2px; background: #25361a; box-shadow: inset 0 1px 0 rgba(158,209,63,.4); }
+.art--ricochet .c1 {
+  left: 48px;
+  top: 14px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px #9ed13f;
+}
+.art--ricochet .b1 {
+  left: 14px;
+  top: 54px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #f2ffdc;
+  box-shadow: 0 0 9px rgba(226, 244, 190, 0.9);
+  animation: miniRicochet 2.6s cubic-bezier(.4,0,.6,1) infinite;
+}
+
+@keyframes miniRicochet {
+  0%, 6%    { transform: translate(0, 0); }
+  42%       { transform: translate(10px, -14px); }
+  78%, 100% { transform: translate(38px, 4px); }
+}
+
+/* Intrus : neuf pastilles, une qui pivote. */
+.art--intrus i { width: 15px; height: 15px; border-radius: 3px; background: #5a4a5e; }
+.art--intrus .i1 { left: 11px; top: 11px; }
+.art--intrus .i2 { left: 31px; top: 11px; }
+.art--intrus .i3 { left: 51px; top: 11px; }
+.art--intrus .i4 { left: 11px; top: 31px; }
+.art--intrus .i5 { left: 31px; top: 31px; }
+.art--intrus .i6 { left: 51px; top: 31px; }
+.art--intrus .i7 { left: 11px; top: 51px; }
+.art--intrus .i8 { left: 31px; top: 51px; animation: miniIntrus 3s ease-in-out infinite; }
+.art--intrus .i9 { left: 51px; top: 51px; }
+
+@keyframes miniIntrus {
+  0%, 30%, 100% { transform: rotate(0deg); background: #5a4a5e; }
+  55%, 80%      { transform: rotate(24deg); background: #8a6a90; }
+}
+
+/* Cadence : quatre voies, deux notes qui descendent vers la ligne. */
+.art--cadence .v1, .art--cadence .v2, .art--cadence .v3, .art--cadence .v4 {
+  top: 8px; width: 15px; height: 60px; border-radius: 2px; background: rgba(255,255,255,.04);
+}
+.art--cadence .v1 { left: 9px;  box-shadow: inset 0 2px 0 #17b3a0; }
+.art--cadence .v2 { left: 27px; box-shadow: inset 0 2px 0 #3f9fd8; }
+.art--cadence .v3 { left: 45px; box-shadow: inset 0 2px 0 #c78de0; }
+.art--cadence .v4 { left: 63px; box-shadow: inset 0 2px 0 #e0b24a; }
+.art--cadence .ligne { left: 9px; top: 58px; width: 69px; height: 2px; background: rgba(255,255,255,.22); }
+.art--cadence .n1 { left: 27px; top: 14px; width: 15px; height: 6px; border-radius: 3px; background: #3f9fd8; animation: miniTombe 2.2s linear infinite; }
+.art--cadence .n2 { left: 63px; top: 14px; width: 15px; height: 6px; border-radius: 3px; background: #e0b24a; animation: miniTombe 2.2s linear infinite 1.1s; }
+
+@keyframes miniTombe {
+  0%   { transform: translateY(-8px); opacity: 0; }
+  12%  { opacity: 1; }
+  92%  { transform: translateY(44px); opacity: 1; }
+  100% { transform: translateY(46px); opacity: 0; }
+}
+
+/* ---------- L'atelier ---------- */
+
+.soon {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px dashed var(--rail-2);
+  border-radius: 4px;
+}
+
+.soon .art {
+  background: none;
+  box-shadow: none;
+  display: grid;
+  place-items: center;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: 26px;
+  color: var(--rail-2);
+}
+
+.soon p { margin: 0; font-size: 12.5px; line-height: 1.55; color: var(--dim); }
+.soon strong { color: var(--bone); font-weight: 700; }
+
+/* Fonte : le minerai file vers le four, et la pile de lingots monte d'un cran. */
+.art--fonte .l1 { left: 10px; top: 25px; width: 56px; height: 2px; background: var(--rail); }
+.art--fonte .n1 {
+  left: 10px; top: 19px; width: 11px; height: 7px;
+  background: #f0a12e;
+  animation: miniFile 2.6s linear infinite;
+}
+.art--fonte .p1, .art--fonte .p2, .art--fonte .p3 {
+  height: 9px;
+  background: linear-gradient(145deg, #f0a12e, #7a4410);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.art--fonte .p1 { left: 14px; bottom: 11px; width: 48px; }
+.art--fonte .p2 { left: 20px; bottom: 22px; width: 36px; }
+.art--fonte .p3 { left: 26px; bottom: 33px; width: 24px; animation: miniPile 2.6s ease-out infinite; }
+
+@keyframes miniFile {
+  0%        { transform: translateX(0); opacity: 0; }
+  10%       { opacity: 1; }
+  70%       { transform: translateX(46px); opacity: 1; }
+  80%, 100% { transform: translateX(46px); opacity: 0; }
+}
+
+@keyframes miniPile {
+  0%, 74%   { transform: scaleX(0.1); opacity: 0; }
+  86%, 100% { transform: scaleX(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art i { animation: none !important; }
+  .card { transition: none; }
+}

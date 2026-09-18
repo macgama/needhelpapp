@@ -1,0 +1,86 @@
+/* Sillage — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css. Le terrain est une seule toile. */
+
+:root {
+  --signal:      #e8c33a;
+  --signal-deep: #8a6a06;
+
+  --screen-w: 300px;
+  --screen-h: 420px;
+}
+
+.screen--sillage {
+  width: var(--screen-w);
+  height: var(--screen-h);
+  background: #080d12;
+  cursor: crosshair;
+}
+
+#terrain {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* La croix directionnelle. */
+.pad--croix { gap: 6px; }
+.pad--croix .btn { flex: 1; font-size: 17px; }
+
+/* Message bref : sans lui, une zone non conquise passe pour un bug.
+   Surtout pas nommé .flash : le socle réserve cette classe à l'animation
+   du score, et les deux se seraient écrasées. */
+.annonce {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  z-index: 4;
+  transform: translateX(-50%);
+  padding: 7px 13px;
+  border-radius: 4px;
+  background: var(--bone);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  animation: surgir 160ms ease-out;
+}
+
+@keyframes surgir { from { opacity: 0; transform: translate(-50%, -6px); } }
+
+/* ---------- Écrans ---------- */
+
+.pret {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  text-align: center;
+  background: rgba(8, 13, 18, 0.88);
+}
+
+.pret-titre {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: clamp(16px, 5vw, 20px);
+  letter-spacing: 0.07em;
+  color: var(--bone);
+  text-shadow: 0 0 18px rgba(232, 195, 58, 0.6);
+}
+
+.pret p { margin: 0; max-width: 27ch; font-size: 12.5px; line-height: 1.55; color: var(--dim); }
+
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes pulse { 50% { opacity: 0.45; } }
+
+.over-note b { color: var(--signal); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse { animation: none; }
+}

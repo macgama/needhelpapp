@@ -299,7 +299,12 @@ async function voirEcheancier(e) {
   try {
     const r = await api('echeancier&id=' + e.id);
     const reste = r.echeances.length ? r.echeances[r.echeances.length - 1].restant : 0;
-    let html = `<h2>${e.nom}</h2>
+    // Le titre n'est PAS interpolé ici. Le nom d'un emprunt est saisi par
+    // l'utilisateur, et un livre se partage : sans cela, un membre du
+    // ménage écrit du HTML qui s'exécute chez l'autre. Le squelette part
+    // vide, le texte arrive plus bas en textContent — comme partout
+    // ailleurs dans ce fichier.
+    let html = `<h2 class="titre-echeancier"></h2>
       <div class="synthese">
         <div><div class="etiquette">Intérêts sur la durée</div><div class="valeur somme negatif">${fr(r.total_interets)}</div></div>
         <div><div class="etiquette">Capital amorti</div><div class="valeur somme">${fr(r.total_capital)}</div></div>
@@ -325,6 +330,7 @@ async function voirEcheancier(e) {
         `<td class="num">${fr(l.capital)}</td><td class="num">${fr(l.restant)}</td></tr>`).join('') +
       '</tbody></table></div>';
     cible.innerHTML = html;
+    cible.querySelector('.titre-echeancier').textContent = e.nom;
     cible.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (err) {
     cible.innerHTML = '';

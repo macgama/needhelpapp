@@ -1,0 +1,444 @@
+/* LES POLICES SONT AUTO-HÉBERGÉES, COMME PARTOUT DANS CE PROJET.
+
+   Les quinze pages chargeaient Archivo, Bungee et IBM Plex Mono depuis
+   fonts.googleapis.com. Cela transmet l'adresse IP de chaque visiteur à
+   Google, ce qui demande un consentement préalable sous nLPD et RGPD —
+   et le portail s'interdit déjà cette dépendance, noir sur blanc, dans
+   needhelpapp/assets/fonts/LISEZ-MOI.txt.
+
+   Les fichiers se déposent à la main dans assets/fonts/ : le
+   déploiement écarte ce dossier. Tant qu'ils n'y sont pas, les piles de
+   repli déclarées plus bas prennent le relais et tout reste jouable.
+   Voir assets/fonts/LISEZ-MOI.txt. */
+
+@font-face {
+  font-family: Archivo;
+  src: url("../assets/fonts/archivo.woff2") format("woff2");
+  font-weight: 500 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: Bungee;
+  src: url("../assets/fonts/bungee.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../assets/fonts/ibm-plex-mono.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../assets/fonts/ibm-plex-mono-600.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+/* Socle commun à toutes les machines.
+   Palette, typographie, châssis, tableau de bord, commandes.
+   Chaque jeu importe cette feuille puis la sienne, qui redéfinit
+   --signal, --signal-deep et --panel-w, et ajoute son plateau. */
+
+:root {
+  /* Fonds */
+  --ink:      #0d1b1e;
+  --ink-2:    #12262a;
+  --well:     #091518;
+  --rail:     #1d3b41;
+  --rail-2:   #2b565e;
+
+  /* Texte */
+  --bone:     #e8e2d4;
+  --dim:      #7d9ba1;
+
+  /* Accent : chaque machine pose le sien */
+  --signal:      #f5b425;
+  --signal-deep: #8a6206;
+
+  /* Rampe des valeurs : métal froid qui chauffe */
+  --t1:  #cfd8cd;
+  --t2:  #9ec6b6;
+  --t3:  #6fb2a8;
+  --t4:  #4f9bb5;
+  --t5:  #5d86c4;
+  --t6:  #7a6fc9;
+  --t7:  #a565bd;
+  --t8:  #c95b93;
+  --t9:  #e05a66;
+  --t10: #ef7f3c;
+  --t11: #f5b425;
+  --t12: #f7f0d8;
+
+  /* Largeur du bandeau : les jeux l'ajustent à leur plateau */
+  --panel-w: 380px;
+
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+/* Un élément porteur de l'attribut hidden doit disparaître, point. Sans cette
+   règle, tout display: flex ou grid posé par une feuille de jeu l'emporte sur
+   le display: none par défaut du navigateur, et l'élément reste visible. */
+[hidden] { display: none !important; }
+
+html { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(120% 80% at 50% 0%, #16323a 0%, var(--ink) 58%, #081215 100%);
+  color: var(--bone);
+  font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cabinet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
+  padding-inline: 16px;
+  padding-block: 18px 34px;
+}
+
+/* ---------- Retour au hall ---------- */
+
+.topbar {
+  width: 100%;
+  max-width: var(--panel-w);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 0;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+.back:hover, .back:focus-visible { color: var(--bone); }
+
+/* ---------- Entête ---------- */
+
+.head { text-align: center; display: grid; gap: 4px; }
+
+.mark {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: clamp(30px, 9vw, 40px);
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-indent: 0.14em;
+  color: var(--bone);
+  text-shadow: 0 2px 0 #06393f, 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.tag {
+  margin: 0;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ---------- Tableau de bord ---------- */
+
+.readout {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  width: 100%;
+  max-width: var(--panel-w);
+  padding: 2px;
+  background: var(--rail);
+  border-radius: 4px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 56px;
+  padding: 8px 6px;
+  background: var(--well);
+}
+.stat:first-child { border-radius: 3px 0 0 3px; }
+.stat:last-child  { border-radius: 0 3px 3px 0; }
+
+.lab {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.val {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 21px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--bone);
+}
+.val.flash { animation: flash 420ms ease-out; }
+
+@keyframes flash {
+  0%   { color: var(--signal); transform: translateY(-2px); }
+  100% { color: var(--bone); transform: none; }
+}
+
+.chip {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 3px;
+  font-weight: 800;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: var(--t1);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.22);
+}
+
+/* ---------- Le châssis ---------- */
+
+.stage {
+  display: flex;
+  align-items: stretch;
+  --amp: 2px;
+}
+.stage.shake { animation: shake 280ms ease-in-out; }
+
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  20%  { transform: translate(calc(var(--amp) * -1), calc(var(--amp) * 0.4)); }
+  45%  { transform: translate(var(--amp), calc(var(--amp) * -0.5)); }
+  70%  { transform: translate(calc(var(--amp) * -0.6), 0); }
+}
+
+.rail {
+  width: 18px;
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(to bottom, var(--rail-2) 0 1px, transparent 1px 14px),
+    linear-gradient(to right, #17343a, var(--rail) 60%, #0f272c);
+  background-clip: content-box, border-box;
+  padding-inline: 4px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Le puits : la surface de jeu, quel que soit le jeu. */
+.screen {
+  position: relative;
+  background: linear-gradient(to bottom, #0b1c20, var(--well));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  touch-action: none;
+  overflow: hidden;
+}
+
+/* Les vies, en pastilles plutôt qu'en chiffre. */
+.vies {
+  display: flex;
+  gap: 5px;
+  height: 21px;
+  align-items: center;
+}
+
+.vies i {
+  display: block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+.vies i.perdue {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--rail-2);
+}
+
+/* ---------- Jauge ---------- */
+
+.meter {
+  width: 100%;
+  max-width: var(--panel-w);
+  display: grid;
+  gap: 5px;
+}
+
+.meter-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.meter-track {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--rail);
+  overflow: hidden;
+}
+
+.meter-track i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--rail-2);
+  transition: width 220ms ease-out, background 220ms ease;
+}
+
+.meter.hot .meter-track i { background: var(--signal); }
+.meter.hot .meter-head { animation: alarm 1s ease-in-out infinite; }
+.meter.hot .meter-left { color: var(--signal); }
+
+@keyframes alarm { 50% { opacity: 0.25; } }
+
+/* ---------- Fin de partie ---------- */
+
+.over {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 20px;
+  text-align: center;
+  background: rgba(9, 21, 24, 0.93);
+  animation: fade 260ms ease-out;
+}
+
+@keyframes fade { from { opacity: 0; } }
+
+.over-kicker {
+  margin: 0;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.over-score {
+  margin: 0;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 46px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.over-note {
+  margin: 0 0 12px;
+  max-width: 28ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+/* ---------- Commandes ---------- */
+
+.pad {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: var(--panel-w);
+}
+
+.btn {
+  flex: 0 0 64px;
+  min-height: 46px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--rail);
+  color: var(--bone);
+  font-family: Archivo, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 3px 0 #0a1c20;
+  transition: transform 90ms ease, background 120ms ease;
+}
+
+.btn--main {
+  flex: 1;
+  background: var(--signal);
+  color: #10161a;
+  letter-spacing: 0.04em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 3px 0 var(--signal-deep);
+}
+
+.btn:active { transform: translateY(3px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+
+.btn:focus-visible,
+.ghost:focus-visible,
+.back:focus-visible,
+.card:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+
+.help {
+  margin: 0;
+  max-width: 36ch;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--dim);
+}
+
+kbd {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--rail);
+  color: var(--bone);
+}
+
+.ghost {
+  border: 1px solid var(--rail-2);
+  border-radius: 4px;
+  background: none;
+  color: var(--dim);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.ghost:hover { color: var(--bone); border-color: var(--bone); }
+/* Le pied du hall porte un <a> qui doit ressembler aux boutons voisins. */
+a.ghost { display: inline-block; text-decoration: none; }
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage.shake, .meter.hot .meter-head, .over { animation-duration: 1ms; }
+}

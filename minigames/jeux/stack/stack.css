@@ -1,0 +1,45 @@
+/* Stack — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css. Le plateau est une seule toile :
+   le ciel, la tour et les chutes y sont peints par le script. */
+
+:root {
+  --signal:      #4fd8e8;
+  --signal-deep: #16707c;
+
+  /* Dimensions posées par le script */
+  --screen-w: 340px;
+  --screen-h: 528px;
+}
+
+.screen--stack {
+  width: var(--screen-w);
+  height: var(--screen-h);
+  background: #0a1620;
+}
+
+#sky {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* La série de poses parfaites : le seul chiffre qui monte vite. */
+.streak {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 21px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--dim);
+  transition: color 160ms ease;
+}
+.streak i { font-style: normal; font-size: 12px; }
+.streak.live { color: var(--signal); }
+
+.over-note b {
+  color: var(--signal);
+  font-weight: 700;
+}

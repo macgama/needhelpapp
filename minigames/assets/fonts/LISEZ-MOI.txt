@@ -1,0 +1,30 @@
+Déposez ici les fichiers de polices, au format WOFF2 :
+
+  archivo.woff2             (Archivo, variable 500-800)
+  bungee.woff2              (Bungee, 400 — la seule graisse qui existe)
+  ibm-plex-mono.woff2       (IBM Plex Mono, 400)
+  ibm-plex-mono-600.woff2   (IBM Plex Mono, 600)
+
+Les trois familles sont sous licence SIL Open Font, librement
+redistribuables. Téléchargez-les depuis Google Fonts, puis passez-les par
+un sous-ensemble latin étendu (outil : glyphhanger, ou fontsource).
+
+Bungee ne sert qu'aux titres : quelques dizaines de glyphes suffisent, et
+le sous-ensemble la fait tomber sous 10 Ko.
+
+Ne PAS charger les polices depuis fonts.googleapis.com : cela transmet
+l'adresse IP de chaque visiteur à Google, ce qui exige un consentement
+préalable sous nLPD et RGPD. C'est la règle du portail, et elle vaut ici.
+Les trois liens vers Google Fonts qui se trouvaient dans les quinze pages
+ont été retirés pour cette raison.
+
+TANT QUE CES FICHIERS NE SONT PAS DÉPOSÉS, LES JEUX RESTENT JOUABLES.
+Chaque `font-family` porte une pile de repli — Helvetica, Arial,
+ui-monospace — et `font-display: swap` laisse le texte s'afficher tout de
+suite. Seule l'allure change : Bungee, qui est une police d'affichage,
+retombe sur Archivo puis sur une linéale ordinaire, et les titres perdent
+leur caractère. Ce n'est pas une panne, c'est une page moins jolie.
+
+Ce dossier n'est PAS déposé par le déploiement : la liste d'exclusions de
+.github/workflows/deploiement.yml écarte `assets/fonts/`. Les fichiers se
+déposent une fois, à la main, par FTP ou SFTP.

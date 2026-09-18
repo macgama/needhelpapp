@@ -7,9 +7,14 @@ Deux fichiers dans `.github/workflows/` s'en chargent :
 | `controles.yml` | Vérifie le code à chaque envoi. Tourne tout seul. |
 | `deploiement.yml` | Dépose sur Infomaniak. Automatique sur `main`, ou à la main. |
 
-Cinq applications sont déclarées : le portail, teaching, familyshop, budget
-et roadsecurity. Une application dont le chemin n'est pas renseigné est
-ignorée sans bruit.
+Six applications sont déclarées : le portail, teaching, familyshop, budget,
+roadsecurity et machines. Une application dont le chemin n'est pas renseigné
+est ignorée sans bruit.
+
+Deux d'entre elles portent un nom de dossier différent de leur adresse, et
+c'est voulu : `roadsecurity/` est la vitrine de l'application Android
+*Conduite*, et `minigames/` s'appelle *Les petites machines* en ligne. Le
+dossier dit ce que c'est, l'adresse dit comment on l'appelle.
 
 Le réglage se fait une seule fois, et presque entièrement depuis le
 navigateur. Comptez vingt minutes.
@@ -74,6 +79,7 @@ Onglet **Variables**, bouton *New repository variable* :
 | `CHEMIN_FAMILYSHOP` | celui de familyshop.needhelpapp.com |
 | `CHEMIN_BUDGET` | **laissez-le vide tant que le sous-domaine n'existe pas** |
 | `CHEMIN_ROADSECURITY` | celui de roadsecurity.needhelpapp.com — la vitrine de l'application Conduite |
+| `CHEMIN_MACHINES` | celui de machines.needhelpapp.com — la collection de jeux, dossier `minigames/` |
 
 Le mot de passe et la clé de chiffrement ne passent jamais par GitHub :
 ils vivent dans `config.php` sur le serveur, et le déploiement n'y touche
@@ -115,7 +121,7 @@ serveur sans être dans le dépôt :
 | Exclu | Pourquoi |
 |---|---|
 | `config.php`, `api/config.php`, `config/nha.php` | Mots de passe et clé de chiffrement. Les écraser couperait le site. |
-| `assets/fonts/`, `assets/img/` | Déposés à la main, absents du dépôt. |
+| `assets/fonts/`, `assets/img/` | Déposés à la main, absents du dépôt. Cela vaut aussi pour les trois polices de `minigames/` : voir son `assets/fonts/LISEZ-MOI.txt`. |
 | `data/`, `*.sqlite` | Données de production. |
 | `sql/` | Les schémas n'ont rien à faire sur le web. |
 | `*.md` | Documentation interne. |

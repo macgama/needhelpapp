@@ -8,7 +8,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/nha-core.php';
 
 /** Doit correspondre à NHA_BUILD_CORE. Voir includes/nha-core.php. */
-const NHA_BUILD_HTTP = '2026-09-03.3';
+const NHA_BUILD_HTTP = '2026-09-17.1';
 
 const NHA_CSRF_COOKIE = 'nha_csrf';
 
@@ -105,6 +105,33 @@ function csrf_cookie(): string {
 
 /** Refuse la requête si le jeton d'en-tête ne correspond pas au cookie. */
 function csrf_verifier(): void {
+    /* LA DOUBLE SOUMISSION NE SUFFIT PAS SEULE, ICI.
+     *
+     * Le cookie nha_csrf est posé sur .needhelpapp.com — il le faut, la
+     * connexion vaut sur tous les sous-domaines. Mais un cookie de
+     * domaine parent s'ÉCRIT aussi depuis n'importe lequel d'entre eux :
+     * une faille sur teaching. ou familyshop. permettrait d'y poser un
+     * jeton choisi, puis de forger une requête vers le portail avec le
+     * même jeton en en-tête. La comparaison ci-dessous serait alors
+     * parfaitement satisfaite — et elle aurait raison de l'être, les
+     * deux valeurs correspondant bel et bien.
+     *
+     * Sec-Fetch-Site ferme cette porte. C'est le NAVIGATEUR qui le pose,
+     * jamais la page, et il distingue « same-origin » de « same-site » —
+     * c'est-à-dire justement le sous-domaine voisin.
+     *
+     * On ne refuse QUE ce qui se déclare étranger. Un en-tête absent est
+     * un navigateur qui ne le connaît pas, pas une attaque : fermer
+     * là-dessus exclurait des gens sans rien gagner, le jeton restant
+     * exigé dans tous les cas. Aucune page du projet n'appelle l'API
+     * d'un autre sous-domaine — c'est vérifiable, et c'est ce qui permet
+     * ce contrôle sans rien casser.
+     */
+    $provenance = (string)($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '');
+    if ($provenance !== '' && $provenance !== 'same-origin' && $provenance !== 'none') {
+        json_erreur('Cette requête ne vient pas de nos pages.', 403);
+    }
+
     $cookie = $_COOKIE[NHA_CSRF_COOKIE] ?? '';
     $entete = $_SERVER['HTTP_X_NHA_CSRF'] ?? '';
     if ($cookie === '') {
@@ -134,29 +161,67 @@ function ip_binaire(): ?string {
 }
 
 /**
+ * La clé sous laquelle une tentative est comptée.
+ *
+ * UNE DEMANDE DE MOT DE PASSE OUBLIÉ N'EST PAS UNE TENTATIVE DE
+ * CONNEXION, ET C'EST TOUT L'OBJET DE CETTE FONCTION.
+ *
+ * Les deux tombaient dans le même seau. Comme limiter() compte « cette
+ * adresse OU cette IP », huit demandes de réinitialisation lancées sur
+ * une adresse connue suffisaient à empêcher son propriétaire de se
+ * connecter pendant un quart d'heure, depuis n'importe où. Le jeton
+ * anti-CSRF n'y changeait rien : celui qui attaque se le délivre à
+ * lui-même. L'inscription ouvrait exactement la même porte, en signalant
+ * un échec chaque fois qu'une adresse existait déjà.
+ *
+ * Préfixer la clé sépare les comptages sans toucher aux index :
+ * « reinit:paul@exemple.ch » et « paul@exemple.ch » ne se rencontrent
+ * plus. Le préfixe reste lisible tel quel dans /admin/journal.php, où il
+ * dit désormais de quel genre d'échec il s'agissait.
+ *
+ * L'adresse est tronquée AVANT d'être préfixée : la colonne fait 190
+ * caractères, et une adresse à la limite ferait déborder la clé — donc,
+ * en base stricte, échouer l'écriture au pire moment.
+ *
+ * (teaching tranche la même question avec une colonne « kind ». C'est
+ * plus propre, et cela demande une migration sur une table que quatre
+ * applications interrogent : à faire le jour où une troisième sorte de
+ * tentative apparaîtra.)
+ */
+function cle_tentative(?string $email, string $portee = 'connexion'): ?string {
+    if ($email === null) { return null; }
+    $prefixe = $portee === 'connexion' ? '' : $portee . ':';
+    return $prefixe . mb_substr(nha_normalise_email($email), 0, 190 - mb_strlen($prefixe));
+}
+
+/**
  * Refuse au-delà de $max tentatives échouées en $minutes minutes,
  * pour une adresse e-mail ou pour une IP. La table est commune à toutes
  * les applications : changer de sous-domaine ne remet pas le compteur à zéro.
+ *
+ * $portee sépare les comptages. Voir cle_tentative().
  */
-function limiter(?string $email, int $max = 8, int $minutes = 15): void {
+function limiter(?string $email, int $max = 8, int $minutes = 15,
+                 string $portee = 'connexion'): void {
     $st = nha_db()->prepare(
         'SELECT COUNT(*) FROM login_attempts
          WHERE success = 0
            AND attempted_at > DATE_SUB(NOW(), INTERVAL ? MINUTE)
            AND (email = ? OR (ip = ? AND ip IS NOT NULL))'
     );
-    $st->execute([$minutes, $email !== null ? nha_normalise_email($email) : '', ip_binaire()]);
+    $st->execute([$minutes, cle_tentative($email, $portee) ?? '', ip_binaire()]);
     if ((int)$st->fetchColumn() >= $max) {
         json_erreur('Trop de tentatives. Réessayez dans un quart d\'heure.', 429);
     }
 }
 
-function noter_tentative(?string $email, bool $succes): void {
+function noter_tentative(?string $email, bool $succes,
+                         string $portee = 'connexion'): void {
     $st = nha_db()->prepare(
         'INSERT INTO login_attempts (email, ip, app_id, success)
          VALUES (?, ?, (SELECT id FROM apps WHERE code = ?), ?)'
     );
-    $st->execute([$email !== null ? nha_normalise_email($email) : null,
+    $st->execute([cle_tentative($email, $portee),
                   ip_binaire(), nha_app_code(), $succes ? 1 : 0]);
 }
 

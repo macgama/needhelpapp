@@ -1,0 +1,128 @@
+/* Intrus — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css.
+
+   La différence à trouver change de NATURE d'une manche à l'autre : teinte,
+   clarté, rotation, taille, décalage. Une différence seulement colorée
+   exclurait du jeu ceux qui distinguent mal les teintes ; ici la couleur n'est
+   qu'une possibilité sur cinq. */
+
+:root {
+  --signal:      #dd6ad0;
+  --signal-deep: #6e2a68;
+
+  --panel-w: 340px;
+}
+
+.stage { width: 100%; max-width: var(--panel-w); }
+
+.screen--intrus {
+  flex: 1;
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 10px;
+  display: grid;
+  place-items: center;
+}
+
+.grille {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+.case {
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* La pastille : c'est elle qui porte la différence. */
+.case i {
+  display: block;
+  width: var(--taille, 74%);
+  aspect-ratio: 1;
+  border-radius: var(--rond, 4px);
+  background: var(--teinte);
+  transform: rotate(var(--tourne, 0deg)) translate(var(--dx, 0), var(--dy, 0));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  transition: none;
+}
+
+.case.trouve i { animation: trouve 420ms ease-out; }
+.case.rate i { animation: rate 420ms ease-in-out; }
+
+@keyframes trouve {
+  0%   { box-shadow: 0 0 0 0 rgba(221, 106, 208, 0.85); }
+  100% { box-shadow: 0 0 0 18px rgba(221, 106, 208, 0); }
+}
+
+@keyframes rate {
+  20%, 60% { transform: rotate(var(--tourne, 0deg)) translate(-4px, 0); }
+  40%, 80% { transform: rotate(var(--tourne, 0deg)) translate(4px, 0); }
+}
+
+/* On désigne l'intrus après coup, pour que l'œil apprenne. */
+.case.designe i { box-shadow: 0 0 0 3px var(--signal), 0 0 18px rgba(221, 106, 208, 0.6); }
+
+/* ---------- Écrans ---------- */
+
+.pret {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  text-align: center;
+  background: rgba(14, 10, 16, 0.93);
+}
+
+.pret-titre {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: clamp(15px, 4.8vw, 19px);
+  letter-spacing: 0.06em;
+  color: var(--bone);
+}
+
+.pret p { margin: 0; max-width: 30ch; font-size: 12.5px; line-height: 1.6; color: var(--dim); }
+.pret b { color: var(--signal); }
+
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes pulse { 50% { opacity: 0.45; } }
+
+.over-note b { color: var(--signal); font-weight: 700; }
+
+/* La nature de la différence, annoncée après coup seulement. */
+.nature {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  z-index: 4;
+  transform: translateX(-50%);
+  padding: 5px 12px;
+  border-radius: 3px;
+  background: rgba(14, 10, 16, 0.92);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--signal);
+  white-space: nowrap;
+  animation: surgir 160ms ease-out;
+}
+
+@keyframes surgir { from { opacity: 0; transform: translate(-50%, 6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse, .case.trouve i, .case.rate i, .nature { animation: none; }
+}

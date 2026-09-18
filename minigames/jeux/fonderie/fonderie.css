@@ -1,0 +1,236 @@
+/* Fonderie — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css.
+
+   Comme Tri, cette machine n'a pas de couleur à elle : son habillage est en
+   acier froid, pour que les seules teintes franches de l'écran soient celles
+   des métaux qu'on doit deviner. Tri prend le registre chaud (os), Fonderie
+   le registre froid. */
+
+:root {
+  --signal:      #9fb0bd;
+  --signal-deep: #47555f;
+
+  --panel-w: 340px;
+  --dose: clamp(30px, 8.6vw, 38px);
+}
+
+.stage { width: 100%; max-width: var(--panel-w); }
+
+.screen--fonderie {
+  flex: 1;
+  min-width: 0;
+  min-height: 300px;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- La dose de métal ---------- */
+
+.dose {
+  width: var(--dose);
+  height: var(--dose);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--metal, #1a242b);
+  color: var(--encre, rgba(0, 0, 0, 0.55));
+  font-size: calc(var(--dose) * 0.4);
+  line-height: 1;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35), inset 0 -3px 0 rgba(0, 0, 0, 0.25),
+              0 2px 5px rgba(0, 0, 0, 0.45);
+}
+
+.dose.creuse {
+  background: none;
+  color: transparent;
+  box-shadow: inset 0 0 0 2px var(--rail), inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.dose.neuve { animation: coule 200ms ease-out; }
+
+@keyframes coule { from { transform: translateY(-8px) scale(0.8); opacity: 0; } }
+
+/* ---------- La commande ---------- */
+
+.commande {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--rail);
+}
+
+.commande .lab { flex: 1; text-align: left; }
+.commande .moules { display: flex; gap: 5px; }
+
+.moule {
+  width: calc(var(--dose) * 0.78);
+  height: calc(var(--dose) * 0.78);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #16202a;
+  box-shadow: inset 0 0 0 1px var(--rail-2);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--dim);
+}
+
+/* ---------- L'historique des essais ---------- */
+
+.essais {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.essais:empty::after {
+  content: "Aucun essai coulé. Composez un alliage et versez.";
+  display: block;
+  padding-top: 10px;
+  max-width: 30ch;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.essai {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: entre 200ms ease-out;
+}
+
+@keyframes entre { from { opacity: 0; transform: translateY(6px); } }
+
+.essai .rang {
+  width: 14px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--dim);
+}
+
+.essai .doses { display: flex; gap: 4px; }
+.essai .dose { width: calc(var(--dose) * 0.72); height: calc(var(--dose) * 0.72); font-size: calc(var(--dose) * 0.3); }
+
+/* Le rapport : carré plein = à sa place, cercle creux = bon métal mal placé. */
+.rapport {
+  display: grid;
+  grid-template-columns: repeat(2, 9px);
+  gap: 3px;
+  margin-left: auto;
+}
+
+.rapport i { width: 9px; height: 9px; background: none; box-shadow: inset 0 0 0 1px var(--rail-2); }
+.rapport i.placee { background: var(--bone); box-shadow: none; }
+.rapport i.deplacee { border-radius: 50%; box-shadow: inset 0 0 0 2px var(--bone); }
+
+/* ---------- Le creuset ---------- */
+
+.creuset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-top: 9px;
+  border-top: 1px solid var(--rail);
+}
+.creuset.refus { animation: refus 380ms ease-in-out; }
+
+@keyframes refus {
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.creuset .dose { cursor: pointer; }
+
+/* ---------- La palette ---------- */
+
+.palette {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  max-width: var(--panel-w);
+}
+
+.metal {
+  flex: 0 1 44px;
+  min-width: 0;
+  aspect-ratio: 1 / 1.22;
+  display: grid;
+  place-items: center;
+  gap: 1px;
+  border: 0;
+  border-radius: 4px;
+  background: #16202a;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 3px 0 #0a1116;
+  transition: transform 90ms ease, background 130ms ease;
+}
+.metal:active { transform: translateY(2px); }
+.metal:hover { background: #1d2b36; }
+
+.metal .pastille {
+  width: 60%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--metal);
+  display: grid;
+  place-items: center;
+  color: var(--encre);
+  font-size: 11px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.metal .nom {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 7.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ---------- Écrans ---------- */
+
+.pret {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  text-align: center;
+  background: rgba(10, 17, 22, 0.93);
+}
+
+.pret-titre {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: clamp(15px, 4.8vw, 19px);
+  letter-spacing: 0.06em;
+  color: var(--bone);
+}
+
+.pret p { margin: 0; max-width: 30ch; font-size: 12.5px; line-height: 1.6; color: var(--dim); }
+.pret b { color: var(--bone); }
+
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes pulse { 50% { opacity: 0.45; } }
+
+.over .moules { display: flex; gap: 5px; margin-bottom: 4px; }
+.over-note b { color: var(--bone); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse, .dose.neuve, .essai, .creuset.refus { animation: none; }
+}

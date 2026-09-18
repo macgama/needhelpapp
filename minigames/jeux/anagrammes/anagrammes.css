@@ -1,0 +1,202 @@
+/* Anagrammes — ce qui n'appartient qu'à cette machine.
+   À charger après css/arcade.css. */
+
+:root {
+  --signal:      #a082e8;
+  --signal-deep: #4a3690;
+
+  --panel-w: 352px;
+}
+
+.stage { width: 100%; max-width: var(--panel-w); }
+
+.screen--ana {
+  flex: 1;
+  min-width: 0;
+  min-height: 330px;
+  padding: 14px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---------- La saisie ---------- */
+
+.saisie {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  min-height: 34px;
+}
+
+.saisie .vide {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.saisie b {
+  display: grid;
+  place-items: center;
+  flex: 0 1 30px;
+  min-width: 0;
+  aspect-ratio: 1 / 1.08;
+  border-radius: 3px;
+  background: var(--signal);
+  color: #14101f;
+  font-size: clamp(13px, 3.6vw, 17px);
+  font-weight: 800;
+  animation: entre 130ms ease-out;
+}
+
+@keyframes entre { from { transform: translateY(-7px); opacity: 0; } }
+
+.saisie.refus { animation: refus 360ms ease-in-out; }
+
+@keyframes refus {
+  20%, 60% { transform: translateX(-7px); }
+  40%, 80% { transform: translateX(7px); }
+}
+
+/* ---------- Le tirage ---------- */
+
+.rack {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.jeton {
+  /* Base de 42 px, mais le rétrécissement est autorisé : sept jetons tiennent
+     toujours sur une seule ligne, sans repli. */
+  flex: 0 1 42px;
+  min-width: 0;
+  aspect-ratio: 1 / 1.14;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: linear-gradient(to bottom, #f0ead9, #ded5be);
+  color: #1b1526;
+  font-family: Archivo, sans-serif;
+  font-size: clamp(15px, 4.6vw, 21px);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.7), 0 3px 0 #8d8571, 0 4px 8px rgba(0, 0, 0, 0.4);
+  transition: background 130ms ease, box-shadow 130ms ease, color 130ms ease, transform 110ms ease;
+}
+
+.jeton:active { transform: translateY(2px); }
+
+.jeton.prise {
+  background: none;
+  color: transparent;
+  box-shadow: inset 0 0 0 1px var(--rail), inset 0 2px 5px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.jeton.tourne { animation: tourne 260ms ease-in-out; }
+
+@keyframes tourne {
+  50% { transform: rotateY(84deg) scale(0.9); }
+}
+
+/* ---------- Les mots trouvés ---------- */
+
+.trouves {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 4px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-top: 2px;
+  border-top: 1px solid var(--rail);
+}
+
+.trouves:empty::after {
+  content: "Les mots trouvés s'afficheront ici.";
+  font-size: 12px;
+  color: var(--dim);
+  padding-top: 8px;
+}
+
+.mot {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 3px;
+  background: var(--rail);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--bone);
+  animation: entre 180ms ease-out;
+}
+
+.mot span {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--dim);
+}
+
+.mot.long { background: var(--signal-deep); }
+.mot.plein { background: var(--signal); color: #14101f; }
+.mot.plein span { color: rgba(0, 0, 0, 0.55); }
+
+/* ---------- Écrans ---------- */
+
+.pret {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  text-align: center;
+  background: rgba(9, 21, 24, 0.9);
+}
+
+.pret-titre {
+  margin: 0;
+  font-family: Bungee, Archivo, sans-serif;
+  font-size: clamp(17px, 5.2vw, 21px);
+  letter-spacing: 0.07em;
+  color: var(--bone);
+}
+
+.pret p { margin: 0; max-width: 28ch; font-size: 13px; line-height: 1.55; color: var(--dim); }
+
+.rates {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  max-width: 100%;
+  margin-bottom: 4px;
+}
+
+.rates i {
+  font-style: normal;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--rail);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--dim);
+}
+.rates i.base { background: var(--signal); color: #14101f; }
+
+@media (prefers-reduced-motion: reduce) {
+  .saisie b, .mot, .jeton.tourne, .saisie.refus { animation: none; }
+}
+
+.saisie .alerte { color: var(--signal); }
