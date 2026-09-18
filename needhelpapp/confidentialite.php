@@ -1,4 +1,5 @@
 <?php
+<<<<<<< Updated upstream
 /**
  * Politique de confidentialité.
  *
@@ -255,6 +256,139 @@ nha_page_debut(
       nouveau destinataire — vous est annoncée par courriel au moins trente
       jours à l'avance, et vous laisse le temps de partir avec vos
       données.</p>
+=======
+require __DIR__ . '/partials/page.php';
+nha_page_debut('Confidentialité', 'Quelles données NeedHelpApp collecte, pourquoi, combien de temps, et comment exercer vos droits.');
+?>
+<section class="doc">
+  <div class="enveloppe lecture">
+    <h1>Politique de <em>confidentialité</em></h1>
+    <p class="date-maj">Version 1.0 — en vigueur depuis le <?= date('j F Y') ?></p>
+
+    <p>Ce document décrit ce que nous savons de vous, pourquoi, combien de temps, et ce que vous pouvez exiger. Il vaut pour needhelpapp.com et pour toutes les applications qui en dépendent.</p>
+    <p>Le principe qui guide l'ensemble&nbsp;: nous ne collectons que ce dont le service a besoin pour fonctionner. Nous ne vendons rien, nous n'affichons aucune publicité, et nous n'installons aucun traceur d'audience.</p>
+
+    <div class="a-completer">
+      <strong>À compléter&nbsp;:</strong> l'identité du responsable du traitement (article 1), le prestataire de paiement (article 5) et, si vous traitez régulièrement des données de personnes situées dans l'Union européenne, la désignation éventuelle d'un représentant au sens de l'art. 27 RGPD. À faire relire en même temps que les conditions générales.
+    </div>
+
+    <nav class="sommaire" aria-label="Sommaire">
+      <ol>
+        <li><a href="#c1">Qui est responsable</a></li>
+        <li><a href="#c2">Quelles données, et pourquoi</a></li>
+        <li><a href="#c3">Sur quelle base juridique</a></li>
+        <li><a href="#c4">Combien de temps</a></li>
+        <li><a href="#c5">Qui d'autre y a accès</a></li>
+        <li><a href="#c6">Les cookies</a></li>
+        <li><a href="#c7">Le cas des enfants</a></li>
+        <li><a href="#c8">La séparation entre applications</a></li>
+        <li><a href="#c9">La sécurité</a></li>
+        <li><a href="#c10">Vos droits</a></li>
+        <li><a href="#c11">Modifications</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="c1">1. Qui est responsable</h2>
+    <p>Le responsable du traitement est [NOM DE LA STRUCTURE], [adresse complète], Suisse. Pour toute question relative à vos données&nbsp;: <a href="mailto:donnees@needhelpapp.com">donnees@needhelpapp.com</a>.</p>
+    <p>Le traitement est soumis à la loi fédérale suisse sur la protection des données (nLPD) et, pour les personnes situées dans l'Union européenne, au règlement général sur la protection des données (RGPD).</p>
+
+    <h2 id="c2">2. Quelles données, et pourquoi</h2>
+    <table>
+      <thead><tr><th>Donnée</th><th>Pourquoi</th></tr></thead>
+      <tbody>
+        <tr><td>Adresse e-mail</td><td>Identifiant du compte, récupération du mot de passe, messages indispensables au service.</td></tr>
+        <tr><td>Prénom, si vous le donnez</td><td>Vous saluer par votre nom. Facultatif.</td></tr>
+        <tr><td>Mot de passe</td><td>Protéger l'accès. Conservé sous forme d'empreinte Argon2id, jamais en clair. Nous sommes dans l'impossibilité technique de le lire.</td></tr>
+        <tr><td>Identifiant Google, si vous utilisez ce mode de connexion</td><td>Vous reconnaître d'une visite à l'autre.</td></tr>
+        <tr><td>Contenus que vous saisissez</td><td>Dictées, listes de vocabulaire, exercices, membres d'association, annonces&nbsp;: c'est le service lui-même.</td></tr>
+        <tr><td>Résultats d'exercices</td><td>Afficher votre progression et vos bilans.</td></tr>
+        <tr><td>Abonnement et statut de paiement</td><td>Savoir à quelles fonctions vous avez droit, et établir les factures.</td></tr>
+        <tr><td>Sessions ouvertes&nbsp;: date, adresse IP, navigateur</td><td>Vous garder connecté, vous permettre de fermer une session oubliée, détecter les accès frauduleux.</td></tr>
+        <tr><td>Tentatives de connexion échouées</td><td>Bloquer les attaques par essais répétés. Effacées après trente jours.</td></tr>
+      </tbody>
+    </table>
+    <p>Nous ne collectons ni géolocalisation, ni carnet d'adresses, ni contenu de votre appareil, ni historique de navigation hors de nos sites. Nous ne pratiquons aucun profilage publicitaire et ne prenons aucune décision automatisée produisant des effets juridiques à votre égard.</p>
+    <p>Sans compte, l'application d'apprentissage fonctionne intégralement sur votre appareil&nbsp;: vos textes et vos exercices ne nous parviennent pas.</p>
+
+    <h2 id="c3">3. Sur quelle base juridique</h2>
+    <ul>
+      <li><strong>Exécution du contrat</strong> (art. 6 par. 1 let. b RGPD)&nbsp;: compte, contenus, abonnement, facturation.</li>
+      <li><strong>Intérêt légitime</strong> (let. f)&nbsp;: sécurité du service, prévention des abus, journalisation technique.</li>
+      <li><strong>Obligation légale</strong> (let. c)&nbsp;: conservation des pièces comptables.</li>
+      <li><strong>Consentement</strong> (let. a)&nbsp;: uniquement pour ce qui n'est pas nécessaire, par exemple une lettre d'information à laquelle vous vous seriez inscrit. Il se retire aussi facilement qu'il se donne.</li>
+    </ul>
+
+    <h2 id="c4">4. Combien de temps</h2>
+    <dl>
+      <dt>Compte et contenus</dt><dd>Tant que le compte existe.</dd>
+      <dt>Après suppression du compte</dt><dd>Effacement sous trente jours, délai destiné à couvrir une suppression accidentelle et le cycle des sauvegardes.</dd>
+      <dt>Sauvegardes</dt><dd>Conservées trente jours par l'hébergeur, puis écrasées.</dd>
+      <dt>Sessions</dt><dd>Trente jours, ou jusqu'à déconnexion.</dd>
+      <dt>Tentatives de connexion</dt><dd>Trente jours.</dd>
+      <dt>Pièces comptables et factures</dt><dd>Dix ans, comme l'exige le droit commercial suisse (art. 958f CO).</dd>
+      <dt>Messages envoyés via le formulaire de contact</dt><dd>Deux ans après la fin de l'échange.</dd>
+    </dl>
+
+    <h2 id="c5">5. Qui d'autre y a accès</h2>
+    <p>Nous ne vendons, ne louons et n'échangeons aucune donnée. Trois catégories de tiers seulement interviennent&nbsp;:</p>
+    <dl>
+      <dt>Infomaniak Network SA, Genève</dt>
+      <dd>Hébergement du site, de la base de données et des e-mails. Données stockées exclusivement en Suisse.</dd>
+      <dt>[PRESTATAIRE DE PAIEMENT]</dt>
+      <dd>Traitement des paiements. Il reçoit votre e-mail et le montant&nbsp;; nous ne recevons ni ne stockons vos données de carte. Ce prestataire applique sa propre politique de confidentialité.</dd>
+      <dt>Google LLC, si vous choisissez la connexion Google</dt>
+      <dd>Uniquement dans ce cas, et à votre initiative. Nous recevons alors votre adresse e-mail et un identifiant technique. Si vous n'utilisez pas ce mode de connexion, aucune donnée n'est échangée avec Google&nbsp;: nos polices de caractères et nos scripts sont hébergés sur nos propres serveurs.</dd>
+    </dl>
+    <p>Nous ne transférons aucune donnée hors de Suisse, sauf le cas ci-dessus de la connexion Google, que vous déclenchez vous-même. Nous répondrions à une réquisition d'une autorité suisse compétente, dans le cadre strict de la loi&nbsp;; nous n'accédons pas à vos contenus autrement.</p>
+
+    <h2 id="c6">6. Les cookies</h2>
+    <p>Deux cookies, tous deux nécessaires au fonctionnement. Aucun ne sert à la mesure d'audience ou à la publicité&nbsp;: c'est pourquoi ce site ne vous impose aucun bandeau de consentement.</p>
+    <table>
+      <thead><tr><th>Nom</th><th>Rôle</th><th>Durée</th></tr></thead>
+      <tbody>
+        <tr><td>nha_session</td><td>Vous garde connecté sur l'ensemble des applications.</td><td>30 jours</td></tr>
+        <tr><td>nha_csrf</td><td>Vérifie que les formulaires envoyés proviennent bien de nos pages.</td><td>30 jours</td></tr>
+      </tbody>
+    </table>
+    <p>Les applications utilisent également le stockage local de votre navigateur pour conserver vos exercices en cours quand vous n'avez pas de compte. Ces données ne quittent pas votre appareil et disparaissent si vous videz votre navigateur.</p>
+
+    <h2 id="c7">7. Le cas des enfants</h2>
+    <p>L'application d'apprentissage s'adresse notamment à des élèves. Elle est conçue pour fonctionner <em>sans</em> compte&nbsp;: dans ce mode, aucune donnée d'enfant ne nous parvient. C'est le mode que nous recommandons pour un usage en classe.</p>
+    <p>Lorsqu'un compte est créé pour un enfant de moins de seize ans, il relève du titulaire de l'autorité parentale, qui peut à tout moment consulter, exporter ou supprimer les données. Nous ne collectons dans ce cadre que le strict nécessaire&nbsp;: une adresse e-mail, un prénom facultatif, et les résultats d'exercices.</p>
+    <p>Aucune application NeedHelpApp ne comporte de messagerie ouverte, de profil public, de fonction de mise en relation avec des inconnus, ni de publicité ciblée. Nous ne cherchons pas à savoir dans quelle école ni dans quelle classe se trouve un élève.</p>
+
+    <h2 id="c8">8. La séparation entre applications</h2>
+    <p>Un compte unique ne signifie pas des données mises en commun. Seuls votre identité, votre session et votre abonnement sont partagés entre applications&nbsp;: ce sont les trois éléments nécessaires pour vous reconnaître et savoir à quoi vous avez droit.</p>
+    <p>Le contenu métier reste cloisonné. Les exercices de votre enfant ne sont pas accessibles depuis l'application sportive, les membres de votre club ne sont pas visibles depuis l'application scolaire, et un artisan ne voit rien de votre activité ailleurs. Cette séparation est structurelle&nbsp;: chaque application dispose de sa propre base de données.</p>
+
+    <h2 id="c9">9. La sécurité</h2>
+    <ul>
+      <li>Tout le trafic est chiffré (HTTPS obligatoire, HSTS activé).</li>
+      <li>Les mots de passe sont hachés avec Argon2id, jamais conservés en clair et jamais visibles par nous.</li>
+      <li>Les jetons de session sont stockés sous forme d'empreinte&nbsp;: un accès à notre base ne permettrait pas de se connecter à votre place.</li>
+      <li>Les tentatives de connexion sont limitées, sur l'ensemble des applications à la fois.</li>
+      <li>Les accès à la base sont restreints et les requêtes systématiquement préparées.</li>
+      <li>Les sauvegardes automatiques sont assurées par l'hébergeur, en Suisse.</li>
+    </ul>
+    <p>Aucun système n'est infaillible. En cas de violation présentant un risque élevé pour vos droits, nous informons les personnes concernées et le Préposé fédéral à la protection des données et à la transparence, dans les délais légaux.</p>
+
+    <h2 id="c10">10. Vos droits</h2>
+    <p>Vous pouvez à tout moment&nbsp;:</p>
+    <ul>
+      <li><strong>accéder</strong> à vos données et en obtenir une copie lisible&nbsp;— le bouton «&nbsp;Télécharger mes données&nbsp;» de votre espace personnel le fait immédiatement&nbsp;;</li>
+      <li><strong>rectifier</strong> ce qui est inexact, directement depuis votre profil&nbsp;;</li>
+      <li><strong>supprimer</strong> votre compte et vos données&nbsp;;</li>
+      <li><strong>vous opposer</strong> à un traitement fondé sur notre intérêt légitime&nbsp;;</li>
+      <li><strong>limiter</strong> un traitement contesté, le temps de la vérification&nbsp;;</li>
+      <li><strong>retirer votre consentement</strong> lorsqu'il en constitue la base&nbsp;;</li>
+      <li><strong>recevoir vos données dans un format réutilisable</strong>, ce que fait l'export au format JSON.</li>
+    </ul>
+    <p>Écrivez à <a href="mailto:donnees@needhelpapp.com">donnees@needhelpapp.com</a>. Nous répondons dans les trente jours. Nous pouvons demander un élément permettant de vérifier votre identité, afin de ne pas remettre vos données à quelqu'un d'autre.</p>
+    <p>Si notre réponse ne vous satisfait pas, vous pouvez saisir le Préposé fédéral à la protection des données et à la transparence (PFPDT), Feldeggweg 1, 3003 Berne. Si vous résidez dans l'Union européenne, vous pouvez également saisir l'autorité de contrôle de votre pays.</p>
+
+    <h2 id="c11">11. Modifications</h2>
+    <p>Cette politique peut évoluer. Toute modification substantielle est annoncée par e-mail aux titulaires d'un compte au moins trente jours avant son entrée en vigueur. La date de version figure en haut de cette page.</p>
+>>>>>>> Stashed changes
   </div>
 </section>
 <?php nha_page_fin(); ?>

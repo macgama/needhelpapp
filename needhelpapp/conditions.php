@@ -1,4 +1,5 @@
 <?php
+<<<<<<< Updated upstream
 /**
  * Conditions générales.
  *
@@ -247,6 +248,107 @@ nha_page_debut(
     <p>Avant d'aller plus loin, écrivez-nous&nbsp;: presque tout se règle par
       un message. Notre <a href="/contact.php">formulaire de contact</a> est
       la voie la plus rapide.</p>
+=======
+require __DIR__ . '/partials/page.php';
+nha_page_debut('Conditions générales', 'Les conditions d\'utilisation des applications NeedHelpApp : compte, abonnement, obligations, résiliation.');
+?>
+<section class="doc">
+  <div class="enveloppe lecture">
+    <h1>Conditions <em>générales</em></h1>
+    <p class="date-maj">Version 1.0 — en vigueur depuis le <?= date('j F Y') ?></p>
+
+    <div class="a-completer">
+      <strong>À faire relire par un juriste avant la mise en ligne.</strong> Ce texte est une base sérieuse et complète, mais il engage votre responsabilité. Deux points méritent un avis professionnel&nbsp;: le traitement des données d'enfants (application scolaire) et le statut d'intermédiaire dans la mise en relation artisan-client.
+    </div>
+
+    <nav class="sommaire" aria-label="Sommaire">
+      <ol>
+        <li><a href="#article-1">Objet et acceptation</a></li>
+        <li><a href="#article-2">Le service</a></li>
+        <li><a href="#article-3">Le compte</a></li>
+        <li><a href="#article-4">Les mineurs</a></li>
+        <li><a href="#article-5">Formules et paiement</a></li>
+        <li><a href="#article-6">Vos obligations</a></li>
+        <li><a href="#article-7">Vos contenus</a></li>
+        <li><a href="#article-8">Mise en relation entre utilisateurs</a></li>
+        <li><a href="#article-9">Disponibilité et évolutions</a></li>
+        <li><a href="#article-10">Résiliation</a></li>
+        <li><a href="#article-11">Responsabilité</a></li>
+        <li><a href="#article-12">Modification des conditions</a></li>
+        <li><a href="#article-13">Droit applicable et for</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="article-1">1. Objet et acceptation</h2>
+    <p>Les présentes conditions régissent l'utilisation du site needhelpapp.com et de l'ensemble des applications qui en dépendent, quel que soit le sous-domaine par lequel vous y accédez (par exemple teaching.needhelpapp.com). Elles forment un contrat entre vous et [NOM DE LA STRUCTURE], ci-après «&nbsp;l'éditeur&nbsp;».</p>
+    <p>Vous les acceptez en créant un compte ou, à défaut de compte, en utilisant le service. Si vous ne les acceptez pas, n'utilisez pas le service.</p>
+
+    <h2 id="article-2">2. Le service</h2>
+    <p>NeedHelpApp met à disposition plusieurs applications distinctes, chacune consacrée à un domaine&nbsp;: apprentissage scolaire, gestion d'association sportive, mise en relation entre artisans et clients, et d'autres à venir. Chaque application dispose de ses propres fonctionnalités, mais toutes partagent le même compte utilisateur et le même abonnement.</p>
+    <p>Le service de base est gratuit et ne comporte aucune publicité. Certaines fonctionnalités, notamment la synchronisation entre appareils et la conservation de l'historique, relèvent d'une formule payante décrite à l'article 5.</p>
+    <p>Les applications sont des outils d'aide. Elles ne remplacent ni un enseignant, ni un comptable, ni un juriste, ni un professionnel du bâtiment. Les corrections, calculs et modèles proposés peuvent comporter des erreurs&nbsp;; il vous appartient de les vérifier avant tout usage engageant.</p>
+
+    <h2 id="article-3">3. Le compte</h2>
+    <p>Un compte est facultatif pour l'usage de base de certaines applications. Il devient nécessaire pour retrouver ses données sur plusieurs appareils, pour souscrire un abonnement et pour les applications qui reposent sur des échanges entre utilisateurs.</p>
+    <p><strong>Le compte est unique pour l'ensemble de NeedHelpApp.</strong> Une adresse e-mail ne peut correspondre qu'à un seul compte. Si vous vous êtes déjà inscrit sur l'une des applications, vous ne pouvez pas en créer un second&nbsp;: connectez-vous avec vos identifiants existants. La connexion vaut pour tous les sous-domaines simultanément.</p>
+    <p>Vous êtes responsable de la confidentialité de votre mot de passe et de toute activité menée depuis votre compte. Signalez-nous sans délai tout usage que vous n'auriez pas autorisé.</p>
+    <p>Les informations que vous fournissez doivent être exactes, en particulier votre adresse e-mail, seule voie de récupération de votre compte.</p>
+
+    <h2 id="article-4">4. Les mineurs</h2>
+    <p>L'application d'apprentissage scolaire s'adresse notamment à des élèves mineurs. Un mineur peut utiliser librement les fonctions qui ne requièrent pas de compte, celles-ci ne transmettant aucune donnée à l'éditeur.</p>
+    <p>La création d'un compte pour un mineur de moins de seize ans relève du titulaire de l'autorité parentale, qui accepte les présentes conditions en son nom. Un parent peut créer des comptes rattachés pour ses enfants dans le cadre d'une formule familiale&nbsp;; il en demeure responsable.</p>
+    <p>Aucune application NeedHelpApp ne comporte de messagerie ouverte entre utilisateurs mineurs, ni de fonctionnalité de mise en relation avec des adultes inconnus.</p>
+
+    <h2 id="article-5">5. Formules et paiement</h2>
+    <p>Les formules et leurs prix sont indiqués sur la page <a href="/abonnement.php">Abonnement</a>. Les prix s'entendent en francs suisses, [TVA incluse / hors TVA].</p>
+    <p><strong>Un abonnement est attaché à votre compte, non à une application.</strong> Souscrit depuis n'importe laquelle, il s'applique à toutes les applications NeedHelpApp, y compris à celles mises en service ultérieurement pendant sa durée de validité. Vous ne payez jamais deux fois pour la même période.</p>
+    <p>L'abonnement se renouvelle automatiquement à échéance, mensuellement ou annuellement selon la formule choisie, jusqu'à résiliation de votre part. Le paiement est traité par [PRESTATAIRE DE PAIEMENT]&nbsp;; l'éditeur ne conserve aucune donnée de carte bancaire.</p>
+    <p>Une formule familiale ou d'association couvre un nombre défini de comptes bénéficiaires. Le titulaire qui paie peut attribuer et reprendre ces places à tout moment. Le retrait d'une place ne supprime pas le compte concerné, qui revient simplement à la formule gratuite.</p>
+    <p>En cas de défaut de paiement, l'abonnement passe en statut impayé&nbsp;; l'accès aux fonctions payantes est suspendu après un délai de [X] jours et un rappel. Les données ne sont pas supprimées pour autant.</p>
+    <p>Si l'éditeur interrompt durablement un service payant de son fait, la part d'abonnement correspondant à la période non fournie est remboursée au prorata.</p>
+
+    <h2 id="article-6">6. Vos obligations</h2>
+    <p>Vous vous engagez à utiliser le service conformément au droit et aux présentes conditions. Il vous est notamment interdit&nbsp;:</p>
+    <ul>
+      <li>de publier ou téléverser un contenu illicite, diffamatoire, haineux, violent, pornographique, ou portant atteinte aux droits de tiers, notamment au droit d'auteur&nbsp;;</li>
+      <li>d'utiliser le service pour importuner, tromper ou usurper l'identité d'autrui&nbsp;;</li>
+      <li>de tenter d'accéder à des données qui ne vous sont pas destinées, de contourner les mesures de sécurité, ou de perturber le fonctionnement du service&nbsp;;</li>
+      <li>d'extraire massivement les contenus du service par des moyens automatisés&nbsp;;</li>
+      <li>de revendre ou de mettre à disposition de tiers l'accès à votre compte ou aux fonctions payantes.</li>
+    </ul>
+    <p>En cas de manquement grave, l'éditeur peut suspendre ou fermer le compte concerné, après avertissement lorsque les circonstances le permettent.</p>
+
+    <h2 id="article-7">7. Vos contenus</h2>
+    <p>Les contenus que vous saisissez restent votre propriété&nbsp;: textes de dictées, listes de vocabulaire, fichiers importés, données de membres, annonces. Vous accordez à l'éditeur le seul droit de les héberger, de les traiter techniquement et de vous les restituer, pour la durée nécessaire à la fourniture du service.</p>
+    <p>Si vous choisissez de partager un contenu dans une bibliothèque commune — une dictée, une liste de vocabulaire — vous acceptez qu'il soit consultable et réutilisable par les autres utilisateurs. Vous garantissez détenir les droits nécessaires sur ce que vous partagez. Vous pouvez en demander le retrait à tout moment.</p>
+    <p>Vous pouvez à tout moment télécharger une copie de vos données depuis votre espace personnel.</p>
+
+    <h2 id="article-8">8. Mise en relation entre utilisateurs</h2>
+    <p>Certaines applications mettent des utilisateurs en relation, notamment des artisans et des clients potentiels. Dans ce cadre, l'éditeur n'agit qu'en qualité d'intermédiaire technique.</p>
+    <p>L'éditeur n'est pas partie au contrat conclu entre les utilisateurs, ne fournit aucune prestation d'artisanat, ne perçoit aucune commission sur les travaux et ne garantit ni la qualité des prestations, ni l'exactitude des qualifications annoncées, ni la solvabilité des parties. Les litiges se règlent entre les intéressés.</p>
+    <p>Il appartient à chaque professionnel de s'assurer qu'il dispose des autorisations, qualifications et assurances requises par son activité.</p>
+
+    <h2 id="article-9">9. Disponibilité et évolutions</h2>
+    <p>L'éditeur s'efforce d'assurer un service continu, sans y être tenu par une obligation de résultat. Des interruptions peuvent survenir pour maintenance, mise à jour ou cause extérieure. Les interruptions planifiées sont annoncées lorsque cela est possible.</p>
+    <p>Les fonctionnalités peuvent évoluer. Si une fonctionnalité payante devait être supprimée, les abonnés en sont informés au moins trente jours à l'avance et peuvent résilier sans frais avec remboursement au prorata.</p>
+
+    <h2 id="article-10">10. Résiliation</h2>
+    <p>Vous pouvez résilier votre abonnement à tout moment depuis votre espace personnel. Il reste actif jusqu'au terme de la période déjà réglée, puis votre compte revient à la formule gratuite. Aucune donnée n'est supprimée de ce fait.</p>
+    <p>Vous pouvez supprimer votre compte à tout moment depuis votre espace personnel. La suppression est définitive et vaut pour toutes les applications&nbsp;; elle entraîne l'effacement de vos données dans les délais indiqués dans la <a href="/confidentialite.php">politique de confidentialité</a>. Téléchargez vos données au préalable si vous souhaitez les conserver.</p>
+    <p>L'éditeur peut résilier ou suspendre un compte en cas de manquement grave aux présentes conditions, ou si le service devait être arrêté, moyennant un préavis raisonnable et le remboursement des sommes versées pour la période non fournie.</p>
+
+    <h2 id="article-11">11. Responsabilité</h2>
+    <p>La responsabilité de l'éditeur est engagée en cas de faute intentionnelle ou de négligence grave, ainsi que dans tous les cas où la loi ne permet pas de l'exclure, notamment en cas d'atteinte à la vie ou à l'intégrité corporelle.</p>
+    <p>Elle est exclue, dans les limites permises par le droit suisse, pour les dommages indirects, la perte de données dont vous n'auriez pas conservé de copie, le manque à gagner, et les conséquences d'un usage du service contraire aux présentes conditions.</p>
+    <p>Il vous appartient de conserver vos propres sauvegardes des contenus qui vous importent. La fonction d'export est prévue à cet effet.</p>
+
+    <h2 id="article-12">12. Modification des conditions</h2>
+    <p>L'éditeur peut modifier les présentes conditions. Toute modification substantielle est annoncée par e-mail aux titulaires d'un compte, au moins trente jours avant son entrée en vigueur. Si vous refusez la nouvelle version, vous pouvez résilier votre abonnement et supprimer votre compte avant cette date&nbsp;; l'usage du service au-delà vaut acceptation.</p>
+
+    <h2 id="article-13">13. Droit applicable et for</h2>
+    <p>Les présentes conditions sont soumises au droit suisse, à l'exclusion des règles de conflit de lois et de la Convention de Vienne sur les contrats de vente internationale de marchandises.</p>
+    <p>Le for exclusif est à [LOCALITÉ DU SIÈGE], sous réserve des fors impératifs, notamment celui du domicile du consommateur. Les parties chercheront d'abord une solution amiable&nbsp;: écrivez à <a href="mailto:contact@needhelpapp.com">contact@needhelpapp.com</a>.</p>
+>>>>>>> Stashed changes
   </div>
 </section>
 <?php nha_page_fin(); ?>

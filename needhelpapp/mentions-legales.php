@@ -1,4 +1,5 @@
 <?php
+<<<<<<< Updated upstream
 /**
  * Mentions légales.
  *
@@ -112,6 +113,60 @@ nha_page_debut(
       peuvent vous ouvrir le for de votre domicile.</p>
     <p>Avant toute procédure, écrivez-nous&nbsp;: presque tout se règle par
       un message.</p>
+=======
+require __DIR__ . '/partials/page.php';
+nha_page_debut('Mentions légales', 'Éditeur, hébergeur et responsabilités du site needhelpapp.com.');
+?>
+<section class="doc">
+  <div class="enveloppe lecture">
+    <h1>Mentions <em>légales</em></h1>
+    <p class="date-maj">Dernière mise à jour&nbsp;: <?= date('j F Y') ?></p>
+
+    <div class="a-completer">
+      <strong>À compléter avant la mise en ligne.</strong> Les champs entre crochets doivent être remplis avec les données réelles de votre structure. Un texte de loi mal rempli vaut moins que pas de texte du tout.
+    </div>
+
+    <h2 id="editeur">Éditeur du site</h2>
+    <dl>
+      <dt>Raison sociale</dt><dd>[NOM DE LA SOCIÉTÉ OU DE L'ASSOCIATION]</dd>
+      <dt>Forme juridique</dt><dd>[Sàrl / SA / association au sens des art. 60 ss CC / raison individuelle]</dd>
+      <dt>Numéro IDE</dt><dd>[CHE-XXX.XXX.XXX]</dd>
+      <dt>Siège</dt><dd>[Rue et numéro, NPA, localité, Suisse]</dd>
+      <dt>Représentée par</dt><dd>[Prénom Nom, fonction]</dd>
+      <dt>Contact</dt><dd><a href="mailto:contact@needhelpapp.com">contact@needhelpapp.com</a></dd>
+      <dt>Téléphone</dt><dd>[+41 XX XXX XX XX]</dd>
+      <dt>Inscription au registre du commerce</dt><dd>[Registre du commerce du canton de …, ou : non inscrite]</dd>
+      <dt>Assujettissement à la TVA</dt><dd>[Numéro TVA, ou : non assujettie]</dd>
+    </dl>
+
+    <h2 id="hebergeur">Hébergeur</h2>
+    <p>Le site et sa base de données sont hébergés par&nbsp;:</p>
+    <dl>
+      <dt>Infomaniak Network SA</dt>
+      <dd>Rue Eugène-Marziano 25, 1227 Les Acacias (Genève), Suisse<br>
+          <a href="https://www.infomaniak.com">www.infomaniak.com</a></dd>
+    </dl>
+    <p>Les données sont stockées dans les centres de données d'Infomaniak situés en Suisse. Aucun serveur situé hors de Suisse n'intervient dans le fonctionnement du service.</p>
+
+    <h2 id="propriete">Propriété intellectuelle</h2>
+    <p>Le nom NeedHelpApp, le logo, la structure du site, les textes, la charte graphique et le code source sont la propriété de l'éditeur, sauf mention contraire. Toute reproduction ou réutilisation, totale ou partielle, sans autorisation écrite préalable est interdite.</p>
+    <p>Les contenus que vous saisissez dans les applications — textes de dictées, listes de vocabulaire, données d'association, descriptions de chantiers — restent votre propriété. Vous nous accordez uniquement le droit technique de les stocker et de vous les restituer. Nous ne les exploitons à aucune autre fin.</p>
+    <p>Les polices de caractères Newsreader et Public Sans sont utilisées sous licence SIL Open Font License 1.1.</p>
+
+    <h2 id="responsabilite">Responsabilité</h2>
+    <p>L'éditeur met tout en œuvre pour fournir des informations exactes et un service disponible, sans pouvoir le garantir. Les exercices, corrections et modèles proposés sont fournis à titre d'aide et ne remplacent ni un enseignant, ni un conseil professionnel, ni un avis juridique.</p>
+    <p>Les mises en relation proposées par certaines applications, notamment entre artisans et clients, n'engagent pas l'éditeur&nbsp;: celui-ci n'est pas partie au contrat conclu entre les utilisateurs, ne fournit aucune prestation d'artisanat et ne garantit ni la qualité des travaux, ni la solvabilité des parties.</p>
+    <p>L'éditeur ne répond pas des dommages indirects résultant de l'utilisation du site, ni de l'indisponibilité temporaire du service, dans les limites permises par le droit suisse.</p>
+
+    <h2 id="liens">Liens vers d'autres sites</h2>
+    <p>Le site peut renvoyer vers des sites tiers dont l'éditeur ne contrôle ni le contenu ni les pratiques. Ces renvois n'emportent aucune approbation de leur contenu.</p>
+
+    <h2 id="droit">Droit applicable et for</h2>
+    <p>Le présent site et son utilisation sont soumis au droit suisse. Le for est à [LOCALITÉ DU SIÈGE], sous réserve d'un for impératif prévu par la loi, notamment celui du domicile du consommateur.</p>
+
+    <h2 id="signalement">Signaler un contenu</h2>
+    <p>Un contenu vous paraît illicite, inexact ou attentatoire à vos droits&nbsp;? Écrivez à <a href="mailto:contact@needhelpapp.com">contact@needhelpapp.com</a> en indiquant l'adresse de la page et la raison. Nous examinons chaque signalement.</p>
+>>>>>>> Stashed changes
   </div>
 </section>
 <?php nha_page_fin(); ?>

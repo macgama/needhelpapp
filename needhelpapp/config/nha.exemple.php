@@ -1,5 +1,6 @@
 <?php
 /**
+<<<<<<< Updated upstream
  * Configuration du socle NeedHelpApp.
  *
  * Copiez ce fichier en  config/nha.php  puis renseignez vos valeurs.
@@ -18,10 +19,22 @@
  *
  * Une fois le fichier rempli, vérifiez le tout d'un coup :
  *   https://needhelpapp.com/diagnostic.php?jeton=VOTRE_JETON
+=======
+ * NeedHelpApp — configuration unique.
+ *
+ * À copier en config/nha.php et à remplir. Ce fichier n'est jamais servi
+ * (voir config/.htaccess) et ne doit JAMAIS être versionné ni partagé :
+ * il contient des secrets qui donnent un accès complet à votre compte Stripe.
+ *
+ * Les noms de clés reprennent ceux déjà utilisés dans la partie teaching,
+ * pour qu'un seul fichier serve aux deux applications. Déposez-le une fois
+ * et faites pointer les deux sites dessus.
+>>>>>>> Stashed changes
  */
 
 return [
 
+<<<<<<< Updated upstream
     /* =============================================================
        La base centrale
        -------------------------------------------------------------
@@ -125,10 +138,92 @@ return [
        débité est celui des tarifs price_… ci-dessus. Gardez les deux
        en accord, et indiquez si la TVA est comprise.
        Vide = un tiret cadratin s'affiche à la place du prix. */
+=======
+    // ---- base de données ----
+    'db_host' => '6l3nq9.myd.infomaniak.com',
+    'db_core' => '6l3nq9_core',
+    'db_user' => '',
+    'db_pass' => '',
+
+    // ---- adresses d'expédition ----
+    // Ces boîtes doivent EXISTER dans le Manager Infomaniak, sinon les
+    // messages partent en indésirables ou sont refusés.
+    'mail_expediteur' => 'noreply@needhelpapp.com',
+    'mail_contact'    => 'contact@needhelpapp.com',
+    'mail_donnees'    => 'donnees@needhelpapp.com',
+
+    // ---- envoi SMTP authentifié ----
+    // Sur mutualisé Infomaniak, la fonction mail() part sans authentification :
+    // les messages sont filtrés, classés en indésirable, ou l'appel se bloque
+    // longuement. Renseignez ce bloc et tout passe par le SMTP authentifié.
+    //
+    // CONTRAINTE : l'adresse expéditrice doit être EXACTEMENT celle qui
+    // s'authentifie. Autrement dit smtp_user == mail_expediteur, sinon le
+    // serveur refuse la commande MAIL FROM.
+    //
+    // Le mot de passe est celui généré pour cette adresse dans le Manager,
+    // pas celui de votre compte Infomaniak.
+    'smtp_hote'        => 'mail.infomaniak.com',
+    'smtp_port'        => 587,          // 587 avec 'tls', ou 465 avec 'ssl'
+    'smtp_chiffrement' => 'tls',        // 'tls' (STARTTLS, recommandé) ou 'ssl'
+    'smtp_user'        => 'noreply@needhelpapp.com',
+    'smtp_pass'        => '',
+    'smtp_delai'       => 10,           // secondes avant abandon
+
+    // ---- abonnement (Stripe) ----
+    // Laissez ces champs vides tant que vous n'avez pas de compte : le site
+    // fonctionne alors entièrement en version gratuite, sans rien proposer
+    // de payant. Commencez par les clés de test (sk_test_…, price_…, whsec_…).
+    'stripe_secret' => '',           // sk_live_… ou sk_test_…
+
+    // ATTENTION : ces deux champs attendent l'identifiant d'un TARIF.
+    // Il commence par price_ . Ni le montant, ni l'identifiant du produit
+    // (prod_…) ne conviennent : un produit porte plusieurs tarifs, et Stripe
+    // doit savoir lequel débiter.
+    // Où : Catalogue de produits → votre produit → section Tarifs → le tarif.
+    'stripe_prix_mensuel' => '',     // price_… à récurrence mensuelle
+    'stripe_prix_annuel'  => '',     // price_… à récurrence annuelle
+
+    // Version de l'API Stripe. Elle décide de ce qui est POSSIBLE, pas
+    // seulement de la forme des réponses : TWINT en paiement récurrent
+    // n'existe qu'à partir de « 2026-05-27.dahlia ». Avec une version
+    // antérieure, il n'apparaît pas dans la page de paiement, et aucun
+    // message ne dit pourquoi. Laissez vide pour prendre celle du code.
+    'stripe_version' => '2026-05-27.dahlia',
+
+    // Donné par Stripe au moment où vous déclarez le point de terminaison
+    // https://needhelpapp.com/api/stripe.php dans Développeurs → Webhooks.
+    'stripe_webhook_secret' => '',   // whsec_…
+
+    // Lien du portail client, dans Stripe → Paramètres → Portail client.
+    // Sert de secours quand le compte n'a pas encore d'identifiant de payeur :
+    // Stripe demande alors son adresse au client et lui envoie un code.
+    'stripe_portail_url' => '',
+
+    // Combien de personnes un abonnement couvre-t-il ?
+    //
+    // C'est une décision commerciale, pas technique. Cinq places pour
+    // 4.90 CHF par mois est généreux : c'est un choix, celui de vendre à
+    // des familles plutôt qu'à des individus. Mettez 1 pour n'en couvrir
+    // qu'une seule, ou davantage pour une formule « famille ».
+    //
+    // Le payeur occupe toujours la première place.
+    'places_incluses' => 5,
+
+    // Nom de la formule payante tel qu'il est écrit dans accounts.plan.
+    // Doit correspondre à ce qu'attend déjà le code de teaching.
+    'plan_paye' => 'complet',
+
+    // ---- prix affichés ----
+    // Ce ne sont que des textes : le montant réellement débité est celui des
+    // tarifs price_… ci-dessus. Gardez les deux en accord, et indiquez si la
+    // TVA est comprise.
+>>>>>>> Stashed changes
     'prix_mensuel'  => '4.90 CHF par mois',
     'prix_annuel'   => '49.00 CHF par an',
     'prix_economie' => 'deux mois offerts',
 
+<<<<<<< Updated upstream
     /* Le nom du plan écrit dans accounts.plan et subscriptions.plan
        quand un paiement aboutit. Les applications comparent à cette
        valeur pour ouvrir les fonctions payantes : ne la changez pas
@@ -168,4 +263,18 @@ return [
        Vide = seule la ligne de commande fonctionne. C'est le plus sûr.
        ============================================================= */
     'purge_jeton' => '',
+=======
+    // ---- connexion avec Google (facultatif) ----
+    // Identifiant client OAuth créé dans la console Google Cloud, type
+    // « Application Web ». Ajoutez-y vos origines autorisées, par exemple
+    // https://needhelpapp.com et https://teaching.needhelpapp.com .
+    // Cet identifiant n'est pas un secret : il est visible dans la page.
+    // Laissez vide pour ne pas proposer Google.
+    'google_client_id' => '',
+
+    // ---- diagnostic ----
+    // Jeton d'accès à /diagnostic.php. Mettez une chaîne longue et aléatoire,
+    // ou laissez vide pour désactiver complètement la page.
+    'diagnostic_jeton' => '',
+>>>>>>> Stashed changes
 ];
