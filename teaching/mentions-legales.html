@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mentions légales — Teaching</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=2026-11-05">
+<style>
+  .prose{max-width:720px;margin:0 auto}
+  .prose h2{font-family:var(--font-display);font-weight:500;font-size:19px;margin:30px 0 8px;color:var(--slate)}
+  .prose p,.prose li{font-size:15px;line-height:1.65}
+  .prose ul{padding-left:18px}
+  .prose a{color:var(--ink)}
+  .fill{background:#FFF8E8;border:1px dashed #D8C48A;border-radius:8px;padding:12px 14px;font-size:14px;color:#6B5A22;margin:12px 0}
+</style>
+</head>
+<body data-version="2026-11-05">
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="index.html">Accueil</a>
+      <a class="lien-app" href="dictee.html">La dictée</a>
+      <a class="lien-app" href="vocabulaire.html">Le vocabulaire</a>
+      <a class="lien-app" href="conjugaison.html">La conjugaison</a>
+      <a class="lien-app" href="mathematiques.html">Les mathématiques</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="profil.html" role="menuitem">Mon profil et mes données</a>
+        <a href="abonnement.html" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap prose">
+  <header class="top">
+    <div class="brand">
+      <h1 class="wordmark">Mentions légales</h1>
+    </div>
+  </header>
+
+
+
+  <div class="fill">
+    <b>À compléter avant l'ouverture des paiements :</b> remplacez les mentions entre crochets,
+    faites relire ce texte par un juriste, et supprimez cet encadré. Vendre un abonnement engage
+    votre responsabilité contractuelle ; ce document est une trame, pas un avis juridique.
+  </div>
+
+  <div class="fill">
+    <b>À remplir avant d'activer TWINT.</b> Stripe vérifie que ces informations
+    figurent en clair sur le site : dénomination et forme juridique, adresse
+    complète, et au moins un moyen de contact. Tant que les crochets sont là,
+    la demande sera refusée. Supprimez cet encadré une fois les champs remplis.
+  </div>
+
+  <h2>Éditeur du site</h2>
+  <p>
+    <b>[Dénomination sociale complète]</b><br>
+    [Forme juridique : entreprise individuelle, Sàrl, SA…]<br>
+    <span class="hint">Pour une entreprise individuelle, indiquez le nom et le prénom complets du propriétaire.</span>
+  </p>
+
+  <h2>Adresse</h2>
+  <p>
+    [Rue et numéro]<br>
+    [Code postal] [Ville]<br>
+    Suisse
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Courriel : <a href="mailto:[contact@mondomaine.ch]">[contact@mondomaine.ch]</a><br>
+    Téléphone : [+41 XX XXX XX XX]
+  </p>
+  <p class="hint">L'un des deux suffit selon les exigences de TWINT, mais une adresse de courriel qui répond vaut mieux que les deux.</p>
+
+  <h2>Inscription au registre</h2>
+  <p>Numéro IDE : [CHE-XXX.XXX.XXX], si vous y êtes inscrit.<br>
+     Numéro de TVA : [CHE-XXX.XXX.XXX TVA], si vous y êtes assujetti.</p>
+
+  <h2>Ce qui est vendu</h2>
+  <p>Un abonnement à un service en ligne d'exercices scolaires : dictée, conjugaison et vocabulaire. Aucun bien matériel n'est expédié, il n'y a donc pas de frais ni de délai de livraison. Les prix sont affichés en francs suisses (CHF) sur la <a href="abonnement.html">page d'abonnement</a> et repris tels quels au moment du paiement.</p>
+
+  <h2>Paiement</h2>
+  <p>Les paiements sont traités par Stripe Payments Europe. Aucune donnée bancaire n'est saisie ni conservée par ce site. Les moyens acceptés sont indiqués sur la page de paiement — carte, et TWINT pour les clients suisses.</p>
+
+  <h2>Hébergement</h2>
+  <p>[Nom de l'hébergeur], [adresse de l'hébergeur].</p>
+
+  <h2>Pour le reste</h2>
+  <p>Les <a href="conditions.html">conditions générales</a> précisent la durée de l'abonnement, sa reconduction et sa résiliation. La <a href="confidentialite.html">page de confidentialité</a> décrit le traitement des données personnelles.</p>
+
+  <p class="hint">Dernière mise à jour : [date de mise en ligne].</p>
+  <footer class="foot">
+    <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+    <a href="index.html">Accueil</a> ·
+    <a href="dictee.html">La dictée</a> ·
+    <a href="vocabulaire.html">Le vocabulaire</a> ·
+    <a href="conjugaison.html">La conjugaison</a> ·
+    <a href="mathematiques.html">Les mathématiques</a> ·
+    <a href="abonnement.html">L'abonnement</a> ·
+    <a href="profil.html">Mon profil</a> ·
+    <a href="faq.html">Questions fréquentes</a> ·
+    <a href="conditions.html">Conditions générales</a> ·
+    <a href="confidentialite.html">Confidentialité</a>
+  </footer>
+</div>
+<!-- compte ------------------------------------------------- -->
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Un seul compte pour la dictée et la conjugaison.</p>
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment on t'appelle ?">
+    </div>
+    <div class="field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/bienvenue.js?v=2026-11-05"></script>
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/compte.js?v=2026-11-05"></script>
+<script>window.Compte.demarrer(function(){});</script>
+</body>
+</html>

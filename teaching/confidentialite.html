@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3B2F7F">
+<meta name="robots" content="index, follow">
+<title>Confidentialité — La dictée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  .prose{max-width:720px;margin:0 auto}
+  .prose h2{font-family:var(--font-display);font-weight:500;font-size:19px;margin:32px 0 8px;color:var(--slate)}
+  .prose h2:first-of-type{margin-top:24px}
+  .prose p, .prose li{font-size:15px;line-height:1.65}
+  .prose ul{padding-left:18px;margin:10px 0}
+  .prose li{margin-bottom:7px}
+  .prose a{color:var(--ink)}
+  .prose .lead{font-size:16px;color:var(--slate)}
+  .fill{background:#FFF8E8;border:1px dashed #D8C48A;border-radius:8px;padding:12px 14px;font-size:14px;color:#6B5A22;margin:10px 0}
+  .tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  .tbl th, .tbl td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+  .tbl th{font-weight:500;color:var(--grey);font-size:13px}
+  .back{display:inline-block;margin-bottom:6px;font-size:14px;color:var(--ink)}
+  @media (max-width:600px){ .tbl, .tbl tbody, .tbl tr, .tbl td{display:block;width:100%} .tbl thead{display:none}
+    .tbl tr{border-bottom:1px solid var(--line);padding:8px 0} .tbl td{border:0;padding:2px 0}
+    .tbl td::before{content:attr(data-l) " : ";color:var(--grey);font-size:13px} }
+</style>
+</head>
+<body data-version="2026-11-05">
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="index.html">Accueil</a>
+      <a class="lien-app" href="dictee.html">La dictée</a>
+      <a class="lien-app" href="vocabulaire.html">Le vocabulaire</a>
+      <a class="lien-app" href="conjugaison.html">La conjugaison</a>
+      <a class="lien-app" href="mathematiques.html">Les mathématiques</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="profil.html" role="menuitem">Mon profil et mes données</a>
+        <a href="abonnement.html" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap prose">
+  <header class="top">
+    <div class="brand">
+      <h1 class="wordmark">Confidentialité</h1>
+    </div>
+  </header>
+
+
+
+  <p class="lead">Cette page explique quelles données La dictée conserve, pourquoi, combien de temps, et comment les faire effacer. Elle est écrite pour être lue, pas pour être subie.</p>
+
+  <div class="fill">
+    <b>À compléter avant la mise en ligne :</b> remplacez ci-dessous les mentions
+    entre crochets par vos coordonnées de responsable du traitement — nom ou raison
+    sociale, adresse postale, adresse de contact — puis supprimez cet encadré.
+    Ces informations sont exigées aussi bien par la LPD suisse que par le RGPD.
+  </div>
+
+  <h2>Qui est responsable</h2>
+  <p>Le responsable du traitement est [Nom ou raison sociale], [adresse postale complète], joignable à l'adresse [contact@mondomaine.ch]. Toute question sur cette page ou sur vos données peut être adressée à cette adresse.</p>
+
+  <h2>Le principe : le moins de données possible</h2>
+  <p>L'application s'utilise entièrement sans compte. Dans ce cas, rien n'est conservé nulle part : ni sur nos serveurs, ni sur votre appareil. Le texte, les réglages et le résultat vivent le temps de la visite et disparaissent en fermant l'onglet. Rien n'est écrit, il n'y a donc rien à effacer.</p>
+  <p>Le compte n'existe que pour une chose : retrouver ses dictées et ses réglages d'une fois sur l'autre et d'un appareil à l'autre. Il est facultatif.</p>
+  <p>Il n'y a ni publicité, ni traceur, ni outil de mesure d'audience, ni revente de données à qui que ce soit.</p>
+
+  <h2>Ce qui est conservé, si vous créez un compte</h2>
+  <table class="tbl">
+    <thead><tr><th>Donnée</th><th>Pourquoi</th><th>Durée</th></tr></thead>
+    <tbody>
+      <tr>
+        <td data-l="Donnée">Adresse e-mail</td>
+        <td data-l="Pourquoi">Identifier le compte et permettre de récupérer un mot de passe oublié</td>
+        <td data-l="Durée">Jusqu'à la suppression du compte</td>
+      </tr>
+      <tr>
+        <td data-l="Donnée">Prénom, s'il est indiqué</td>
+        <td data-l="Pourquoi">Afficher un message d'accueil</td>
+        <td data-l="Durée">Jusqu'à la suppression du compte</td>
+      </tr>
+      <tr>
+        <td data-l="Donnée">Empreinte du mot de passe</td>
+        <td data-l="Pourquoi">Vérifier la connexion. Le mot de passe lui-même n'est jamais conservé : seule une empreinte irréversible l'est</td>
+        <td data-l="Durée">Jusqu'à la suppression du compte</td>
+      </tr>
+      <tr>
+        <td data-l="Donnée">Dictées enregistrées : titre, auteur, niveau, texte</td>
+        <td data-l="Pourquoi">Les retrouver d'une séance à l'autre, et les partager si vous le décidez</td>
+        <td data-l="Durée">Jusqu'à leur suppression, ou celle du compte</td>
+      </tr>
+      <tr>
+        <td data-l="Donnée">Réglages de lecture</td>
+        <td data-l="Pourquoi">Ne pas avoir à les régler à chaque fois</td>
+        <td data-l="Durée">Jusqu'à la suppression du compte</td>
+      </tr>
+      <tr>
+        <td data-l="Donnée">Résultats des dictées : nombre de mots, de fautes, date</td>
+        <td data-l="Pourquoi">Afficher la progression. Les copies elles-mêmes ne sont pas conservées, seulement les nombres</td>
+        <td data-l="Durée">Jusqu'à la suppression du compte</td>
+      </tr>
+      <tr>
+        <td data-l="Donnée">Adresse IP et horodatage des tentatives de connexion</td>
+        <td data-l="Pourquoi">Empêcher les essais de mots de passe en série. Intérêt légitime à la sécurité du service</td>
+        <td data-l="Durée">30 jours</td>
+      </tr>
+      <tr>
+        <td data-l="Donnée">Jeton de récupération de mot de passe</td>
+        <td data-l="Pourquoi">Vérifier le lien envoyé par e-mail</td>
+        <td data-l="Durée">1 heure, puis effacé</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Les dictées publiées</h2>
+  <p>Publier une dictée dans la bibliothèque partagée est une décision volontaire, prise dictée par dictée. Le titre, le nom d'auteur que vous avez saisi, le niveau scolaire et le nombre de mots apparaissent alors dans le catalogue, que n'importe quel visiteur peut consulter. Le texte lui-même n'est lisible que par les personnes ayant un compte, ou par celles à qui vous avez transmis le lien de partage.</p>
+  <p>Deux conséquences à connaître. D'abord, le champ « auteur » est libre : si vous y mettez votre nom, vous le rendez public. Rien ne vous oblige à le remplir, ni à y mettre votre vrai nom. Ensuite, une dictée retirée de la bibliothèque cesse d'apparaître dans les recherches, mais un lien de partage déjà distribué peut continuer de fonctionner, et rien n'empêche quelqu'un d'en avoir gardé une copie : c'est le propre de ce qui a été publié une fois. Supprimer la dictée supprime définitivement le lien.</p>
+  <p>Ne publiez pas de texte protégé par le droit d'auteur sans autorisation, ni de texte comportant des données concernant un enfant. Toute dictée publiée peut être signalée par n'importe quel visiteur ; au-delà de trois signalements elle est retirée de la bibliothèque en attendant vérification.</p>
+
+  <h2>Cookies</h2>
+  <p>Sans compte, aucun cookie n'est déposé et rien n'est écrit dans la mémoire du navigateur.</p>
+  <p>Un seul cookie est déposé, et uniquement si vous vous connectez : il porte l'identifiant de votre session. Il est technique, indispensable au fonctionnement du compte, et ne sert à aucun suivi. Il n'y a donc pas de bandeau à accepter. Il disparaît à la déconnexion ou après trente jours.</p>
+
+  <h2>La lecture à voix haute</h2>
+  <p>Par défaut, la voix est celle intégrée à votre appareil. Le texte de la dictée est prononcé localement et n'est envoyé nulle part.</p>
+  <p>Si vous activez vous-même l'option « voix IA en ligne » et fournissez votre propre clé, alors le texte de la dictée est transmis au service que vous avez choisi — ElevenLabs ou Google Cloud — afin qu'il produise l'audio. Ce transfert a lieu directement entre votre navigateur et ce service, sans passer par ce site, et il est soumis aux conditions de ce prestataire, y compris quant à l'endroit où se trouvent ses serveurs. Votre clé reste dans la page et n'est jamais transmise à ce site ni enregistrée.</p>
+
+  <h2>L'import d'un PDF ou d'une photo</h2>
+  <p>La lecture des fichiers se fait entièrement dans votre navigateur. Les images et les documents ne sont jamais envoyés sur un serveur, ni sur celui-ci, ni ailleurs. Seules les bibliothèques de lecture sont téléchargées depuis un réseau de distribution public, ce qui expose votre adresse IP à ce réseau, comme pour n'importe quelle ressource web.</p>
+
+  <h2>Si vous vous abonnez</h2>
+  <p>Le paiement est traité par <b>Stripe Payments Europe</b>. C'est Stripe qui reçoit et conserve vos données bancaires : elles ne transitent jamais par ce site et n'y sont jamais enregistrées. De notre côté, nous ne gardons que l'identifiant technique attribué par Stripe à votre abonnement, la formule choisie, son état, et la date de la prochaine échéance — le strict nécessaire pour savoir si votre accès est ouvert.</p>
+  <p>Les évènements de facturation reçus de Stripe sont journalisés pendant [douze mois] afin de pouvoir retracer un incident de paiement. Vos factures sont conservées par Stripe et accessibles depuis « Gérer mon abonnement ». Les obligations comptables imposent par ailleurs une conservation de dix ans des pièces justificatives, chez l'éditeur comme chez Stripe.</p>
+  <p>La fin d'un abonnement n'efface aucune de vos données : dictées, listes et résultats restent consultables et exportables. Seuls l'enregistrement, le partage et la bibliothèque redeviennent inaccessibles.</p>
+
+  <h2>Si vous vous connectez avec Google</h2>
+  <p>Le bouton « Continuer avec Google » est facultatif : l'inscription par adresse et mot de passe reste possible. Si vous l'utilisez, Google nous transmet trois informations, et trois seulement : votre adresse e-mail, votre prénom, et un identifiant technique propre à ce site. Nous ne recevons ni votre mot de passe Google, ni vos contacts, ni quoi que ce soit d'autre.</p>
+  <p>En sens inverse, Google apprend que vous vous connectez à ce site. Si vous préférez l'éviter, créez un compte avec une adresse et un mot de passe : le bouton Google ne charge alors rien et aucune requête ne part vers Google.</p>
+
+  <h2>Qui d'autre voit ces données</h2>
+  <ul>
+    <li><b>L'hébergeur</b>, [Infomaniak Network SA, Genève, Suisse], sur les serveurs duquel le site et la base de données sont installés. Les données restent en Suisse.</li>
+    <li><b>Le service d'envoi d'e-mails</b> de ce même hébergeur, uniquement pour acheminer le message de récupération de mot de passe.</li>
+    <li><b>Stripe</b>, pour le paiement des abonnements, si vous en prenez un.</li>
+    <li><b>Google</b>, si et seulement si vous choisissez « Continuer avec Google ».</li>
+    <li><b>Google Fonts</b>, pour les polices d'écriture de la page, ce qui expose votre adresse IP à Google. Si vous préférez l'éviter, les polices peuvent être hébergées directement sur le site.</li>
+  </ul>
+  <p>Aucune donnée n'est transmise à d'autres tiers, ni utilisée à des fins commerciales.</p>
+
+  <h2>Les enfants</h2>
+  <p>L'application est destinée aux enfants, mais le compte est destiné à l'adulte qui les accompagne : c'est son adresse e-mail qui est demandée. Nous ne collectons volontairement aucune donnée permettant d'identifier un enfant — ni nom de famille, ni classe, ni école, ni date de naissance. Le prénom est facultatif et sert uniquement à l'affichage. Si vous constatez qu'un enfant a créé un compte seul, écrivez-nous : il sera supprimé.</p>
+
+  <h2>Vos droits</h2>
+  <p>Vous pouvez à tout moment :</p>
+  <ul>
+    <li><b>Consulter</b> vos données : elles sont toutes visibles dans l'application.</li>
+    <li><b>Les emporter</b> : le bouton « Exporter dans un fichier » produit l'ensemble de vos dictées dans un format ouvert et réutilisable.</li>
+    <li><b>Les corriger</b> : le prénom et les dictées sont modifiables depuis l'application.</li>
+    <li><b>Tout effacer</b> : le bouton « Supprimer mon compte » efface immédiatement et définitivement le compte, les dictées et les résultats. Aucune copie n'est conservée, hormis dans les sauvegardes de l'hébergeur, qui expirent d'elles-mêmes.</li>
+  </ul>
+  <p>Pour toute demande que l'application ne permet pas de traiter, écrivez à [contact@mondomaine.ch]. Vous pouvez également saisir le Préposé fédéral à la protection des données et à la transparence (PFPDT), à Berne, ou l'autorité de contrôle de votre pays de résidence si vous êtes dans l'Union européenne.</p>
+
+  <h2>Sécurité</h2>
+  <p>Le site est servi en HTTPS. Les mots de passe sont conservés sous forme d'empreinte calculée avec un algorithme conçu pour cet usage. Les accès à la base de données passent par des requêtes préparées. Les tentatives de connexion sont limitées. Le cookie de session est inaccessible aux scripts et restreint à ce site. Aucun système n'étant parfaitement sûr, choisissez un mot de passe que vous n'utilisez nulle part ailleurs.</p>
+
+  <h2>Modifications</h2>
+  <p>Cette page peut évoluer si l'application change. La date ci-dessous indique la dernière révision.</p>
+  <p class="hint">Dernière mise à jour : [date de mise en ligne].</p>
+
+  <footer class="foot">
+    <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+    <a href="index.html">Accueil</a> ·
+    <a href="dictee.html">La dictée</a> ·
+    <a href="vocabulaire.html">Le vocabulaire</a> ·
+    <a href="conjugaison.html">La conjugaison</a> ·
+    <a href="mathematiques.html">Les mathématiques</a> ·
+    <a href="abonnement.html">L'abonnement</a> ·
+    <a href="profil.html">Mon profil</a> ·
+    <a href="faq.html">Questions fréquentes</a> ·
+    <a href="mentions-legales.html">Mentions légales</a> ·
+    <a href="conditions.html">Conditions générales</a> ·
+    <a href="confidentialite.html">Confidentialité</a>
+  </footer>
+</div>
+<!-- compte ------------------------------------------------- -->
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Un seul compte pour la dictée et la conjugaison.</p>
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment on t'appelle ?">
+    </div>
+    <div class="field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/bienvenue.js?v=2026-11-05"></script>
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/compte.js?v=2026-11-05"></script>
+<script>window.Compte.demarrer(function(){});</script>
+</body>
+</html>

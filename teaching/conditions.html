@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conditions générales — Teaching</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css?v=2026-11-05">
+<style>
+  .prose{max-width:720px;margin:0 auto}
+  .prose h2{font-family:var(--font-display);font-weight:500;font-size:19px;margin:30px 0 8px;color:var(--slate)}
+  .prose p,.prose li{font-size:15px;line-height:1.65}
+  .prose ul{padding-left:18px}
+  .prose a{color:var(--ink)}
+  .fill{background:#FFF8E8;border:1px dashed #D8C48A;border-radius:8px;padding:12px 14px;font-size:14px;color:#6B5A22;margin:12px 0}
+</style>
+</head>
+<body data-version="2026-11-05">
+<div class="bandeau">
+  <nav class="barre-haut" aria-label="Navigation du site">
+    <button class="menu-burger" id="menu-burger" aria-expanded="false" aria-controls="liens-apps">
+      <span class="barres" aria-hidden="true"></span>
+      <span class="mot">Menu</span>
+    </button>
+    <div class="liens-apps" id="liens-apps">
+      <a class="retour-portail" href="https://needhelpapp.com/" title="Revenir à NeedHelpApp">
+        <span class="fleche" aria-hidden="true">←</span><span class="nom">Need<em>Help</em>App</span>
+      </a>
+      <a class="lien-app" href="index.html">Accueil</a>
+      <a class="lien-app" href="dictee.html">La dictée</a>
+      <a class="lien-app" href="vocabulaire.html">Le vocabulaire</a>
+      <a class="lien-app" href="conjugaison.html">La conjugaison</a>
+      <a class="lien-app" href="mathematiques.html">Les mathématiques</a>
+    </div>
+    <div class="compte-menu" id="account-state" hidden>
+      <button class="btn btn--ghost btn--tiny" id="open-auth">Se connecter</button>
+      <button class="compte-bouton" id="compte-bouton" hidden aria-expanded="false" aria-haspopup="true">
+        <span class="pastille" id="compte-initiale">?</span>
+        <span id="who"></span>
+        <span class="fleche" aria-hidden="true"></span>
+      </button>
+      <div class="compte-tiroir" id="compte-tiroir" hidden role="menu">
+        <div class="entete"><b id="compte-nom-tiroir">Mon compte</b><span id="compte-etat"></span></div>
+        <a href="profil.html" role="menuitem">Mon profil et mes données</a>
+        <a href="abonnement.html" id="lien-abo" role="menuitem">Mon abonnement</a>
+        <button id="logout" class="sortir" role="menuitem">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div class="wrap prose">
+  <header class="top">
+    <div class="brand">
+      <h1 class="wordmark">Conditions générales</h1>
+    </div>
+  </header>
+
+
+
+  <div class="fill">
+    <b>À compléter avant l'ouverture des paiements :</b> remplacez les mentions entre crochets,
+    faites relire ce texte par un juriste, et supprimez cet encadré. Vendre un abonnement engage
+    votre responsabilité contractuelle ; ce document est une trame, pas un avis juridique.
+  </div>
+
+  <h2>1. Qui édite ce service</h2>
+  <p>[Nom ou raison sociale], [adresse postale complète], [numéro IDE si applicable], joignable à [contact@mondomaine.ch]. Le service est hébergé en Suisse.</p>
+
+  <h2>2. Objet</h2>
+  <p>Teaching met à disposition deux outils pédagogiques : une dictée lue à voix haute avec correction, et des exercices de conjugaison. L'usage de base est gratuit et sans compte. Un abonnement payant, facultatif, ouvre l'enregistrement, le partage et le suivi des résultats.</p>
+
+  <h2>3. Le compte</h2>
+  <p>La création d'un compte suppose une adresse e-mail valable et un mot de passe d'au moins huit caractères. Le compte est personnel ; son titulaire répond des usages qui en sont faits. Un compte destiné à un enfant doit être créé et surveillé par un adulte responsable.</p>
+
+  <h2>4. L'abonnement, sa durée, sa résiliation</h2>
+  <ul>
+    <li>L'abonnement est proposé au mois ou à l'année, aux tarifs affichés sur la page d'abonnement au moment de la souscription. [Précisez si les prix s'entendent TVA comprise.]</li>
+    <li>Il est reconduit automatiquement à chaque échéance, jusqu'à résiliation.</li>
+    <li>La résiliation se fait en deux clics depuis « Gérer mon abonnement », sans justification ni préavis. Elle prend effet à la fin de la période en cours : le service reste ouvert jusque-là, et aucun nouveau prélèvement n'a lieu.</li>
+    <li>Les périodes déjà entamées ne sont pas remboursées au prorata, sauf disposition légale contraire.</li>
+  </ul>
+
+  <h2>5. Droit de rétractation</h2>
+  <p>[À adapter selon votre clientèle. Pour des clients dans l'Union européenne, un droit de rétractation de quatorze jours s'applique aux contrats conclus à distance ; l'exécution immédiate du service à la demande du client peut y mettre fin, à condition de l'en informer clairement au moment de la souscription. Le droit suisse ne prévoit pas de rétractation générale pour la vente en ligne.]</p>
+
+  <h2>6. Paiement</h2>
+  <p>Les paiements sont traités par Stripe. Aucune donnée bancaire n'est saisie, transmise ni conservée par ce site. Les factures sont accessibles depuis « Gérer mon abonnement ». En cas d'échec de prélèvement, l'accès aux fonctions payantes est suspendu jusqu'à régularisation.</p>
+
+  <h2>7. Vos données restent les vôtres</h2>
+  <p>La fin d'un abonnement n'efface rien. Les dictées, les listes et les résultats demeurent consultables et exportables dans un format ouvert. Seuls l'enregistrement, le partage et l'accès à la bibliothèque sont suspendus. La suppression du compte, elle, efface tout définitivement, et se déclenche depuis l'application.</p>
+
+  <h2>8. Contenus publiés par les utilisateurs</h2>
+  <p>Une dictée publiée dans la bibliothèque reste la propriété de son auteur, qui garantit disposer des droits sur le texte déposé et s'engage à ne pas publier d'œuvre protégée sans autorisation. L'éditeur peut retirer sans préavis tout contenu signalé, illicite ou manifestement inapproprié.</p>
+
+  <h2>9. Disponibilité</h2>
+  <p>Le service est fourni en l'état, sans garantie de disponibilité ininterrompue. Des interruptions peuvent survenir pour maintenance ou du fait de l'hébergeur. La responsabilité de l'éditeur est limitée au montant de l'abonnement versé sur les douze derniers mois, dans les limites permises par la loi.</p>
+
+  <h2>10. Modification des conditions et des prix</h2>
+  <p>Toute modification est annoncée par e-mail au moins trente jours à l'avance. Elle ne s'applique qu'à compter de l'échéance suivante ; un abonné qui la refuse peut résilier avant cette date.</p>
+
+  <h2>11. Droit applicable</h2>
+  <p>Le contrat est soumis au droit suisse. Le for est à [ville], sous réserve des dispositions impératives protégeant les consommateurs.</p>
+
+  <p class="hint">Dernière mise à jour : [date de mise en ligne].</p>
+  <footer class="foot">
+    <a href="https://needhelpapp.com/">NeedHelpApp</a> ·
+    <a href="index.html">Accueil</a> ·
+    <a href="dictee.html">La dictée</a> ·
+    <a href="vocabulaire.html">Le vocabulaire</a> ·
+    <a href="conjugaison.html">La conjugaison</a> ·
+    <a href="mathematiques.html">Les mathématiques</a> ·
+    <a href="abonnement.html">L'abonnement</a> ·
+    <a href="profil.html">Mon profil</a> ·
+    <a href="faq.html">Questions fréquentes</a> ·
+    <a href="mentions-legales.html">Mentions légales</a> ·
+    <a href="conditions.html">Conditions générales</a> ·
+    <a href="confidentialite.html">Confidentialité</a>
+  </footer>
+</div>
+<!-- compte ------------------------------------------------- -->
+<div class="modal" id="auth-modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <button class="modal-close" id="auth-close" aria-label="Fermer">×</button>
+    <h2 class="title" id="auth-title">Se connecter</h2>
+    <p class="sub" id="auth-sub">Un seul compte pour la dictée et la conjugaison.</p>
+    <div class="field" id="name-field" hidden>
+      <label for="auth-name">Prénom</label>
+      <input type="text" id="auth-name" autocomplete="given-name" placeholder="Comment on t'appelle ?">
+    </div>
+    <div class="field">
+      <label for="auth-email">Adresse e-mail</label>
+      <input type="email" id="auth-email" autocomplete="email" inputmode="email" placeholder="prenom@exemple.ch">
+    </div>
+    <div class="field" id="password-field">
+      <label for="auth-password">Mot de passe</label>
+      <input type="password" id="auth-password" autocomplete="current-password" placeholder="Au moins 8 caractères">
+      <button class="linkish" id="auth-forgot">Mot de passe oublié&nbsp;?</button>
+    </div>
+
+    <div class="ou-google" id="zone-google-bloc" hidden>
+      <span>ou</span>
+      <div id="zone-google"></div>
+    </div>
+    <p class="status" id="auth-status"></p>
+    <div class="actions">
+      <button class="btn btn--big" id="auth-submit">Se connecter</button>
+      <button class="btn btn--ghost" id="auth-switch">Créer un compte</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/google.js?v=2026-11-05"></script>
+<script src="assets/bienvenue.js?v=2026-11-05"></script>
+<script src="assets/avis.js?v=2026-11-05"></script>
+<script src="assets/menu.js?v=2026-11-05"></script>
+<script src="assets/compte.js?v=2026-11-05"></script>
+<script>window.Compte.demarrer(function(){});</script>
+</body>
+</html>
